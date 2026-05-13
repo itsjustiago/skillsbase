@@ -3,6 +3,230 @@
   "updated_at": "2026-05-13",
   "skills": [
     {
+      "name": "agent-harness-construction",
+      "path": "skills/agent-harness-construction/SKILL.md",
+      "description": "Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. Covers granularity rules, error recovery contracts, and context budgeting.",
+      "tags": [
+        "agent",
+        "agents",
+        "evaluation",
+        "harness"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 1800
+    },
+    {
+      "name": "agent-introspection-debugging",
+      "path": "skills/agent-introspection-debugging/SKILL.md",
+      "description": "Structured self-debugging workflow for AI agent failures. Capture failures, diagnose root causes, apply contained recovery, produce debug reports.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 1420
+    },
+    {
+      "name": "agentic-engineering",
+      "path": "skills/agentic-engineering/SKILL.md",
+      "description": "Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing. Use when AI agents perform most implementation work and humans enforce quality and risk controls.",
+      "tags": [
+        "agent",
+        "agents",
+        "evaluation",
+        "harness"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3500
+    },
+    {
+      "name": "api-design",
+      "path": "skills/api-design/SKILL.md",
+      "description": "REST API design patterns including resource naming, HTTP methods, status codes, pagination, filtering, error responses, versioning, rate limiting, and authentication.",
+      "tags": [
+        "api",
+        "rest",
+        "graphql",
+        "typescript",
+        "http",
+        "status-codes",
+        "authentication",
+        "rate-limiting",
+        "pagination"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 14800
+    },
+    {
+      "name": "audit-context-building",
+      "path": "skills/audit-context-building/SKILL.md",
+      "description": "\"Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding. Applies First Principles, 5 Whys, and 5 Hows at micro scale.\"",
+      "tags": [
+        "security",
+        "audit",
+        "analysis",
+        "context-building",
+        "architecture"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 4800
+    },
+    {
+      "name": "backend-patterns",
+      "path": "skills/backend-patterns/SKILL.md",
+      "description": "Backend architecture patterns including repository/service layers, database optimization, caching, error handling, middleware, authentication, rate limiting, and job queues.",
+      "tags": [
+        "nodejs",
+        "express",
+        "nextjs",
+        "typescript",
+        "architecture",
+        "database",
+        "caching",
+        "api",
+        "rest",
+        "graphql",
+        "authentication"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 14900
+    },
+    {
+      "name": "benchmark",
+      "path": "skills/benchmark/SKILL.md",
+      "description": "\"Measures performance baselines, detects regressions before/after PRs, and compares stack alternatives. Tracks Core Web Vitals, bundle sizes, API latency, build times, and performance trends.\"",
+      "tags": [
+        "testing",
+        "performance",
+        "benchmark",
+        "metrics"
+      ],
+      "project_types": [
+        "any-web"
+      ],
+      "cost_tokens": 2800
+    },
+    {
+      "name": "blog-post",
+      "path": "skills/blog-post/SKILL.md",
+      "description": "Long-form article/blog post — masthead, hero image, article body with pull quotes, author byline, related posts. Use for blog articles, essays, case studies, newsletters.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 205
+    },
+    {
+      "name": "browser-qa",
+      "path": "skills/browser-qa/SKILL.md",
+      "description": "\"Automates visual testing and UI interaction verification using browser automation after deploying features. Performs smoke tests, interaction tests, visual regression, and accessibility audits.\"",
+      "tags": [
+        "testing",
+        "dast",
+        "browser-testing",
+        "qa",
+        "visual-testing"
+      ],
+      "project_types": [
+        "any-web"
+      ],
+      "cost_tokens": 2400
+    },
+    {
+      "name": "bun-runtime",
+      "path": "skills/bun-runtime/SKILL.md",
+      "description": "Bun as all-in-one JavaScript runtime, package manager, bundler, and test runner. Covers Node.js compatibility, Vercel deployment, and migration from Node.",
+      "tags": [
+        "javascript",
+        "typescript",
+        "runtime",
+        "package-manager",
+        "bundler",
+        "testing",
+        "nodejs"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web",
+        "any"
+      ],
+      "cost_tokens": 1900
+    },
+    {
+      "name": "claude-api",
+      "path": "skills/claude-api/SKILL.md",
+      "description": "Build Claude API applications in Python and TypeScript. Covers Messages API, streaming, tool use, vision, extended thinking, batches, prompt caching, and Agent SDK patterns.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 2200
+    },
+    {
+      "name": "claude-devfleet",
+      "path": "skills/claude-devfleet/SKILL.md",
+      "description": "Orchestrate multi-agent coding tasks via Claude DevFleet — plan projects, dispatch parallel agents in isolated worktrees, monitor progress, and read structured reports.",
+      "tags": [
+        "agent",
+        "agents",
+        "harness",
+        "deployment"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3200
+    },
+    {
+      "name": "code-review",
+      "path": "skills/code-review/SKILL.md",
+      "description": "Code review automation for TypeScript, JavaScript, Python, Go, Swift, Kotlin. Analyzes PRs for complexity and risk, checks code quality for SOLID violations and code smells, generates review reports.",
+      "tags": [
+        "code-review",
+        "review",
+        "quality"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3500
+    },
+    {
+      "name": "codeql",
+      "path": "skills/codeql/SKILL.md",
+      "description": "\"Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Supports run all and important only scan modes with data extension models and SARIF output processing.\"",
+      "tags": [
+        "security",
+        "sast",
+        "static-analysis",
+        "codeql",
+        "data-flow"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 7200
+    },
+    {
+      "name": "continuous-learning",
+      "path": "skills/continuous-learning/SKILL.md",
+      "description": "Automatically extract reusable patterns from Claude Code sessions and save them as learned skills for future use.",
+      "tags": [
+        "learning",
+        "llm",
+        "agent"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 2500
+    },
+    {
       "name": "custom-jwt-auth-jose",
       "path": "skills/custom-jwt-auth-jose/SKILL.md",
       "description": "Custom JWT auth in Next.js with jose + bcryptjs — sign/verify tokens, httpOnly cookies, middleware-friendly verification (Edge-compatible), password hashing, and the server-action login flow.",
@@ -20,6 +244,69 @@
         "any-web"
       ],
       "cost_tokens": 1600
+    },
+    {
+      "name": "dashboard",
+      "path": "skills/dashboard/SKILL.md",
+      "description": "Admin/analytics dashboard in single HTML file — left sidebar nav, top bar with search, KPI cards, charts. Use when brief asks for dashboard, admin panel, analytics, or control panel.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 71
+    },
+    {
+      "name": "database-migrations",
+      "path": "skills/database-migrations/SKILL.md",
+      "description": "Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Django, TypeORM, golang-migrate). Use when planning or implementing database schema changes.",
+      "tags": [
+        "database",
+        "migration",
+        "postgres",
+        "sql",
+        "drizzle",
+        "prisma"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 11000
+    },
+    {
+      "name": "deep-research",
+      "path": "skills/deep-research/SKILL.md",
+      "description": "Multi-source research using firecrawl and exa MCPs. Searches, synthesizes findings, and delivers cited reports with source attribution.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 1185
+    },
+    {
+      "name": "deployment-patterns",
+      "path": "skills/deployment-patterns/SKILL.md",
+      "description": "Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up deployment infrastructure or planning releases.",
+      "tags": [
+        "deployment",
+        "ci-cd",
+        "docker",
+        "vercel"
+      ],
+      "project_types": [
+        "any-web"
+      ],
+      "cost_tokens": 14500
+    },
+    {
+      "name": "docker-patterns",
+      "path": "skills/docker-patterns/SKILL.md",
+      "description": "Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration. Use when setting up containerized development environments or reviewing Docker configurations.",
+      "tags": [
+        "docker",
+        "container",
+        "deployment",
+        "ci-cd"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 12500
     },
     {
       "name": "drizzle-neon-typescript",
@@ -41,6 +328,184 @@
       "cost_tokens": 1600
     },
     {
+      "name": "e2e-testing",
+      "path": "skills/e2e-testing/SKILL.md",
+      "description": "\"Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies for building stable, fast, and maintainable test suites.\"",
+      "tags": [
+        "testing",
+        "e2e",
+        "playwright",
+        "dast",
+        "browser-testing"
+      ],
+      "project_types": [
+        "any-web"
+      ],
+      "cost_tokens": 4400
+    },
+    {
+      "name": "email-marketing",
+      "path": "skills/email-marketing/SKILL.md",
+      "description": "Brand product-launch email — masthead, hero block, headline lockup, body copy, CTA, specs grid. Pure HTML email layout (600px column). Use for email templates and newsletter blasts.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 271
+    },
+    {
+      "name": "eval-harness",
+      "path": "skills/eval-harness/SKILL.md",
+      "description": "Eval-driven development framework for Claude Code. Define pass/fail criteria before coding, measure reliability with pass@k metrics, and track regressions.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 1440
+    },
+    {
+      "name": "exa-search",
+      "path": "skills/exa-search/SKILL.md",
+      "description": "Neural search via Exa MCP for web, code, companies, and people. Access current information, code examples, technical references, and business intelligence.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 1250
+    },
+    {
+      "name": "frontend-patterns",
+      "path": "skills/frontend-patterns/SKILL.md",
+      "description": "React, Next.js, state management, performance optimization, and UI best practices with patterns for composition, hooks, caching, and accessibility.",
+      "tags": [
+        "react",
+        "nextjs",
+        "typescript",
+        "performance",
+        "hooks",
+        "state-management",
+        "accessibility",
+        "component-patterns"
+      ],
+      "project_types": [
+        "nextjs",
+        "react",
+        "vite"
+      ],
+      "cost_tokens": 15900
+    },
+    {
+      "name": "git-workflow",
+      "path": "skills/git-workflow/SKILL.md",
+      "description": "Git workflow patterns including branching strategies, commit conventions, merge vs rebase, conflict resolution, and collaborative development best practices for teams of all sizes.",
+      "tags": [
+        "git",
+        "github",
+        "pr",
+        "workflow"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 16000
+    },
+    {
+      "name": "html-ppt-pitch-deck",
+      "path": "skills/html-ppt-pitch-deck/SKILL.md",
+      "description": "Investor-ready 10-slide HTML pitch deck — white + blue→purple gradient hero, big numbers, traction bar chart, ask page. Use for seed-round pitches and VC fundraising.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 190
+    },
+    {
+      "name": "html-ppt-product-launch",
+      "path": "skills/html-ppt-product-launch/SKILL.md",
+      "description": "Launch keynote HTML deck — dark hero + light content, warm orange→peach accent, feature cards, pricing tiers, CTA. Use for product announcements and feature reveals.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 183
+    },
+    {
+      "name": "html-ppt-tech-sharing",
+      "path": "skills/html-ppt-tech-sharing/SKILL.md",
+      "description": "Conference/tech-talk HTML deck — GitHub-dark, JetBrains Mono, terminal code blocks, agenda + Q&A pages. Use for engineering talks and technical presentations.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 190
+    },
+    {
+      "name": "html-ppt-zhangzara-monochrome",
+      "path": "skills/html-ppt-zhangzara-monochrome/SKILL.md",
+      "description": "Monochrome HTML deck — ivory ledger paper, all-black type, Lora serif headlines. Use for white papers, user research, academic briefs, policy documents.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 290
+    },
+    {
+      "name": "insecure-defaults",
+      "path": "skills/insecure-defaults/SKILL.md",
+      "description": "\"Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns that crash safely.\"",
+      "tags": [
+        "security",
+        "audit",
+        "configuration",
+        "secrets",
+        "hardcoded"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 2800
+    },
+    {
+      "name": "invoice",
+      "path": "skills/invoice/SKILL.md",
+      "description": "Printable invoice page — sender/recipient blocks, line items table, tax breakdown, totals, payment instructions. Use for billing documents and invoices.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 123
+    },
+    {
+      "name": "iterative-retrieval",
+      "path": "skills/iterative-retrieval/SKILL.md",
+      "description": "Pattern for progressively refining context retrieval to solve the subagent context problem. Agents retrieve only the context they need through iterative DISPATCH-EVALUATE-REFINE-LOOP cycles.",
+      "tags": [
+        "retrieval",
+        "rag",
+        "learning",
+        "agent"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 4500
+    },
+    {
+      "name": "live-dashboard",
+      "path": "skills/live-dashboard/SKILL.md",
+      "description": "Notion-style team dashboard — KPIs, 7-day sparkline, activity feed, linked-database table. Wired to Notion via connectors. Falls back to mock data offline.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 475
+    },
+    {
+      "name": "mcp-server-patterns",
+      "path": "skills/mcp-server-patterns/SKILL.md",
+      "description": "Build MCP servers with Node/TypeScript SDK. Tools, resources, prompts, Zod validation, stdio vs Streamable HTTP transport options.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 985
+    },
+    {
+      "name": "mutation-testing",
+      "path": "skills/mutation-testing/SKILL.md",
+      "description": "\"Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Helps configure and optimize mutation testing campaigns for code quality assurance.\"",
+      "tags": [
+        "testing",
+        "mutation-testing",
+        "quality",
+        "coverage"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 2200
+    },
+    {
       "name": "nextjs-app-router",
       "path": "skills/nextjs-app-router/SKILL.md",
       "description": "Next.js App Router patterns — server components, server actions, route handlers, layouts, streaming, and the boundaries between server and client code.",
@@ -56,6 +521,79 @@
         "nextjs"
       ],
       "cost_tokens": 1500
+    },
+    {
+      "name": "nextjs-turbopack",
+      "path": "skills/nextjs-turbopack/SKILL.md",
+      "description": "Next.js 16+ with Turbopack for incremental bundling, faster dev startup, HMR, file-system caching, and production bundle optimization.",
+      "tags": [
+        "nextjs",
+        "typescript",
+        "performance",
+        "bundler",
+        "turbopack",
+        "webpack",
+        "build",
+        "dev-tools"
+      ],
+      "project_types": [
+        "nextjs",
+        "react",
+        "vite"
+      ],
+      "cost_tokens": 1400
+    },
+    {
+      "name": "postgres-patterns",
+      "path": "skills/postgres-patterns/SKILL.md",
+      "description": "PostgreSQL database patterns for query optimization, schema design, indexing, and security. Quick reference for common patterns, index types, data types, and anti-pattern detection. Based on Supabase best practices.",
+      "tags": [
+        "postgres",
+        "sql",
+        "database",
+        "performance"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 5500
+    },
+    {
+      "name": "pricing-page",
+      "path": "skills/pricing-page/SKILL.md",
+      "description": "Standalone pricing page — header, plan tiers with pricing, feature comparison table, FAQ. Use for pricing pages, subscription plans, tier comparisons.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 250
+    },
+    {
+      "name": "prompt-optimizer",
+      "path": "skills/prompt-optimizer/SKILL.md",
+      "description": "Analyze raw prompts, identify intent and gaps, match ECC components (skills/commands/agents/hooks), and output a ready-to-paste optimized prompt. Advisory role only — never executes the task itself.",
+      "tags": [
+        "prompt-engineering",
+        "llm",
+        "learning"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 13000
+    },
+    {
+      "name": "property-based-testing",
+      "path": "skills/property-based-testing/SKILL.md",
+      "description": "\"Provides guidance for property-based testing across multiple languages and smart contracts. Helps write stronger test coverage than example-based tests for serialization, parsing, validation, and algorithmic code.\"",
+      "tags": [
+        "testing",
+        "property-based-testing",
+        "pbt",
+        "coverage"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3600
     },
     {
       "name": "pwa-deployment",
@@ -97,6 +635,69 @@
       "cost_tokens": 1500
     },
     {
+      "name": "saas-landing",
+      "path": "skills/saas-landing/SKILL.md",
+      "description": "Single-page SaaS landing — hero, features, social proof, pricing, footer CTA. Respects active DESIGN.md tokens. Use for product landing pages and marketing sites.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 468
+    },
+    {
+      "name": "sarif-parsing",
+      "path": "skills/sarif-parsing/SKILL.md",
+      "description": "\"Parses and processes SARIF files from static analysis tools like CodeQL, Semgrep, or other scanners. Handles filtering, deduplication, format conversion, and CI/CD integration of SARIF data.\"",
+      "tags": [
+        "security",
+        "static-analysis",
+        "sarif",
+        "scanning",
+        "parsing"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 5200
+    },
+    {
+      "name": "second-opinion",
+      "path": "skills/second-opinion/SKILL.md",
+      "description": "\"Runs external LLM code reviews (OpenAI Codex or Google Gemini CLI) on uncommitted changes, branch diffs, or specific commits. Provides independent review powered by a separate model.\"",
+      "tags": [
+        "review",
+        "code-review",
+        "quality",
+        "testing"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3200
+    },
+    {
+      "name": "semgrep",
+      "path": "skills/semgrep/SKILL.md",
+      "description": "\"Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes — run all and important only. Automatically detects and uses Semgrep Pro for cross-file taint analysis when available.\"",
+      "tags": [
+        "security",
+        "sast",
+        "static-analysis",
+        "semgrep",
+        "scanning"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 6800
+    },
+    {
+      "name": "social-carousel",
+      "path": "skills/social-carousel/SKILL.md",
+      "description": "Three-card social carousel — 1080×1080 cinematic squares with connected headlines, brand marks, loop affordance. Use for Instagram/LinkedIn carousel posts and social series.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 293
+    },
+    {
       "name": "supabase-typescript",
       "path": "skills/supabase-typescript/SKILL.md",
       "description": "Supabase patterns in TypeScript — typed client setup, RLS-friendly queries, auth flows, realtime subscriptions, and the SSR/server-action handoff.",
@@ -117,6 +718,22 @@
       "cost_tokens": 1600
     },
     {
+      "name": "supply-chain-risk-auditor",
+      "path": "skills/supply-chain-risk-auditor/SKILL.md",
+      "description": "\"Identifies dependencies at heightened risk of exploitation or takeover. Use when assessing supply chain attack surface, evaluating dependency health, or scoping security engagements.\"",
+      "tags": [
+        "security",
+        "supply-chain",
+        "dependencies",
+        "audit",
+        "risk-assessment"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3200
+    },
+    {
       "name": "tailwindcss-v4",
       "path": "skills/tailwindcss-v4/SKILL.md",
       "description": "Tailwind CSS v4 — CSS-first config (no tailwind.config.js by default), @theme directive, new @utility / @variant, breaking changes from v3, and the @tailwindcss/postcss vs Vite plugin split.",
@@ -135,6 +752,44 @@
       "cost_tokens": 1500
     },
     {
+      "name": "tdd-workflow",
+      "path": "skills/tdd-workflow/SKILL.md",
+      "description": "Test-driven development with 80%+ coverage including unit, integration, and E2E tests using Jest/Vitest, Playwright, and mocking patterns.",
+      "tags": [
+        "testing",
+        "tdd",
+        "test-driven-development",
+        "jest",
+        "vitest",
+        "playwright",
+        "coverage",
+        "best-practices"
+      ],
+      "project_types": [
+        "nextjs",
+        "react",
+        "any-web",
+        "any"
+      ],
+      "cost_tokens": 16100
+    },
+    {
+      "name": "variant-analysis",
+      "path": "skills/variant-analysis/SKILL.md",
+      "description": "\"Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits.\"",
+      "tags": [
+        "security",
+        "audit",
+        "variant-analysis",
+        "pattern-matching",
+        "bug-hunting"
+      ],
+      "project_types": [
+        "any"
+      ],
+      "cost_tokens": 3400
+    },
+    {
       "name": "vercel-blob-storage",
       "path": "skills/vercel-blob-storage/SKILL.md",
       "description": "Vercel Blob — uploading from server actions or client, the put/del/list/head API, public vs private blobs, signed client uploads for large files, and the path/pathname conventions.",
@@ -151,6 +806,22 @@
         "any-web"
       ],
       "cost_tokens": 1400
+    },
+    {
+      "name": "video-shortform",
+      "path": "skills/video-shortform/SKILL.md",
+      "description": "Short-form video generation — 3-10 second clips for product reveals, motion teasers, ambient loops. Works with Seedance 2, Kling 3/4, Veo 3. Outputs MP4 to project folder.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 346
+    },
+    {
+      "name": "web-prototype",
+      "path": "skills/web-prototype/SKILL.md",
+      "description": "General-purpose desktop web prototype — single self-contained HTML file built from seed template + section layouts. Default for landing/marketing/docs pages.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 312
     }
   ],
   "profiles": {
