@@ -1,0 +1,70 @@
+{
+  "version": "1",
+  "updated_at": "2026-05-13",
+  "skills": [
+    {
+      "name": "nextjs-app-router",
+      "path": "skills/nextjs-app-router/SKILL.md",
+      "description": "Next.js App Router patterns — server components, server actions, route handlers, layouts, streaming, and the boundaries between server and client code.",
+      "tags": [
+        "nextjs",
+        "react",
+        "app-router",
+        "ssr",
+        "server-components",
+        "server-actions"
+      ],
+      "project_types": [
+        "nextjs"
+      ],
+      "cost_tokens": 1500
+    },
+    {
+      "name": "pwa-deployment",
+      "path": "skills/pwa-deployment/SKILL.md",
+      "description": "PWA essentials — manifest, service worker registration, install prompt, iOS quirks, and deploying so the app actually installs.",
+      "tags": [
+        "pwa",
+        "service-worker",
+        "manifest",
+        "mobile",
+        "ios",
+        "android",
+        "vercel"
+      ],
+      "project_types": [
+        "nextjs",
+        "vite",
+        "any-web"
+      ],
+      "cost_tokens": 1400
+    },
+    {
+      "name": "supabase-typescript",
+      "path": "skills/supabase-typescript/SKILL.md",
+      "description": "Supabase patterns in TypeScript — typed client setup, RLS-friendly queries, auth flows, realtime subscriptions, and the SSR/server-action handoff.",
+      "tags": [
+        "supabase",
+        "postgres",
+        "auth",
+        "typescript",
+        "rls",
+        "realtime",
+        "ssr"
+      ],
+      "project_types": [
+        "nextjs",
+        "vite",
+        "any-web"
+      ],
+      "cost_tokens": 1600
+    }
+  ],
+  "profiles": {
+    "nextjs-pwa": [
+      "nextjs-app-router",
+      "pwa-deployment",
+      "supabase-typescript"
+    ]
+  }
+}

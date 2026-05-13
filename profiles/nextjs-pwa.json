@@ -1,0 +1,8 @@
+{
+  "description": "Starter pack for Next.js Progressive Web Apps with Supabase backend.",
+  "skills": [
+    "nextjs-app-router",
+    "pwa-deployment",
+    "supabase-typescript"
+  ]
+}
