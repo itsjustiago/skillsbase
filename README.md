@@ -52,6 +52,61 @@ The **matchmaker** reads your `package.json` (or `Cargo.toml`, `pyproject.toml`,
 Restart Claude once after install — done. Future sessions in that project automatically have those skills.
 
 ---
+
+# 🎨 Design MCP Stack
+
+Skills give the agent **rules**. MCPs give the agent **eyes and hands**. For real design quality, you need both. The `design-auto-pipeline` skill knows to use these — you don't have to invoke them by name.
+
+| MCP | What it does | Status |
+|---|---|---|
+| **Magic** (21st.dev) | Closest thing to a "design gallery". Search real UI components by description, get screenshots + code. Generate variants. | ✅ installed |
+| **Claude in Chrome** | Browse reference sites visually, screenshot, read page DOM. Use it for *"make it like vercel.com"*. | ✅ installed |
+| **Claude Preview** | Render generated HTML in iframe, screenshot your own output, inspect DOM/console. **Closes the visual loop** — the agent sees what it built. | ✅ installed |
+| **Playwright Chrome** | Headless browser for visual regression + interaction validation. | ✅ installed |
+| **Exa** | Web search for design inspiration. | ✅ installed (via ecc) |
+| **Vercel** | Live deploy preview. | ✅ installed |
+| **shadcn-ui MCP** | Real shadcn/ui component source — never invent the API. | ❌ **NOT installed** — see below |
+| **design-extract** (designlang) | Point at any URL → returns Tailwind config + design tokens + component map. New capability: extraction. | ❌ **NOT installed** — see below |
+| **Figma MCP** | Read Figma files directly. | ❌ skip if you don't use Figma |
+
+### The unlock: visual self-review
+
+The biggest gap in text-only LLM design is that the agent **never sees what it built**. The pipeline now uses **Claude Preview** at closeout — screenshot the output, inspect it, fix what's visually wrong before declaring done.
+
+### Recommended additions (require user action)
+
+**1. shadcn/ui MCP** — if you use shadcn/ui (you do, in `lift`):
+
+```bash
+claude mcp add --transport stdio --scope user shadcn-ui npx -y @heilgar/shadcn-ui-mcp-server
+```
+
+Or check [ui.shadcn.com/docs/mcp](https://ui.shadcn.com/docs/mcp) for the official installer.
+
+**2. design-extract** (Manavarya09/design-extract) — extract design system from any URL:
+
+```bash
+claude mcp add --transport stdio --scope user designlang npx -y designlang --mcp
+```
+
+After installing either, restart Claude. The `design-auto-pipeline` skill already knows to use them when available.
+
+### How the agent uses them (automatic)
+
+When you ask **"build a workout history page"**:
+
+1. Direction phase — if vague, Magic MCP surfaces 3 references with screenshots
+2. Build phase — shadcn MCP for any Button/Card/Form components
+3. Self-review phase — Claude Preview renders + screenshots the output
+4. Closeout — critique, polish, audit informed by what the agent **saw**
+
+When you ask **"make it like vercel.com"**:
+
+1. design-extract pulls Tailwind tokens from vercel.com
+2. Build uses those tokens as constraints
+3. Closeout as usual
+
+---
 ---
 
 <details>
