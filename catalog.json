@@ -3,6 +3,44 @@
   "updated_at": "2026-05-13",
   "skills": [
     {
+      "name": "custom-jwt-auth-jose",
+      "path": "skills/custom-jwt-auth-jose/SKILL.md",
+      "description": "Custom JWT auth in Next.js with jose + bcryptjs — sign/verify tokens, httpOnly cookies, middleware-friendly verification (Edge-compatible), password hashing, and the server-action login flow.",
+      "tags": [
+        "auth",
+        "jwt",
+        "jose",
+        "bcrypt",
+        "cookies",
+        "middleware",
+        "nextjs"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 1600
+    },
+    {
+      "name": "drizzle-neon-typescript",
+      "path": "skills/drizzle-neon-typescript/SKILL.md",
+      "description": "Drizzle ORM on Neon serverless Postgres in TypeScript — schema definition, type-safe queries, migrations via drizzle-kit, connection pooling, and the serverless vs edge driver split.",
+      "tags": [
+        "drizzle",
+        "neon",
+        "postgres",
+        "typescript",
+        "orm",
+        "migrations",
+        "serverless"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 1600
+    },
+    {
       "name": "nextjs-app-router",
       "path": "skills/nextjs-app-router/SKILL.md",
       "description": "Next.js App Router patterns — server components, server actions, route handlers, layouts, streaming, and the boundaries between server and client code.",
@@ -40,6 +78,25 @@
       "cost_tokens": 1400
     },
     {
+      "name": "react-19-patterns",
+      "path": "skills/react-19-patterns/SKILL.md",
+      "description": "React 19 patterns — Actions, `useFormStatus`/`useFormState`/`useActionState`, `useOptimistic`, the `use()` hook, ref-as-prop, document metadata, and what's different from React 18.",
+      "tags": [
+        "react",
+        "react-19",
+        "hooks",
+        "actions",
+        "server-actions",
+        "forms"
+      ],
+      "project_types": [
+        "nextjs",
+        "vite",
+        "any-web"
+      ],
+      "cost_tokens": 1500
+    },
+    {
       "name": "supabase-typescript",
       "path": "skills/supabase-typescript/SKILL.md",
       "description": "Supabase patterns in TypeScript — typed client setup, RLS-friendly queries, auth flows, realtime subscriptions, and the SSR/server-action handoff.",
@@ -58,6 +115,42 @@
         "any-web"
       ],
       "cost_tokens": 1600
+    },
+    {
+      "name": "tailwindcss-v4",
+      "path": "skills/tailwindcss-v4/SKILL.md",
+      "description": "Tailwind CSS v4 — CSS-first config (no tailwind.config.js by default), @theme directive, new @utility / @variant, breaking changes from v3, and the @tailwindcss/postcss vs Vite plugin split.",
+      "tags": [
+        "tailwindcss",
+        "tailwind-v4",
+        "css",
+        "postcss",
+        "design"
+      ],
+      "project_types": [
+        "nextjs",
+        "vite",
+        "any-web"
+      ],
+      "cost_tokens": 1500
+    },
+    {
+      "name": "vercel-blob-storage",
+      "path": "skills/vercel-blob-storage/SKILL.md",
+      "description": "Vercel Blob — uploading from server actions or client, the put/del/list/head API, public vs private blobs, signed client uploads for large files, and the path/pathname conventions.",
+      "tags": [
+        "vercel",
+        "blob",
+        "storage",
+        "uploads",
+        "files",
+        "cdn"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 1400
     }
   ],
   "profiles": {
