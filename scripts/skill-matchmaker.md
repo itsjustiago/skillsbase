@@ -1,0 +1,191 @@
+---
+name: skill-matchmaker
+description: |
+  Use to install project-relevant skills from the skillsbase GitHub catalog
+  into the current project's .claude/skills/ folder. Invoke when:
+  (1) entering plan mode in a project that has no .claude/skills/ yet,
+  (2) the user runs /skills-suggest, or
+  (3) you realise a needed capability might exist in the catalog and the
+  user has not been offered the chance to install it.
+  Always confirms with the user before fetching or writing files.
+---
+
+# skill-matchmaker
+
+You install Claude Code skills from the central catalog at `github.com/itsjustiago/skillsbase` into the **current project's** `.claude/skills/` directory, so they load only for that project — keeping global startup lean.
+
+## When to invoke yourself
+
+Trigger conditions (any one is enough):
+
+1. **Plan mode entered AND** `<cwd>/.claude/skills/` does not exist or is empty.
+2. **User invoked `/skills-suggest`** explicitly.
+3. **Reactive:** during a normal turn, you (the calling agent) identified a capability gap — e.g. user asked about a framework you don't have patterns for, or wants an output format you have no skill for — and the catalog might have it.
+
+Do **not** invoke unprompted outside these conditions. Do **not** auto-install without user approval.
+
+## The protocol
+
+### Step 1 — Project fingerprint
+
+Read the project root to identify stack. Cheapest signals first:
+
+| Signal | What to extract |
+|---|---|
+| `package.json` | `dependencies` + `devDependencies` keys. Look for: `next`, `react`, `vue`, `svelte`, `vite`, `astro`, `expo`, `@supabase/*`, `firebase`, `prisma`, `drizzle-orm`, `tailwindcss`. |
+| `tsconfig.json` exists | `typescript` |
+| `next.config.*` exists | `nextjs` (confirm beyond `package.json`) |
+| `public/manifest.json` or `app/manifest.ts` | `pwa` |
+| `Cargo.toml` | `rust` + crate names |
+| `pubspec.yaml` | `flutter` / `dart` |
+| `*.csproj`, `*.sln` | `dotnet` / `csharp` |
+| `go.mod` | `go` + module imports |
+| `pyproject.toml`, `requirements.txt` | `python` + framework (`django`, `fastapi`, `flask`) |
+| `supabase/config.toml` or `supabase/migrations/` | `supabase` |
+| Vercel/Netlify config | deployment platform |
+
+Build a fingerprint object:
+
+```ts
+{
+  languages: string[],        // e.g. ["typescript"]
+  frameworks: string[],       // e.g. ["nextjs", "react"]
+  libraries: string[],        // e.g. ["supabase", "tailwindcss"]
+  features: string[],         // e.g. ["pwa", "ssr"]
+  project_types: string[],    // normalized: e.g. ["nextjs"]
+}
+```
+
+A `Project type:` line may already be present in the session context (from the SessionStart hook output) — use it as a hint but verify by reading files.
+
+### Step 2 — Fetch the catalog
+
+```
+WebFetch https://raw.githubusercontent.com/itsjustiago/skillsbase/main/catalog.json
+```
+
+Parse as JSON. Shape:
+
+```json
+{
+  "version": "1",
+  "updated_at": "YYYY-MM-DD",
+  "skills": [
+    { "name": "...", "path": "skills/<name>/SKILL.md",
+      "description": "...", "tags": [...], "project_types": [...],
+      "cost_tokens": 1500 }
+  ],
+  "profiles": { "<name>": [ "skill-a", "skill-b" ] }
+}
+```
+
+If the fetch fails (offline, 404, malformed JSON), tell the user clearly and stop — do not invent a catalog.
+
+### Step 3 — Score each skill
+
+For each `skill` in the catalog:
+
+```
+score = 0
+for pt in skill.project_types:
+  if pt in fingerprint.project_types: score += 10
+  elif pt == "any-web" and fingerprint.frameworks.length > 0: score += 3
+for tag in skill.tags:
+  if tag in (fingerprint.languages ∪ fingerprint.frameworks ∪ fingerprint.libraries ∪ fingerprint.features):
+    score += 3
+```
+
+Threshold: **score ≥ 6** to recommend, **score ≥ 12** to recommend strongly.
+
+Also: if a `profile` in `catalog.profiles` exactly matches the fingerprint (e.g. fingerprint has `nextjs` + `pwa` and there's a `nextjs-pwa` profile), surface the profile as a "starter pack" option.
+
+### Step 4 — Already-installed check
+
+List `<cwd>/.claude/skills/` and remove any candidates that are already installed there. If a candidate has the same name as a globally-installed skill (in `~/.claude/skills/`), warn the user — local will shadow global.
+
+### Step 5 — Recommend (don't enumerate)
+
+**Critical UX rule:** the user does not know what these skills do, and does not want to learn before deciding. They trust you to make the call. Your job is to **recommend a specific subset and justify it in concrete project terms**, then ask for a simple yes/no.
+
+Never present skills as a flat menu of options for the user to evaluate. Never use the abstract description from the catalog — translate it into "what you'll use this for in *this* project".
+
+#### Partition the scored skills
+
+- **Recomendadas** (score ≥ 10): confident match. Default to install.
+- **Opcionais** (score 6–9): plausible, not certain. Do **not** default-include — only mention if user picks "let me see everything".
+- **Mismatch / warning**: a skill that appears in a profile or has a tag overlap but the fingerprint shows it doesn't fit (e.g. catalog has `supabase-typescript` but project uses Drizzle). Mention briefly as a "the catalog has this but it's not for you" line.
+
+#### Output format
+
+Lead with a short paragraph in the user's language explaining what you found, then a justification per recommended skill **anchored in real artifacts from this project** (specific files, dependencies, config you saw during fingerprint).
+
+Example for a Next.js + PWA + Drizzle project:
+
+> Olhei para o projeto: Next.js 16, PWA com `manifest.ts` e service worker, Drizzle ORM em cima de Neon. Recomendo instalar **2** skills:
+>
+> 1. **`nextjs-app-router`** — vais usar isto no dia-a-dia. Cobre server components, server actions, route handlers, layouts e o boundary `use client`/`use server`. Toda a tua pasta `app/` depende destes padrões.
+>
+> 2. **`pwa-deployment`** — tens `app/manifest.ts` e registo do service worker, e o app já instala em mobile. Cobre os gotchas do iOS (splash screens, status bar, jar separada de cookies), ícones maskable para Android, e o ciclo de update do service worker.
+>
+> Há uma terceira no catálogo (`supabase-typescript`) que **não recomendo** porque o teu projeto usa Drizzle+Neon, não Supabase. Só fazia sentido se planeares migrar.
+>
+> Custo: ~2900 tokens adicionados ao startup do `lift`. Ficam só neste projeto (`.claude/skills/`), não afetam mais nada.
+
+#### Ask one question, three options
+
+Use `AskUserQuestion` with **one** question (not a multi-select menu). Options:
+
+1. **"Sim, instala as recomendadas"** — default path, one click and done.
+2. **"Quero ver tudo e escolher"** — only then fall back to the multi-select menu with all candidates (recommended + optional + mismatch, with the warning intact).
+3. **"Não, agora não"** — exit gracefully.
+
+If the user picks option 2, present the full multi-select with the recommended ones pre-justified. Still **never** dump a flat list without per-project explanations.
+
+### Step 6 — Install
+
+For each approved skill:
+
+1. WebFetch `https://raw.githubusercontent.com/itsjustiago/skillsbase/main/<path>` (the `path` field from catalog).
+2. Write to `<cwd>/.claude/skills/<name>/SKILL.md` (create dirs as needed).
+3. Confirm each write.
+
+After all writes succeed, output:
+
+```
+Skills instaladas em .claude/skills/:
+  - nextjs-app-router
+  - pwa-deployment
+  - supabase-typescript
+
+⚠ Reinicia a sessão do Claude Code para as skills ficarem ativas no índice.
+   (Só uma vez por projeto — depois ficam sempre disponíveis aqui.)
+
+Para versionar, faz commit de .claude/skills/. Para uso pessoal, adiciona a .gitignore.
+```
+
+### Step 7 — Git advice (only on first install)
+
+If `<cwd>/.claude/skills/` was empty before this run and `<cwd>/.git/` exists, ask the user whether they want the skills committed (team-shared) or git-ignored (personal). On their choice:
+
+- **Commit:** do nothing — files are tracked by default.
+- **Ignore:** append `.claude/skills/` to `<cwd>/.gitignore` (create if missing).
+
+Do not run `git add` / `git commit` automatically — leave that to the user.
+
+## Failure modes
+
+| Situation | What to do |
+|---|---|
+| Catalog fetch fails | Show URL + error; stop. Do not fall back to a hardcoded list. |
+| Fingerprint is empty (no detectable config files) | Tell the user, ask what stack they're targeting, let them pick from full catalog. |
+| All candidates already installed | Say "no new recommendations" and exit. Optionally show `/skills-suggest` for manual browsing. |
+| User rejects everything | Acknowledge, exit. Do not retry the same proposal next session — once per session is enough. |
+| Skill in catalog has same name as global skill | Warn before install. If user proceeds, local file shadows global. |
+
+## Hard rules
+
+- **Never write outside `<cwd>/.claude/skills/`** — not even with user approval. If they want a global skill, they install it themselves.
+- **Never invoke yourself in a loop** — one proposal per session, max.
+- **Never edit existing local skills** without explicit confirmation — only create new ones or skip.
+- **Never fabricate skill content** — if a fetch fails or returns 404, report it; don't write a placeholder.
+- **Confirm before fetching** the SKILL.md bodies — the catalog fetch is fine without confirmation, but individual skill downloads + writes need approval.
