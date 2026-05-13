@@ -294,6 +294,14 @@
       "cost_tokens": 14500
     },
     {
+      "name": "design-brief",
+      "path": "skills/design-brief/SKILL.md",
+      "description": "Parse natural-language design briefs into structured specs using I-Lang protocol—eliminate ambiguity with explicit palette, typography, layout, mood, and density.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 5700
+    },
+    {
       "name": "docker-patterns",
       "path": "skills/docker-patterns/SKILL.md",
       "description": "Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration. Use when setting up containerized development environments or reviewing Docker configurations.",
@@ -473,6 +481,14 @@
         "any"
       ],
       "cost_tokens": 4500
+    },
+    {
+      "name": "kami-deck",
+      "path": "skills/kami-deck/SKILL.md",
+      "description": "Produce a print-grade slide deck in the kami design system—warm parchment, serif typography, ink-blue accent, magazine-style swipe navigation.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 3250
     },
     {
       "name": "live-dashboard",
@@ -822,6 +838,14 @@
       "tags": [],
       "project_types": [],
       "cost_tokens": 312
+    },
+    {
+      "name": "wireframe-sketch",
+      "path": "skills/wireframe-sketch/SKILL.md",
+      "description": "Generate hand-drawn wireframe sketches with graph-paper background, marker tones, and lo-fi annotation—perfect for early-stage design exploration.",
+      "tags": [],
+      "project_types": [],
+      "cost_tokens": 1700
     }
   ],
   "profiles": {
