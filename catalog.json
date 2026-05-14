@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "updated_at": "2026-05-13",
+  "updated_at": "2026-05-14",
   "skills": [
     {
       "name": "agent-harness-construction",
@@ -21,8 +21,15 @@
       "name": "agent-introspection-debugging",
       "path": "skills/agent-introspection-debugging/SKILL.md",
       "description": "Structured self-debugging workflow for AI agent failures. Capture failures, diagnose root causes, apply contained recovery, produce debug reports.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "agents",
+        "debugging",
+        "evaluation",
+        "agent-harness"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 1420
     },
     {
@@ -64,7 +71,7 @@
     {
       "name": "audit-context-building",
       "path": "skills/audit-context-building/SKILL.md",
-      "description": "\"Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding. Applies First Principles, 5 Whys, and 5 Hows at micro scale.\"",
+      "description": "Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding. Applies First Principles, 5 Whys, and 5 Hows at micro scale.",
       "tags": [
         "security",
         "audit",
@@ -103,7 +110,7 @@
     {
       "name": "benchmark",
       "path": "skills/benchmark/SKILL.md",
-      "description": "\"Measures performance baselines, detects regressions before/after PRs, and compares stack alternatives. Tracks Core Web Vitals, bundle sizes, API latency, build times, and performance trends.\"",
+      "description": "Measures performance baselines, detects regressions before/after PRs, and compares stack alternatives. Tracks Core Web Vitals, bundle sizes, API latency, build times, and performance trends.",
       "tags": [
         "testing",
         "performance",
@@ -119,14 +126,22 @@
       "name": "blog-post",
       "path": "skills/blog-post/SKILL.md",
       "description": "Long-form article/blog post — masthead, hero image, article body with pull quotes, author byline, related posts. Use for blog articles, essays, case studies, newsletters.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "blog",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 205
     },
     {
       "name": "browser-qa",
       "path": "skills/browser-qa/SKILL.md",
-      "description": "\"Automates visual testing and UI interaction verification using browser automation after deploying features. Performs smoke tests, interaction tests, visual regression, and accessibility audits.\"",
+      "description": "Automates visual testing and UI interaction verification using browser automation after deploying features. Performs smoke tests, interaction tests, visual regression, and accessibility audits.",
       "tags": [
         "testing",
         "dast",
@@ -163,8 +178,17 @@
       "name": "claude-api",
       "path": "skills/claude-api/SKILL.md",
       "description": "Build Claude API applications in Python and TypeScript. Covers Messages API, streaming, tool use, vision, extended thinking, batches, prompt caching, and Agent SDK patterns.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "claude-api",
+        "anthropic",
+        "llm",
+        "prompt-caching",
+        "tool-use",
+        "agents"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 2200
     },
     {
@@ -199,7 +223,7 @@
     {
       "name": "codeql",
       "path": "skills/codeql/SKILL.md",
-      "description": "\"Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Supports run all and important only scan modes with data extension models and SARIF output processing.\"",
+      "description": "Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Supports run all and important only scan modes with data extension models and SARIF output processing.",
       "tags": [
         "security",
         "sast",
@@ -249,8 +273,16 @@
       "name": "dashboard",
       "path": "skills/dashboard/SKILL.md",
       "description": "Admin/analytics dashboard in single HTML file — left sidebar nav, top bar with search, KPI cards, charts. Use when brief asks for dashboard, admin panel, analytics, or control panel.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "dashboard",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 71
     },
     {
@@ -274,8 +306,16 @@
       "name": "deep-research",
       "path": "skills/deep-research/SKILL.md",
       "description": "Multi-source research using firecrawl and exa MCPs. Searches, synthesizes findings, and delivers cited reports with source attribution.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "research",
+        "search",
+        "mcp",
+        "analysis",
+        "synthesis"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 1185
     },
     {
@@ -297,8 +337,17 @@
       "name": "design-brief",
       "path": "skills/design-brief/SKILL.md",
       "description": "Parse natural-language design briefs into structured specs using I-Lang protocol—eliminate ambiguity with explicit palette, typography, layout, mood, and density.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "design",
+        "brief",
+        "planning",
+        "discovery",
+        "i-lang"
+      ],
+      "project_types": [
+        "any-web",
+        "any"
+      ],
       "cost_tokens": 5700
     },
     {
@@ -338,7 +387,7 @@
     {
       "name": "e2e-testing",
       "path": "skills/e2e-testing/SKILL.md",
-      "description": "\"Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies for building stable, fast, and maintainable test suites.\"",
+      "description": "Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies for building stable, fast, and maintainable test suites.",
       "tags": [
         "testing",
         "e2e",
@@ -355,24 +404,48 @@
       "name": "email-marketing",
       "path": "skills/email-marketing/SKILL.md",
       "description": "Brand product-launch email — masthead, hero block, headline lockup, body copy, CTA, specs grid. Pure HTML email layout (600px column). Use for email templates and newsletter blasts.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "email",
+        "marketing",
+        "ui"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 271
     },
     {
       "name": "eval-harness",
       "path": "skills/eval-harness/SKILL.md",
       "description": "Eval-driven development framework for Claude Code. Define pass/fail criteria before coding, measure reliability with pass@k metrics, and track regressions.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "eval",
+        "evaluation",
+        "testing",
+        "quality",
+        "agents"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 1440
     },
     {
       "name": "exa-search",
       "path": "skills/exa-search/SKILL.md",
       "description": "Neural search via Exa MCP for web, code, companies, and people. Access current information, code examples, technical references, and business intelligence.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "search",
+        "research",
+        "mcp",
+        "web",
+        "code"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 1250
     },
     {
@@ -415,38 +488,70 @@
       "name": "html-ppt-pitch-deck",
       "path": "skills/html-ppt-pitch-deck/SKILL.md",
       "description": "Investor-ready 10-slide HTML pitch deck — white + blue→purple gradient hero, big numbers, traction bar chart, ask page. Use for seed-round pitches and VC fundraising.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "presentation",
+        "deck",
+        "slides",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 190
     },
     {
       "name": "html-ppt-product-launch",
       "path": "skills/html-ppt-product-launch/SKILL.md",
       "description": "Launch keynote HTML deck — dark hero + light content, warm orange→peach accent, feature cards, pricing tiers, CTA. Use for product announcements and feature reveals.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "presentation",
+        "deck",
+        "slides",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 183
     },
     {
       "name": "html-ppt-tech-sharing",
       "path": "skills/html-ppt-tech-sharing/SKILL.md",
       "description": "Conference/tech-talk HTML deck — GitHub-dark, JetBrains Mono, terminal code blocks, agenda + Q&A pages. Use for engineering talks and technical presentations.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "presentation",
+        "deck",
+        "slides",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 190
     },
     {
       "name": "html-ppt-zhangzara-monochrome",
       "path": "skills/html-ppt-zhangzara-monochrome/SKILL.md",
       "description": "Monochrome HTML deck — ivory ledger paper, all-black type, Lora serif headlines. Use for white papers, user research, academic briefs, policy documents.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "presentation",
+        "deck",
+        "slides",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 290
     },
     {
       "name": "insecure-defaults",
       "path": "skills/insecure-defaults/SKILL.md",
-      "description": "\"Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns that crash safely.\"",
+      "description": "Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns that crash safely.",
       "tags": [
         "security",
         "audit",
@@ -463,8 +568,16 @@
       "name": "invoice",
       "path": "skills/invoice/SKILL.md",
       "description": "Printable invoice page — sender/recipient blocks, line items table, tax breakdown, totals, payment instructions. Use for billing documents and invoices.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "invoice",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 123
     },
     {
@@ -486,30 +599,54 @@
       "name": "kami-deck",
       "path": "skills/kami-deck/SKILL.md",
       "description": "Produce a print-grade slide deck in the kami design system—warm parchment, serif typography, ink-blue accent, magazine-style swipe navigation.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "presentation",
+        "deck",
+        "slides",
+        "print-design",
+        "editorial",
+        "serif"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 3250
     },
     {
       "name": "live-dashboard",
       "path": "skills/live-dashboard/SKILL.md",
       "description": "Notion-style team dashboard — KPIs, 7-day sparkline, activity feed, linked-database table. Wired to Notion via connectors. Falls back to mock data offline.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "dashboard",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 475
     },
     {
       "name": "mcp-server-patterns",
       "path": "skills/mcp-server-patterns/SKILL.md",
       "description": "Build MCP servers with Node/TypeScript SDK. Tools, resources, prompts, Zod validation, stdio vs Streamable HTTP transport options.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "mcp",
+        "typescript",
+        "agents",
+        "tool-use"
+      ],
+      "project_types": [
+        "any"
+      ],
       "cost_tokens": 985
     },
     {
       "name": "mutation-testing",
       "path": "skills/mutation-testing/SKILL.md",
-      "description": "\"Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Helps configure and optimize mutation testing campaigns for code quality assurance.\"",
+      "description": "Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Helps configure and optimize mutation testing campaigns for code quality assurance.",
       "tags": [
         "testing",
         "mutation-testing",
@@ -578,8 +715,16 @@
       "name": "pricing-page",
       "path": "skills/pricing-page/SKILL.md",
       "description": "Standalone pricing page — header, plan tiers with pricing, feature comparison table, FAQ. Use for pricing pages, subscription plans, tier comparisons.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "pricing",
+        "landing-page",
+        "ui"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 250
     },
     {
@@ -599,7 +744,7 @@
     {
       "name": "property-based-testing",
       "path": "skills/property-based-testing/SKILL.md",
-      "description": "\"Provides guidance for property-based testing across multiple languages and smart contracts. Helps write stronger test coverage than example-based tests for serialization, parsing, validation, and algorithmic code.\"",
+      "description": "Provides guidance for property-based testing across multiple languages and smart contracts. Helps write stronger test coverage than example-based tests for serialization, parsing, validation, and algorithmic code.",
       "tags": [
         "testing",
         "property-based-testing",
@@ -654,14 +799,22 @@
       "name": "saas-landing",
       "path": "skills/saas-landing/SKILL.md",
       "description": "Single-page SaaS landing — hero, features, social proof, pricing, footer CTA. Respects active DESIGN.md tokens. Use for product landing pages and marketing sites.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "landing-page",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 468
     },
     {
       "name": "sarif-parsing",
       "path": "skills/sarif-parsing/SKILL.md",
-      "description": "\"Parses and processes SARIF files from static analysis tools like CodeQL, Semgrep, or other scanners. Handles filtering, deduplication, format conversion, and CI/CD integration of SARIF data.\"",
+      "description": "Parses and processes SARIF files from static analysis tools like CodeQL, Semgrep, or other scanners. Handles filtering, deduplication, format conversion, and CI/CD integration of SARIF data.",
       "tags": [
         "security",
         "static-analysis",
@@ -677,7 +830,7 @@
     {
       "name": "second-opinion",
       "path": "skills/second-opinion/SKILL.md",
-      "description": "\"Runs external LLM code reviews (OpenAI Codex or Google Gemini CLI) on uncommitted changes, branch diffs, or specific commits. Provides independent review powered by a separate model.\"",
+      "description": "Runs external LLM code reviews (OpenAI Codex or Google Gemini CLI) on uncommitted changes, branch diffs, or specific commits. Provides independent review powered by a separate model.",
       "tags": [
         "review",
         "code-review",
@@ -692,7 +845,7 @@
     {
       "name": "semgrep",
       "path": "skills/semgrep/SKILL.md",
-      "description": "\"Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes — run all and important only. Automatically detects and uses Semgrep Pro for cross-file taint analysis when available.\"",
+      "description": "Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes — run all and important only. Automatically detects and uses Semgrep Pro for cross-file taint analysis when available.",
       "tags": [
         "security",
         "sast",
@@ -709,8 +862,16 @@
       "name": "social-carousel",
       "path": "skills/social-carousel/SKILL.md",
       "description": "Three-card social carousel — 1080×1080 cinematic squares with connected headlines, brand marks, loop affordance. Use for Instagram/LinkedIn carousel posts and social series.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "social",
+        "carousel",
+        "ui"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 293
     },
     {
@@ -736,7 +897,7 @@
     {
       "name": "supply-chain-risk-auditor",
       "path": "skills/supply-chain-risk-auditor/SKILL.md",
-      "description": "\"Identifies dependencies at heightened risk of exploitation or takeover. Use when assessing supply chain attack surface, evaluating dependency health, or scoping security engagements.\"",
+      "description": "Identifies dependencies at heightened risk of exploitation or takeover. Use when assessing supply chain attack surface, evaluating dependency health, or scoping security engagements.",
       "tags": [
         "security",
         "supply-chain",
@@ -792,7 +953,7 @@
     {
       "name": "variant-analysis",
       "path": "skills/variant-analysis/SKILL.md",
-      "description": "\"Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits.\"",
+      "description": "Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits.",
       "tags": [
         "security",
         "audit",
@@ -827,24 +988,48 @@
       "name": "video-shortform",
       "path": "skills/video-shortform/SKILL.md",
       "description": "Short-form video generation — 3-10 second clips for product reveals, motion teasers, ambient loops. Works with Seedance 2, Kling 3/4, Veo 3. Outputs MP4 to project folder.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "video",
+        "design",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 346
     },
     {
       "name": "web-prototype",
       "path": "skills/web-prototype/SKILL.md",
       "description": "General-purpose desktop web prototype — single self-contained HTML file built from seed template + section layouts. Default for landing/marketing/docs pages.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "html",
+        "design",
+        "prototype",
+        "ui",
+        "mockup"
+      ],
+      "project_types": [
+        "any-web"
+      ],
       "cost_tokens": 312
     },
     {
       "name": "wireframe-sketch",
       "path": "skills/wireframe-sketch/SKILL.md",
       "description": "Generate hand-drawn wireframe sketches with graph-paper background, marker tones, and lo-fi annotation—perfect for early-stage design exploration.",
-      "tags": [],
-      "project_types": [],
+      "tags": [
+        "wireframe",
+        "low-fidelity",
+        "mockup",
+        "exploration",
+        "prototype",
+        "sketch"
+      ],
+      "project_types": [
+        "any-web",
+        "any"
+      ],
       "cost_tokens": 1700
     }
   ],

@@ -86,7 +86,7 @@ Or check [ui.shadcn.com/docs/mcp](https://ui.shadcn.com/docs/mcp) for the offici
 **2. design-extract** (Manavarya09/design-extract) — extract design system from any URL:
 
 ```bash
-claude mcp add --transport stdio --scope user designlang npx -y designlang --mcp
+claude mcp add --scope user --transport stdio designlang -- npx -y designlang mcp
 ```
 
 After installing either, restart Claude. The `design-auto-pipeline` skill already knows to use them when available.
@@ -112,7 +112,7 @@ When you ask **"make it like vercel.com"**:
 <details>
 <summary><b>📚 Reference (for the Claude agent reading this)</b> — full catalog, schemas, and scoring algorithm</summary>
 
-## Catalog — 59 skills
+## Catalog — 62 skills
 
 Click a skill name to read its full body. Each row: tags · project types · one-line purpose.
 

@@ -19,15 +19,24 @@ function parseFrontmatter(md) {
   const out = {};
   let key = null;
   let buf = '';
-  let inBlock = false;
+  let mode = null; // null | 'block-string' | 'block-list'
   for (const rawLine of m[1].split(/\r?\n/)) {
-    if (inBlock) {
+    if (mode === 'block-string') {
       if (/^\S/.test(rawLine)) {
         out[key] = buf.replace(/\n$/, '');
-        inBlock = false;
+        mode = null;
       } else {
         buf += rawLine.replace(/^  /, '') + '\n';
         continue;
+      }
+    } else if (mode === 'block-list') {
+      const item = rawLine.match(/^\s+-\s+(.+)$/);
+      if (item) {
+        out[key].push(item[1].trim().replace(/^['"]|['"]$/g, ''));
+        continue;
+      } else {
+        mode = null;
+        // fall through to parse new key
       }
     }
     const kv = rawLine.match(/^([a-z_]+):\s*(.*)$/);
@@ -35,17 +44,21 @@ function parseFrontmatter(md) {
     key = kv[1];
     const value = kv[2];
     if (value === '|' || value === '>' || value === '|-' || value === '>-') {
-      inBlock = true;
+      mode = 'block-string';
       buf = '';
+    } else if (value === '') {
+      // YAML block-list: tags:\n  - a\n  - b
+      mode = 'block-list';
+      out[key] = [];
     } else if (value.startsWith('[') && value.endsWith(']')) {
-      out[key] = value.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
+      out[key] = value.slice(1, -1).split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
     } else if (/^\d+$/.test(value)) {
       out[key] = parseInt(value, 10);
     } else {
-      out[key] = value;
+      out[key] = value.replace(/^['"]|['"]$/g, '');
     }
   }
-  if (inBlock) out[key] = buf.replace(/\n$/, '');
+  if (mode === 'block-string') out[key] = buf.replace(/\n$/, '');
   return out;
 }
 
