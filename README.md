@@ -26,8 +26,8 @@ bash setup.sh
 
 **After `setup.sh`:**
 - **Restart Claude Code** so plugins + CLAUDE.md load
-- **Optional extras** (design MCPs, graphify, browser-harness): `setup/install-extras.md`
-- **MCP auth** (supabase, vercel, github token): `mcp/README.md`
+- **MCP servers** (9 total — magic, shadcn-ui, designlang, github, firebase, supabase, vercel, n8n, playwright): `setup/mcps.md`
+- **Optional CLIs** (graphify, browser-harness): `setup/install-extras.md`
 - **Per project**: run `/skills-suggest` — the matchmaker installs project-relevant skills locally
 
 ## Syncing an existing machine
@@ -57,7 +57,8 @@ Repo layout:
 | `skills/` | The 62-skill **per-project catalog** (consumed by the matchmaker, never auto-installed globally) |
 | `profiles/` | Curated starter packs (e.g. `nextjs-pwa`) |
 | `scripts/` | `build-catalog.mjs` — regenerates `catalog.json` from `skills/` |
-| `mcp/` | MCP server auth + setup guides |
+| `setup/mcps.md` | Install commands + auth notes for all 9 MCP servers |
+| `mcp/` | MCP conceptual guide (what each server does, auth deep-dive) |
 | `guides/` | Workflow docs — design pipeline, git, security, multi-agent |
 | `memory/` | How Claude's memory system works |
 | `catalog.json` | Machine-readable index of the per-project catalog |
