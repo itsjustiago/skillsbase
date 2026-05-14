@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Core plugin installer for the skillsbase lean Claude Code setup.
+#
+# Philosophy: keep the global layer tiny (7 plugins + a handful of skills).
+# Each project pulls its own skills from the skillsbase catalog via /skills-suggest.
+#
+# Run from the repo root: bash setup/install-plugins.sh
+# Or via the orchestrator: bash setup.sh
+
+set -e
+
+# Resolve repo root regardless of where this is called from
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+echo "==> Adding marketplaces..."
+claude plugin marketplace add obra/superpowers
+claude plugin marketplace add pbakaus/impeccable
+claude plugin marketplace add athola/claude-night-market
+claude plugin marketplace add bradautomates/claude-video
+claude plugin marketplace add anthropics/claude-code
+
+echo ""
+echo "==> Installing core plugins (7)..."
+core_plugins=(
+  "superpowers@superpowers-dev"          # brainstorming, TDD, debug, plans, git worktrees
+  "sanctum@claude-night-market"          # ship-merge PR workflow
+  "leyline@claude-night-market"          # required dependency of sanctum
+  "conserve@claude-night-market"         # context-optimization, clear-context
+  "impeccable@impeccable"                # design polish (critique/polish/audit) — v3+ live browser editing
+  "frontend-design@claude-code-plugins"  # Anthropic anti-AI-slop floor
+  "watch@claude-video"                   # video clips (yt-dlp + ffmpeg + Whisper)
+)
+
+for plugin in "${core_plugins[@]}"; do
+  if claude plugin install "$plugin" --scope user 2>&1 | grep -qiE "Successfully|already installed"; then
+    echo "  v $plugin"
+  else
+    echo "  x $plugin (install may have failed — re-run to retry)"
+  fi
+done
+
+echo ""
+echo "==> Installing global skills into ~/.claude/skills/ ..."
+mkdir -p ~/.claude/skills
+for skill_dir in "$REPO_ROOT"/global-skills/*/; do
+  name="$(basename "$skill_dir")"
+  mkdir -p ~/.claude/skills/"$name"
+  cp "$skill_dir/SKILL.md" ~/.claude/skills/"$name"/SKILL.md
+  echo "  v $name"
+done
+
+echo ""
+echo "==> Installing slash commands into ~/.claude/commands/ ..."
+mkdir -p ~/.claude/commands
+for cmd in "$REPO_ROOT"/commands/*.md; do
+  name="$(basename "$cmd")"
+  cp "$cmd" ~/.claude/commands/"$name"
+  echo "  v /$(basename "$name" .md)"
+done
+
+echo ""
+echo "Core plugins + global skills installed."
+echo "Next: copy configs (settings.json, CLAUDE.md, statusline.sh) — see setup.sh or README."

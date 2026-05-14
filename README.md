@@ -1,10 +1,49 @@
 # skillsbase
 
-Catalog of Claude Code skills, installed per-project by the [`skill-matchmaker`](#how-the-matchmaker-works) skill.
+The single source of truth for itsjustiago's Claude Code setup — **machine bootstrap + per-project skill catalog in one repo.**
+
+Clone this on any new machine and Claude is fully configured: lean global core, the skill-matchmaker engine, design pipeline, MCP guides, and a 62-skill catalog that installs per-project on demand.
 
 > Your Claude has **two layers** of skills:
-> - 🌍 **Global** — always loaded in every project, no install needed.
-> - 📦 **Per-project** — picked from this catalog by the matchmaker. Only loads in projects that need them.
+> - 🌍 **Global** — always loaded in every project (7 plugins + ~7 skills). Set up once by `setup.sh`.
+> - 📦 **Per-project** — picked from this catalog by the `skill-matchmaker`. Only loads in projects that need them.
+
+---
+
+# 🚀 New machine setup
+
+```bash
+git clone https://github.com/itsjustiago/skillsbase.git
+cd skillsbase
+bash setup.sh
+```
+
+`setup.sh` is idempotent (safe to re-run). It:
+1. Installs the 7 core plugins (superpowers, sanctum + leyline, conserve, impeccable, frontend-design, watch)
+2. Copies the global skills (`global-skills/` → `~/.claude/skills/`) and slash commands (`commands/` → `~/.claude/commands/`)
+3. Installs global configs (`setup/CLAUDE.md`, `setup/settings.json`, `setup/statusline.sh`) — backs up any existing ones
+4. Points you at the remaining manual steps
+
+**After `setup.sh`:**
+- **Restart Claude Code** so plugins + CLAUDE.md load
+- **Optional extras** (design MCPs, graphify, browser-harness): `setup/install-extras.md`
+- **MCP auth** (supabase, vercel, github token): `mcp/README.md`
+- **Per project**: run `/skills-suggest` — the matchmaker installs project-relevant skills locally
+
+Repo layout:
+
+| Dir | Purpose |
+|---|---|
+| `setup/` | Bootstrap scripts + config templates (CLAUDE.md, settings.json, statusline.sh, install-extras.md) |
+| `global-skills/` | Skills copied into `~/.claude/skills/` — matchmaker, design-auto-pipeline, taste-skill, etc. |
+| `commands/` | Slash commands copied into `~/.claude/commands/` |
+| `skills/` | The 62-skill **per-project catalog** (consumed by the matchmaker, never auto-installed globally) |
+| `profiles/` | Curated starter packs (e.g. `nextjs-pwa`) |
+| `scripts/` | `build-catalog.mjs` — regenerates `catalog.json` from `skills/` |
+| `mcp/` | MCP server auth + setup guides |
+| `guides/` | Workflow docs — design pipeline, git, security, multi-agent |
+| `memory/` | How Claude's memory system works |
+| `catalog.json` | Machine-readable index of the per-project catalog |
 
 ---
 
