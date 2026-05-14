@@ -1,41 +1,24 @@
 # Global Claude Code Instructions
 
-## Skill Installation
-Whenever the user says "install a skill", "add a skill", or similar — always install it **globally** to `~/.claude/settings.json` (not project-level, not session-only), unless the user explicitly says "install this just for this project" or "install just for this session."
+## Skills architecture (read this first)
 
-After installing globally, confirm to the user that the skill is now available across all their projects.
+This machine runs a **two-layer skill system**:
 
-## Skill Organization
-When a single skill installation brings in multiple sub-skills (e.g. a bundle or package), document them grouped under the parent skill name — not as a flat list. Use this format in any skill inventory or documentation:
+- **Global layer** — a small core that loads in every session: 7 plugins (superpowers, sanctum+leyline, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `graphify`). Keep this lean — it's startup token cost on every session.
+- **Per-project layer** — installed on demand into `<project>/.claude/skills/` by the `skill-matchmaker` skill, pulling from the catalog at https://github.com/itsjustiago/skillsbase.
 
-```
-## <parent-skill-name>
-- sub-skill-1
-- sub-skill-2
-- sub-skill-3
-...
-```
+**When the user says "install a skill":**
+- If it's a stack/task-specific skill → it belongs in the project. Use `skill-matchmaker` to pull it from the skillsbase catalog into `<project>/.claude/skills/`. If it's not in the catalog yet, add it to the catalog first (see below), then install.
+- If it's a genuinely global capability (used in *every* project) → install to `~/.claude/skills/` and confirm it's now global. Be conservative — global is expensive.
 
-This way it's always clear which skills came from which parent, and the user can remove or reference a whole group by its parent name.
+**The single source of truth is the `skillsbase` repo** (https://github.com/itsjustiago/skillsbase). It contains both the skill catalog AND the machine bootstrap (setup scripts, configs, MCP guides). After meaningfully changing skills/setup, update that repo: add/edit the `skills/<name>/SKILL.md`, run `node scripts/build-catalog.mjs`, commit, push.
 
-## GitHub Skills Repository
-After every skill installation, update the GitHub repo at https://github.com/itsjustiago/claude-skills by cloning/pulling it to a temp directory, making changes, and pushing:
-
-1. **README.md** — add the skill to the relevant section in the Installed Skills table.
-2. **skills/<parent-skill-name>.md** — create or update with: source repo, install command, what it does, sub-skills list, and how to use it.
-3. **guides/** — if the skill has a non-obvious workflow (e.g. a design pipeline, security audit steps, multi-step commands), create or update the relevant guide in `guides/`. Simple utility skills don't need a guide entry.
-4. **setup/install-plugins.sh** — add the new plugin install command to the script so new machines get it automatically.
-5. **setup/settings.json** — add the new plugin and its marketplace source.
-6. Commit and push with message: `Add skill: <parent-skill-name>`.
-
-### What counts as "needs a usage guide"
-Write or update a guide in `guides/` when the skill:
-- Has specific commands the user needs to know (e.g. `/audit`, `/polish`)
-- Works as part of a multi-step workflow
-- Has multiple modes or variants
-- Requires the user to trigger it manually at the right moment
-
-Simple auto-activating skills (background enhancers) don't need a guide entry.
+**When the user wants this machine to match the repo** ("make this machine match skillsbase", "reconcile this PC", "I have a different setup here, fix it"):
+1. Clone/pull `skillsbase` if not already local.
+2. Run `bash sync.sh` (dry run) — it prints exactly what would be uninstalled/installed/updated.
+3. Show the user the diff. On their confirmation, run `bash sync.sh --apply`.
+4. `sync.sh` backs up `~/.claude/` first and only touches the global layer — never per-project skills.
+5. Tell the user to restart Claude Code.
 
 ## Per-project skills on demand (skillsbase)
 There is a central catalog of project-specific skills at https://github.com/itsjustiago/skillsbase. The global skill `skill-matchmaker` consults that catalog and installs project-relevant skills into `<project>/.claude/skills/`. Trigger it in these cases:
@@ -60,3 +43,11 @@ Hard rules:
 Before non-trivial coding tasks, briefly check installed skills for one that applies — invoke it via the `Skill` tool if there's a clear match. Skip the check for one-liners and trivial edits.
 
 For grunt work (file searches, reading large outputs, simple lookups, parallel checks), dispatch to subagents via the `Agent` tool with a smaller model: `model: "haiku"` for searches/reads, `model: "sonnet"` for mid-complexity work. Stay in Opus for orchestration, planning, and complex reasoning. Don't analyze every task to pick a model — just default to Opus and override only when grunt work is well-bounded.
+
+<!--
+  Two more sections get appended to ~/.claude/CLAUDE.md automatically by their installers
+  (not part of this template — they're machine-specific paths):
+
+  # graphify         — added by `graphify install` (see setup/install-extras.md)
+  # browser-harness  — added when you install browser-harness (see setup/install-extras.md)
+-->

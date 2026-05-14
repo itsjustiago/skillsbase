@@ -30,6 +30,23 @@ bash setup.sh
 - **MCP auth** (supabase, vercel, github token): `mcp/README.md`
 - **Per project**: run `/skills-suggest` — the matchmaker installs project-relevant skills locally
 
+## Syncing an existing machine
+
+`setup.sh` is **additive** — it installs the core but leaves any extra plugins/skills already on the machine. To make a machine match this repo **exactly** (uninstall what's not in the core, install what's missing), use `sync.sh`:
+
+```bash
+bash sync.sh            # DRY RUN — shows the diff, changes nothing
+bash sync.sh --apply    # reconcile: uninstall extras, install missing, copy configs
+```
+
+`sync.sh`:
+- Only touches the **global layer** (`~/.claude/`) — never per-project `.claude/skills/`
+- Backs up `~/.claude/{skills,commands,settings.json,CLAUDE.md}` to `~/.claude/backups/sync-<ts>/` before applying
+- Leaves externally-managed skills alone (e.g. `graphify`, which self-installs via its CLI)
+- Never auto-overwrites `settings.json` (it has machine-local keys like voice/theme/env) — flags it for manual merge instead
+
+**Telling Claude to do it:** "make this machine match the skillsbase repo" → Claude runs `bash sync.sh` (dry run), shows you the diff, and on your OK runs `bash sync.sh --apply`.
+
 Repo layout:
 
 | Dir | Purpose |
