@@ -4,8 +4,12 @@
 
 This machine runs a **two-layer skill system**:
 
-- **Global layer** — a small core that loads in every session: 7 plugins (superpowers, sanctum+leyline, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `graphify`). Keep this lean — it's startup token cost on every session.
+- **Global layer** — a small core that loads in every session: 7 plugins (superpowers, sanctum+leyline, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `skill-scout`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `graphify`). Keep this lean — it's startup token cost on every session.
 - **Per-project layer** — installed on demand into `<project>/.claude/skills/` by the `skill-matchmaker` skill, pulling from the catalog at https://github.com/itsjustiago/skillsbase.
+
+**Two discovery skills, different scope:**
+- `skill-matchmaker` — searches the user's **own catalog** (skillsbase). "What do I have for this?"
+- `skill-scout` — searches the **wider public ecosystem** (GitHub, awesome-lists, marketplaces, MCP registry). "What exists out there I don't know about?" Use when the user asks "find me a skill/plugin for X" or when the matchmaker comes up empty.
 
 **When the user says "install a skill":**
 - If it's a stack/task-specific skill → it belongs in the project. Use `skill-matchmaker` to pull it from the skillsbase catalog into `<project>/.claude/skills/`. If it's not in the catalog yet, add it to the catalog first (see below), then install.
