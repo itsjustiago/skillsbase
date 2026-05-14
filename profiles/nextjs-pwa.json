@@ -1,8 +1,9 @@
 {
-  "description": "Starter pack for Next.js Progressive Web Apps with Supabase backend.",
+  "description": "Starter pack for Next.js Progressive Web Apps — stack-agnostic essentials. The matchmaker layers DB/auth skills on top based on the actual project (Drizzle vs Supabase vs Prisma).",
   "skills": [
     "nextjs-app-router",
-    "pwa-deployment",
-    "supabase-typescript"
+    "react-19-patterns",
+    "tailwindcss-v4",
+    "pwa-deployment"
   ]
 }

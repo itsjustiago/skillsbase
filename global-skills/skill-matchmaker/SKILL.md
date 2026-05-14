@@ -79,25 +79,52 @@ Parse as JSON. Shape:
 }
 ```
 
-If the fetch fails (offline, 404, malformed JSON), tell the user clearly and stop — do not invent a catalog.
+If the WebFetch fails (offline, 404, malformed JSON):
+- **Graceful fallback:** if a local clone of the `skillsbase` repo exists (commonly `~/Desktop/skillsbase/` or wherever the user keeps it), read `catalog.json` from there instead — it's the same file.
+- If no local clone is reachable, tell the user clearly and stop. **Do not invent a catalog.**
 
 ### Step 3 — Score each skill
+
+**Before scoring — normalize the fingerprint tokens.** Package names rarely match
+catalog tags exactly. Build a normalized set: lowercase, strip `@scope/` prefixes,
+strip common suffixes (`-orm`, `-js`, `-ts`, `-react`, `-core`), and ALSO keep the
+raw token. So `drizzle-orm` → `{drizzle-orm, drizzle}`, `@vercel/blob` →
+`{@vercel/blob, vercel/blob, vercel, blob}`. Match catalog tags against this
+expanded set, both directions (a catalog tag is a hit if it equals OR is a
+substring of any normalized token, or vice versa).
 
 For each `skill` in the catalog:
 
 ```
 score = 0
 for pt in skill.project_types:
-  if pt in fingerprint.project_types: score += 10
-  elif pt == "any-web" and fingerprint.frameworks.length > 0: score += 3
+  if pt in fingerprint.project_types:            score += 10
+  elif pt == "any-web" and fingerprint.is_web:   score += 3
+  elif pt == "any":                              score += 2   # universal-skill baseline
 for tag in skill.tags:
-  if tag in (fingerprint.languages ∪ fingerprint.frameworks ∪ fingerprint.libraries ∪ fingerprint.features):
-    score += 3
+  if tag matches any normalized fingerprint token:  score += 3
 ```
 
-Threshold: **score ≥ 6** to recommend, **score ≥ 12** to recommend strongly.
+The `any` baseline (+2) ensures universally-useful skills (`git-workflow`,
+`code-review`, `postgres-patterns`, etc.) still surface on stacks where no tag
+matches — e.g. a Rust or Python project. Without it they'd score 0 and vanish.
 
-Also: if a `profile` in `catalog.profiles` exactly matches the fingerprint (e.g. fingerprint has `nextjs` + `pwa` and there's a `nextjs-pwa` profile), surface the profile as a "starter pack" option.
+**Thresholds (canonical — must match README and Step 5):**
+- `score ≥ 10` → **recommended** (default-selected in the proposal)
+- `6 ≤ score < 10` → **optional** (only surfaced if the user picks "let me see everything")
+- `score < 6` → not surfaced
+
+**Mismatch demotion (apply after scoring):** if a skill's *primary* tag names a
+specific product/framework that is **absent** from the fingerprint — e.g.
+`supabase-typescript` (primary tag `supabase`) on a project with no `supabase`
+dependency — drop it out of "recommended" into "mismatch", even if its
+`project_types` match pushed the score ≥ 10. A `project_types: [nextjs]` match
+means "relevant to Next.js projects", not "this specific product is in use". Surface
+mismatches only as a one-line "the catalog has this but it's not for you" note.
+
+Also: if a `profile` in `catalog.profiles` matches the fingerprint, surface it as a
+"starter pack" — but still run per-skill scoring on top; the profile is a baseline,
+not the final answer (a profile may bundle a skill that mismatch-demotion rejects).
 
 ### Step 4 — Already-installed check
 

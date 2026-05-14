@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Core plugin installer for the skillsbase lean Claude Code setup.
 #
-# Philosophy: keep the global layer tiny (7 plugins + a handful of skills).
+# Philosophy: keep the global layer tiny (8 plugins + a handful of skills).
 # Each project pulls its own skills from the skillsbase catalog via /skills-suggest.
 #
 # Run from the repo root: bash setup/install-plugins.sh
@@ -12,6 +12,11 @@ set -e
 # Resolve repo root regardless of where this is called from
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# Preflight — claude plugin install shells out to npm/npx under the hood
+for tool in claude node npx; do
+  command -v "$tool" >/dev/null 2>&1 || { echo "✗ Missing required tool: $tool — install it and re-run."; exit 1; }
+done
+
 echo "==> Adding marketplaces..."
 claude plugin marketplace add obra/superpowers
 claude plugin marketplace add pbakaus/impeccable
@@ -20,24 +25,32 @@ claude plugin marketplace add bradautomates/claude-video
 claude plugin marketplace add anthropics/claude-code
 
 echo ""
-echo "==> Installing core plugins (7)..."
+echo "==> Installing core plugins (8)..."
 core_plugins=(
   "superpowers@superpowers-dev"          # brainstorming, TDD, debug, plans, git worktrees
   "sanctum@claude-night-market"          # ship-merge PR workflow
   "leyline@claude-night-market"          # required dependency of sanctum
+  "abstract@claude-night-market"         # required dependency of sanctum
   "conserve@claude-night-market"         # context-optimization, clear-context
   "impeccable@impeccable"                # design polish (critique/polish/audit) — v3+ live browser editing
   "frontend-design@claude-code-plugins"  # Anthropic anti-AI-slop floor
   "watch@claude-video"                   # video clips (yt-dlp + ffmpeg + Whisper)
 )
 
+FAILED=()
 for plugin in "${core_plugins[@]}"; do
   if claude plugin install "$plugin" --scope user 2>&1 | grep -qiE "Successfully|already installed"; then
     echo "  v $plugin"
   else
-    echo "  x $plugin (install may have failed — re-run to retry)"
+    echo "  x $plugin (install failed)"
+    FAILED+=("$plugin")
   fi
 done
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo ""
+  echo "⚠ ${#FAILED[@]} plugin(s) failed: ${FAILED[*]}"
+  echo "  Re-run this script to retry (it's idempotent). Usually a transient network error."
+fi
 
 echo ""
 echo "==> Installing global skills into ~/.claude/skills/ ..."

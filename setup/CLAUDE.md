@@ -4,7 +4,7 @@
 
 This machine runs a **two-layer skill system**:
 
-- **Global layer** — a small core that loads in every session: 7 plugins (superpowers, sanctum+leyline, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `skill-scout`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `graphify`). Keep this lean — it's startup token cost on every session.
+- **Global layer** — a small core that loads in every session: 8 plugins (superpowers, sanctum+leyline+abstract, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `skill-scout`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `ship`, `ship-merge`, `graphify`). Keep this lean — it's startup token cost on every session.
 - **Per-project layer** — installed on demand into `<project>/.claude/skills/` by the `skill-matchmaker` skill, pulling from the catalog at https://github.com/itsjustiago/skillsbase.
 
 **Two discovery skills, different scope:**
@@ -27,8 +27,8 @@ This machine runs a **two-layer skill system**:
 ## Per-project skills on demand (skillsbase)
 There is a central catalog of project-specific skills at https://github.com/itsjustiago/skillsbase. The global skill `skill-matchmaker` consults that catalog and installs project-relevant skills into `<project>/.claude/skills/`. Trigger it in these cases:
 
-1. **First time entering plan mode in a project** where `<project>/.claude/skills/` doesn't exist or is empty — propose to the user that you run `skill-matchmaker` before diving into Phase 1 exploration.
-2. **User runs `/skills-suggest`** — invoke immediately.
+1. **Entering plan mode in a project that has no local catalog skills.** Concrete signal: `<cwd>/.claude/skills/` does not exist OR contains no subdirectories. When you hit plan mode and that's true, propose running `skill-matchmaker` before Phase 1 exploration. (If the dir exists with skills in it, the project is already set up — skip.)
+2. **User runs `/skills-suggest`** — invoke immediately, no precondition.
 3. **Reactive:** during normal work, if you realize the user wants something where a catalog skill could help (e.g. a framework you don't have patterns for, or an unfamiliar output format), propose `skill-matchmaker`. Don't invoke without confirmation. Don't loop — once per session is plenty.
 
 The skill installs locally to `<project>/.claude/skills/`, then the user must restart Claude once for the skills to load. After that the project has those skills permanently.

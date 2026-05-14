@@ -28,6 +28,7 @@ CORE_PLUGINS=(
   "superpowers@superpowers-dev"
   "sanctum@claude-night-market"
   "leyline@claude-night-market"
+  "abstract@claude-night-market"
   "conserve@claude-night-market"
   "impeccable@impeccable"
   "frontend-design@claude-code-plugins"
@@ -64,7 +65,13 @@ CHANGES=0
 
 # ── 1. Plugins ──────────────────────────────────────────────
 echo "── Plugins ──────────────────────────────────"
+# Primary: parse `claude plugin list`. Fallback: read enabledPlugins keys from
+# ~/.claude/settings.json (in case the CLI output format changes).
 INSTALLED_PLUGINS=$(claude plugin list 2>/dev/null | grep "❯" | sed 's/.*❯ //' | tr -d ' ')
+if [ -z "$INSTALLED_PLUGINS" ] && [ -f "$CLAUDE_DIR/settings.json" ]; then
+  echo "  (note: 'claude plugin list' returned nothing — falling back to settings.json)"
+  INSTALLED_PLUGINS=$(grep -oE '"[^"]+@[^"]+"[[:space:]]*:' "$CLAUDE_DIR/settings.json" | sed 's/[":]//g' | tr -d ' ')
+fi
 for p in $INSTALLED_PLUGINS; do
   if ! in_list "$p" "${CORE_PLUGINS[@]}"; then
     echo "  REMOVE  $p"
@@ -96,13 +103,20 @@ if [ -d "$CLAUDE_DIR/skills" ]; then
   done
 fi
 for name in $DESIRED_SKILLS; do
-  if [ ! -f "$CLAUDE_DIR/skills/$name/SKILL.md" ]; then
+  src="$REPO_ROOT/global-skills/$name/SKILL.md"
+  dst="$CLAUDE_DIR/skills/$name/SKILL.md"
+  if [ ! -f "$dst" ]; then
     echo "  INSTALL $name"
     CHANGES=$((CHANGES+1))
+  elif ! cmp -s "$src" "$dst"; then
+    echo "  UPDATE  $name (content differs)"
+    CHANGES=$((CHANGES+1))
+  else
+    continue   # identical — nothing to do
   fi
   if $APPLY; then
     mkdir -p "$CLAUDE_DIR/skills/$name"
-    cp "$REPO_ROOT/global-skills/$name/SKILL.md" "$CLAUDE_DIR/skills/$name/SKILL.md"
+    cp "$src" "$dst"
   fi
 done
 
@@ -122,13 +136,20 @@ if [ -d "$CLAUDE_DIR/commands" ]; then
   done
 fi
 for name in $DESIRED_CMDS; do
-  if [ ! -f "$CLAUDE_DIR/commands/$name" ]; then
+  src="$REPO_ROOT/commands/$name"
+  dst="$CLAUDE_DIR/commands/$name"
+  if [ ! -f "$dst" ]; then
     echo "  INSTALL /$(basename "$name" .md)"
     CHANGES=$((CHANGES+1))
+  elif ! cmp -s "$src" "$dst"; then
+    echo "  UPDATE  /$(basename "$name" .md) (content differs)"
+    CHANGES=$((CHANGES+1))
+  else
+    continue   # identical — nothing to do
   fi
   if $APPLY; then
     mkdir -p "$CLAUDE_DIR/commands"
-    cp "$REPO_ROOT/commands/$name" "$CLAUDE_DIR/commands/$name"
+    cp "$src" "$dst"
   fi
 done
 
@@ -162,6 +183,11 @@ if [ "$CHANGES" -eq 0 ]; then
 elif $APPLY; then
   echo "✓ Applied $CHANGES change(s). Backup: $BAK"
   echo "  RESTART Claude Code so the new state loads."
+  echo ""
+  echo "  To undo everything:"
+  echo "    rm -rf $CLAUDE_DIR/skills $CLAUDE_DIR/commands"
+  echo "    cp -r $BAK/skills $BAK/commands $CLAUDE_DIR/  2>/dev/null"
+  echo "    cp $BAK/settings.json $BAK/CLAUDE.md $CLAUDE_DIR/  2>/dev/null"
 else
   echo "$CHANGES change(s) would be made. Re-run with --apply to execute:"
   echo "    bash sync.sh --apply"

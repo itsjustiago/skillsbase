@@ -23,12 +23,15 @@ MISSING=""
 command -v claude >/dev/null 2>&1 || MISSING="$MISSING claude"
 command -v git    >/dev/null 2>&1 || MISSING="$MISSING git"
 command -v curl   >/dev/null 2>&1 || MISSING="$MISSING curl"
+command -v node   >/dev/null 2>&1 || MISSING="$MISSING node"
+command -v npx    >/dev/null 2>&1 || MISSING="$MISSING npx"
 if [ -n "$MISSING" ]; then
   echo "  ✗ Missing required tools:$MISSING"
+  echo "    claude/git/curl are required; node+npx are needed for plugin + MCP installs."
   echo "    Install them first, then re-run."
   exit 1
 fi
-echo "  v claude, git, curl present"
+echo "  v claude, git, curl, node, npx present"
 mkdir -p "$CLAUDE_DIR"
 
 # ── Step 1: core plugins + global skills + commands ──────────

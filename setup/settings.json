@@ -3,25 +3,18 @@
     "superpowers@superpowers-dev": true,
     "sanctum@claude-night-market": true,
     "leyline@claude-night-market": true,
+    "abstract@claude-night-market": true,
     "conserve@claude-night-market": true,
     "impeccable@impeccable": true,
     "frontend-design@claude-code-plugins": true,
     "watch@claude-video": true
   },
   "extraKnownMarketplaces": {
-    "superpowers-dev":            { "source": { "source": "github", "repo": "obra/superpowers" } },
-    "impeccable":                 { "source": { "source": "github", "repo": "pbakaus/impeccable" } },
-    "claude-night-market":        { "source": { "source": "github", "repo": "athola/claude-night-market" } },
-    "claude-video":               { "source": { "source": "github", "repo": "bradautomates/claude-video" } },
-
-    "_optional_marketplaces": "Add these only if a project requires plugins not covered by skillsbase:",
-    "context-engineering-marketplace": { "source": { "source": "github", "repo": "muratcankoylan/Agent-Skills-for-Context-Engineering" } },
-    "ui-ux-pro-max-skill":        { "source": { "source": "github", "repo": "nextlevelbuilder/ui-ux-pro-max-skill" } },
-    "claude-code-plugins":        { "source": { "source": "github", "repo": "anthropics/claude-code" } },
-    "claude-code-workflows":      { "source": { "source": "github", "repo": "wshobson/agents" } },
-    "claude-code-skills":         { "source": { "source": "github", "repo": "alirezarezvani/claude-skills" } },
-    "trailofbits":                { "source": { "source": "github", "repo": "trailofbits/skills" } },
-    "ecc":                        { "source": { "source": "github", "repo": "affaan-m/everything-claude-code" } }
+    "superpowers-dev":      { "source": { "source": "github", "repo": "obra/superpowers" } },
+    "impeccable":           { "source": { "source": "github", "repo": "pbakaus/impeccable" } },
+    "claude-night-market":  { "source": { "source": "github", "repo": "athola/claude-night-market" } },
+    "claude-video":         { "source": { "source": "github", "repo": "bradautomates/claude-video" } },
+    "claude-code-plugins":  { "source": { "source": "github", "repo": "anthropics/claude-code" } }
   },
   "voiceEnabled": true,
   "voice": { "enabled": true, "mode": "hold" },

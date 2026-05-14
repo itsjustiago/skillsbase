@@ -1,137 +1,76 @@
-# MCP Servers
+# MCP Servers — concepts & auth
 
-MCP (Model Context Protocol) servers give Claude direct access to external services. This page documents all MCP servers and built-in tools available in this setup.
+What MCP servers are, which ones this setup uses, and how auth works.
 
----
-
-## Built-in Claude Code Tools (No Install Needed)
-
-These are native Claude Code capabilities — always available, nothing to configure:
-
-| Tool | What it does |
-|------|-------------|
-| `WebSearch` | Search the web from within a conversation |
-| `WebFetch` | Fetch and read any URL |
-| `Bash` | Run shell commands |
-| `Read / Write / Edit` | Work with files on disk |
+> **For exact install commands → [`setup/mcps.md`](../setup/mcps.md)** — that's the canonical reference.
+> This page is the conceptual overview.
 
 ---
 
-## Plugin-Installed MCP Servers (Auto via `install-plugins.sh`)
+## What MCPs are
 
-These are installed automatically when you run `install-plugins.sh`. You only need to handle auth where noted.
+MCP (Model Context Protocol) servers give Claude direct access to external services —
+databases, browsers, design tools, APIs. Unlike skills (which are instructions),
+MCPs are running processes Claude can call as tools.
 
-### GitHub *(ecc plugin)*
-**What it does:** Create issues, open PRs, push files, search code, comment on reviews — all from within the conversation.
+In this setup MCPs are **not installed by `setup.sh`** — they need per-user API keys
+or OAuth, so you install the ones you want from `setup/mcps.md` after the core bootstrap.
 
-**Auth required:** Yes — `GITHUB_TOKEN` env variable.
-1. Go to [github.com/settings/tokens](https://github.com/settings/tokens) → generate a Personal Access Token
-2. Add to `~/.claude/settings.json`:
+---
+
+## Built-in Claude Code tools (no install)
+
+Always available, nothing to configure: `WebSearch`, `WebFetch`, `Bash`, `Read/Write/Edit`.
+
+---
+
+## The 9 MCP servers
+
+| MCP | What it does | Auth |
+|---|---|---|
+| **magic** (21st.dev) | Visual UI component gallery + generation | API key on first use |
+| **shadcn-ui** | Real shadcn/ui component source code | None |
+| **designlang** | Extract design tokens (Tailwind/shadcn config) from any URL | None |
+| **playwright-chrome** | Browser automation, e2e, screenshots | None |
+| **n8n-mcp** | Docs for all 1650 n8n workflow nodes | None |
+| **github** | Issues, PRs, repos, code search | `GITHUB_TOKEN` env var |
+| **firebase** | Firebase project tooling | `firebase login` flow |
+| **supabase** | DB, auth, RLS, edge functions, migrations | Browser OAuth |
+| **vercel** | Deployments, env vars, project management | Browser OAuth |
+
+Install commands, tiered by auth needs: **[`setup/mcps.md`](../setup/mcps.md)**.
+
+---
+
+## Auth — how each kind works
+
+**API key (env var)** — `github` needs `GITHUB_TOKEN`. Generate at
+[github.com/settings/tokens](https://github.com/settings/tokens), add to
+`~/.claude/settings.json` under an `"env"` block:
 ```json
-"env": {
-  "GITHUB_TOKEN": "ghp_yourtoken"
-}
+"env": { "GITHUB_TOKEN": "ghp_yourtoken" }
 ```
 
----
+**API key (prompted)** — `magic` prompts for a 21st.dev key on first run.
 
-### Context7 *(ecc plugin)*
-**What it does:** Fetches up-to-date library documentation and code examples — so Claude always has current API references instead of stale training data.
+**CLI login flow** — `firebase` runs `firebase login` the first time Claude calls it.
 
-**Auth required:** None.
-
----
-
-### Exa *(ecc plugin)*
-**What it does:** AI-powered semantic web search and URL fetching — better than keyword search for technical research.
-
-**Auth required:** Yes — `EXA_API_KEY`. Get one at [exa.ai](https://exa.ai), then add to `~/.claude/settings.json`:
-```json
-"env": {
-  "EXA_API_KEY": "your_key"
-}
-```
+**Browser OAuth** — `supabase` and `vercel` open a browser login the first time
+they're used (or trigger manually with `/mcp`). Tokens land in
+`~/.claude/.credentials.json` — **never commit that file.**
 
 ---
 
-### Memory *(ecc plugin)*
-**What it does:** Persistent knowledge graph — Claude can store and recall entities, relationships, and observations across sessions.
+## Which MCPs the design pipeline uses
 
-**Auth required:** None.
-
----
-
-### Playwright *(ecc plugin)*
-**What it does:** Full browser automation — navigate pages, click, fill forms, take screenshots, run E2E tests.
-
-**Auth required:** None.
-
----
-
-### Sequential Thinking *(ecc plugin)*
-**What it does:** Structured step-by-step reasoning — helps Claude break down complex problems before responding.
-
-**Auth required:** None.
-
----
-
-### Markitdown *(claude-night-market plugin)*
-**What it does:** Converts files (PDF, Word, Excel, PowerPoint, images) to Markdown so Claude can read them.
-
-**Auth required:** None. Requires `uvx` — install with `pip install uv`.
-
----
-
-## Manually Added MCP Servers
-
-These were added manually via `claude mcp add` and require auth on each machine.
-
-### Supabase
-**What it does:** Direct access to Supabase — query databases, manage tables, auth, storage, and edge functions.
-
-**How to auth:** Browser OAuth — just run a Supabase-related prompt and Claude will prompt you to log in.
-
-**URL:** `https://mcp.supabase.com/mcp`
-
----
-
-### Vercel
-**What it does:** Deploy projects, check build status, view logs, manage domains — from within Claude.
-
-**How to auth:** Browser OAuth — just run a Vercel-related prompt and Claude will prompt you to log in.
-
-**URL:** `https://mcp.vercel.com`
-
----
-
-### Magic (21st.dev)
-**What it does:** Generates polished UI components from plain descriptions.
-
-**How to set up:**
-```bash
-claude mcp add magic -- npx -y @21st-dev/magic@latest
-# Enter your API key from 21st.dev when prompted
-```
-
-> **Windows note:** Both `magic` and `github` MCP servers require a `cmd /c` wrapper on Windows. In `~/.claude.json`, set `"command": "cmd"` and prepend `"/c"` and `"npx"` to the args array — e.g. `"args": ["/c", "npx", "-y", "@21st-dev/magic@latest"]`.
-
----
-
-### Higgsfield
-**What it does:** AI image and video generation — image-to-video with motion controls, character consistency, marketing studio, virality prediction. 16 tools: `generate_image`, `generate_video`, `balance`, `show_characters`, `show_generations`, `show_marketing_studio`, `virality_predictor`, plus workspace/media management.
-
-**How to set up:**
-```bash
-claude mcp add --transport http --scope user higgsfield https://mcp.higgsfield.ai/mcp
-```
-Then trigger OAuth via the `/mcp` slash command (or just ask Claude to do something Higgsfield-related — the browser flow opens automatically).
-
-**URL:** `https://mcp.higgsfield.ai/mcp`
+`design-auto-pipeline` auto-uses **magic** (component inspiration), **shadcn-ui**
+(real component source), and **designlang** (extract tokens from a reference URL).
+You don't invoke them by name — install them and the pipeline picks them up.
 
 ---
 
 ## Notes
 
-- `~/.claude/.credentials.json` holds OAuth tokens — **never commit this file**
-- Plugin MCPs are defined in the plugin's `.mcp.json` — they activate automatically when the plugin is enabled
-- Manually added MCPs persist in your global Claude config across projects
+- MCPs persist in `~/.claude.json` (`mcpServers` block) across all projects.
+- `claude mcp list` shows status; `claude mcp get <name>` shows the config.
+- A disconnected MCP doesn't break Claude — its tools just become unavailable.

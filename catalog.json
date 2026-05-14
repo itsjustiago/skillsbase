@@ -1036,8 +1036,9 @@
   "profiles": {
     "nextjs-pwa": [
       "nextjs-app-router",
-      "pwa-deployment",
-      "supabase-typescript"
+      "react-19-patterns",
+      "tailwindcss-v4",
+      "pwa-deployment"
     ]
   }
 }

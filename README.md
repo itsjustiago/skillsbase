@@ -5,7 +5,7 @@ The single source of truth for itsjustiago's Claude Code setup — **machine boo
 Clone this on any new machine and Claude is fully configured: lean global core, the skill-matchmaker engine, design pipeline, MCP guides, and a 62-skill catalog that installs per-project on demand.
 
 > Your Claude has **two layers** of skills:
-> - 🌍 **Global** — always loaded in every project (7 plugins + ~7 skills). Set up once by `setup.sh`.
+> - 🌍 **Global** — always loaded in every project (8 plugins + ~10 skills). Set up once by `setup.sh`.
 > - 📦 **Per-project** — picked from this catalog by the `skill-matchmaker`. Only loads in projects that need them.
 
 ---
@@ -19,7 +19,7 @@ bash setup.sh
 ```
 
 `setup.sh` is idempotent (safe to re-run). It:
-1. Installs the 7 core plugins (superpowers, sanctum + leyline, conserve, impeccable, frontend-design, watch)
+1. Installs the 8 core plugins (superpowers, sanctum + leyline + abstract, conserve, impeccable, frontend-design, watch)
 2. Copies the global skills (`global-skills/` → `~/.claude/skills/`) and slash commands (`commands/` → `~/.claude/commands/`)
 3. Installs global configs (`setup/CLAUDE.md`, `setup/settings.json`, `setup/statusline.sh`) — backs up any existing ones
 4. Points you at the remaining manual steps
@@ -112,56 +112,45 @@ Restart Claude once after install — done. Future sessions in that project auto
 
 # 🎨 Design MCP Stack
 
-Skills give the agent **rules**. MCPs give the agent **eyes and hands**. For real design quality, you need both. The `design-auto-pipeline` skill knows to use these — you don't have to invoke them by name.
+Skills give the agent **rules**. MCPs give the agent **eyes and hands**. The `design-auto-pipeline` skill auto-uses three of them — you don't invoke them by name:
 
-| MCP | What it does | Status |
-|---|---|---|
-| **Magic** (21st.dev) | Closest thing to a "design gallery". Search real UI components by description, get screenshots + code. Generate variants. | ✅ installed |
-| **Claude in Chrome** | Browse reference sites visually, screenshot, read page DOM. Use it for *"make it like vercel.com"*. | ✅ installed |
-| **Claude Preview** | Render generated HTML in iframe, screenshot your own output, inspect DOM/console. **Closes the visual loop** — the agent sees what it built. | ✅ installed |
-| **Playwright Chrome** | Headless browser for visual regression + interaction validation. | ✅ installed |
-| **Exa** | Web search for design inspiration. | ✅ installed (via ecc) |
-| **Vercel** | Live deploy preview. | ✅ installed |
-| **shadcn-ui MCP** | Real shadcn/ui component source — never invent the API. | ❌ **NOT installed** — see below |
-| **design-extract** (designlang) | Point at any URL → returns Tailwind config + design tokens + component map. New capability: extraction. | ❌ **NOT installed** — see below |
-| **Figma MCP** | Read Figma files directly. | ❌ skip if you don't use Figma |
+- **magic** (21st.dev) — visual component gallery; surfaces real UI references when a prompt is vague
+- **shadcn-ui** — real shadcn/ui component source code; never invent the API
+- **designlang** — point at any URL → extracts Tailwind config + design tokens (for *"make it like vercel.com"*)
 
-### The unlock: visual self-review
+Install commands for these (+ the other 6 MCPs) → [`setup/mcps.md`](setup/mcps.md). They're not installed by `setup.sh` because they need API keys / auth.
 
-The biggest gap in text-only LLM design is that the agent **never sees what it built**. The pipeline now uses **Claude Preview** at closeout — screenshot the output, inspect it, fix what's visually wrong before declaring done.
+**The unlock:** text-only LLM design never *sees* what it built. Pair the pipeline with a preview tool (Claude Preview / playwright-chrome) so the agent screenshots its own output at closeout and fixes what's visually wrong before declaring done.
 
-### Recommended additions (require user action)
+---
 
-**1. shadcn/ui MCP** — if you use shadcn/ui (you do, in `lift`):
+# 🛟 Troubleshooting
 
-```bash
-claude mcp add --transport stdio --scope user shadcn-ui npx -y @heilgar/shadcn-ui-mcp-server
-```
+| Symptom | Fix |
+|---|---|
+| `setup.sh` stopped partway | Re-run it — idempotent, picks up where it left off |
+| New skills don't show up after `/skills-suggest` | You must **restart Claude Code** — skills only load at session start |
+| A plugin "failed to load" with a dependency error | A core plugin's dependency is disabled. `sanctum` needs `leyline`. Enable it in `~/.claude/settings.json` and restart |
+| MCP shows `! Needs authentication` | Expected for supabase/vercel — auth happens via browser on first use, or run `/mcp` |
+| MCP shows `✗ Failed to connect` | Check the command in `claude mcp get <name>` — usually a wrong subcommand/flag. See [`setup/mcps.md`](setup/mcps.md) |
+| Startup feels heavy / too many tokens | Run `bash sync.sh` — reconciles the machine back to the lean core |
+| "Is this `setup.sh` or `sync.sh`?" | `setup.sh` = first-time, additive. `sync.sh` = make an existing machine match the repo exactly |
+| Want a skill that's not in the catalog | Ask the agent to run `skill-scout` — it searches the wider ecosystem |
 
-Or check [ui.shadcn.com/docs/mcp](https://ui.shadcn.com/docs/mcp) for the official installer.
+# 📖 Glossary
 
-**2. design-extract** (Manavarya09/design-extract) — extract design system from any URL:
+| Term | Meaning |
+|---|---|
+| **Global layer** | The 8 plugins + ~10 skills in `~/.claude/` that load in *every* session |
+| **Per-project layer** | Skills in `<project>/.claude/skills/` that load only in that one project |
+| **skill-matchmaker** | Global skill — searches *this catalog* and installs project-relevant skills locally |
+| **skill-scout** | Global skill — searches the *wider ecosystem* (GitHub, marketplaces) for skills you don't have |
+| **design-auto-pipeline** | Global skill — orchestrates the design flow (taste-skill → frontend-design → impeccable) automatically |
+| **MCP** | Model Context Protocol server — gives Claude a live tool (browser, DB, design API). Distinct from a skill (which is instructions) |
+| **catalog** | `catalog.json` + `skills/` — the 62-skill per-project library the matchmaker reads from |
+| **profile** | A named bundle of catalog skills for a common stack (e.g. `nextjs-pwa`) |
 
-```bash
-claude mcp add --scope user --transport stdio designlang -- npx -y designlang mcp
-```
-
-After installing either, restart Claude. The `design-auto-pipeline` skill already knows to use them when available.
-
-### How the agent uses them (automatic)
-
-When you ask **"build a workout history page"**:
-
-1. Direction phase — if vague, Magic MCP surfaces 3 references with screenshots
-2. Build phase — shadcn MCP for any Button/Card/Form components
-3. Self-review phase — Claude Preview renders + screenshots the output
-4. Closeout — critique, polish, audit informed by what the agent **saw**
-
-When you ask **"make it like vercel.com"**:
-
-1. design-extract pulls Tailwind tokens from vercel.com
-2. Build uses those tokens as constraints
-3. Closeout as usual
+> **Adding a skill to the catalog?** See [Adding / modifying / removing a skill](#adding--modifying--removing-a-skill) in the reference section below.
 
 ---
 ---
@@ -282,18 +271,21 @@ Click a skill name to read its full body. Each row: tags · project types · one
    ```
    https://raw.githubusercontent.com/itsjustiago/skillsbase/main/catalog.json
    ```
-4. Scores each skill:
+4. Normalizes fingerprint tokens (`drizzle-orm` → also matches `drizzle`, `@vercel/blob` → `vercel`, `blob`).
+5. Scores each skill:
    - `project_types` exact match → **+10**
    - `any-web` + project is web → **+3**
-   - Each tag in common with fingerprint → **+3**
-5. Buckets:
+   - `any` (universal skill) → **+2** baseline so git/security/etc. still surface on any stack
+   - Each tag matching a normalized fingerprint token → **+3**
+6. Buckets:
    - `score ≥ 10` → **recommended** (default-selected)
    - `6 ≤ score < 10` → **optional** (surfaced if user picks "let me see all")
    - `score < 6` → not surfaced
-6. User approves → matchmaker WebFetches each SKILL.md → writes to `<project>/.claude/skills/<name>/SKILL.md`
-7. User restarts Claude once. Skills now load in that project only.
+7. **Mismatch demotion:** a skill whose primary tag names a specific product absent from the project (e.g. `supabase-typescript` on a Drizzle project) is dropped out of "recommended" even if `project_types` pushed its score up — surfaced only as a "not for you" note.
+8. User approves → matchmaker WebFetches each SKILL.md → writes to `<project>/.claude/skills/<name>/SKILL.md`
+9. User restarts Claude once. Skills now load in that project only.
 
-The matchmaker **never invents skills**, **never fabricates frontmatter**, and **never writes outside `.claude/skills/`**. If the project uses Drizzle, it won't propose Supabase. If there are no Python files, it won't propose `django-patterns`.
+The matchmaker **never invents skills**, **never fabricates frontmatter**, and **never writes outside `.claude/skills/`**. If the project uses Drizzle, it won't recommend Supabase. If there are no Python files, it won't recommend `django-patterns`.
 
 ---
 
@@ -416,7 +408,7 @@ Full list referenced from the global section:
 
 ## Related
 
-- [itsjustiago/claude-skills](https://github.com/itsjustiago/claude-skills) — bootstrap repo (new machine setup, MCP auth, global CLAUDE.md)
+- [itsjustiago/claude-skills](https://github.com/itsjustiago/claude-skills) — the predecessor repo, now **superseded** by this one (kept for history only)
 - [Claude Code docs — Skills](https://docs.anthropic.com/claude-code/skills)
 
 ## License

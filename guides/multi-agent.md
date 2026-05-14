@@ -25,10 +25,9 @@ Each agent gets its own isolated branch — no conflicts:
 > *"Set up git worktrees for this task"* — Superpowers handles it
 
 ## Coordination
-- **agent-teams** — multi-agent team patterns, file ownership, parallel debug/feature/review presets
 - **superpowers:dispatching-parallel-agents** — when to fan out to subagents vs do work in-thread
+- **superpowers:using-git-worktrees** — isolated branches per agent, no conflicts
 - **conserve** — context budget across parallel sessions; prevents bloat compounding
-- **everything-claude-code (ecc)** — bundles GitHub/Memory/Sequential-Thinking MCPs that agents share
 
 ## Cheaper subagents for grunt work
 When dispatching subagents via the `Agent` tool, override the model for bounded tasks:

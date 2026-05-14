@@ -2,7 +2,18 @@
 
 input=$(cat)
 
-JQ="/c/Users/tiago/AppData/Local/Microsoft/WinGet/Packages/jqlang.jq_Microsoft.Winget.Source_8wekyb3d8bbwe/jq.exe"
+# Locate jq portably — PATH first, then common Windows winget install location.
+JQ="$(command -v jq 2>/dev/null || command -v jq.exe 2>/dev/null)"
+if [ -z "$JQ" ]; then
+  for p in "$HOME"/AppData/Local/Microsoft/WinGet/Packages/jqlang.jq*/jq.exe; do
+    [ -f "$p" ] && JQ="$p" && break
+  done
+fi
+# No jq → degrade gracefully to a minimal statusline instead of erroring.
+if [ -z "$JQ" ]; then
+  printf "Claude"
+  exit 0
+fi
 
 model=$("$JQ" -r '.model.display_name // "Unknown"' <<< "$input")
 ctx_used=$("$JQ" -r '.context_window.used_percentage // empty' <<< "$input")
