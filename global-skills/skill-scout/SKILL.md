@@ -94,6 +94,10 @@ After presenting, offer the user a choice:
 
 Always let the user pick. Don't auto-install.
 
+## After a successful install
+
+If the user adopts a skill found outside the catalog — especially one installed into `.claude/skills/` via this scout run — suggest they run `/propose-skill <name>` once they have tried it and are happy with it. This feeds the discovery loop back into skillsbase: the skill gets reviewed, added to the catalog, and becomes available to the matchmaker for all future projects. One command, the team benefits.
+
 ## Hard rules
 
 - **Honesty over enthusiasm.** If a repo is hyped but the output is generic slop, say so. If you can't find evidence of quality, say "no independent evidence found" — don't guess.
