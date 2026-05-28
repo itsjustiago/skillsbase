@@ -65,12 +65,48 @@ CHANGES=0
 
 # ── 1. Plugins ──────────────────────────────────────────────
 echo "── Plugins ──────────────────────────────────"
-# Primary: parse `claude plugin list`. Fallback: read enabledPlugins keys from
-# ~/.claude/settings.json (in case the CLI output format changes).
-INSTALLED_PLUGINS=$(claude plugin list 2>/dev/null | grep "❯" | sed 's/.*❯ //' | tr -d ' ')
-if [ -z "$INSTALLED_PLUGINS" ] && [ -f "$CLAUDE_DIR/settings.json" ]; then
-  echo "  (note: 'claude plugin list' returned nothing — falling back to settings.json)"
-  INSTALLED_PLUGINS=$(grep -oE '"[^"]+@[^"]+"[[:space:]]*:' "$CLAUDE_DIR/settings.json" | sed 's/[":]//g' | tr -d ' ')
+# Source-of-truth order for installed-plugin detection:
+#   1. PRIMARY: parse ~/.claude/settings.json with a real JSON parser (jq or python3).
+#      This is authoritative — the file is written by the Claude CLI itself, its schema
+#      is stable (enabledPlugins keys are "name@marketplace"), and it works offline.
+#   2. FALLBACK: `claude plugin list` output, tried only when the JSON parse fails.
+#      We check for multiple possible list-marker characters (❯ ✓ * and a leading
+#      two-space indent) so the check survives minor CLI output format changes.
+#   Rationale for reversing the old order: grep'ing for ❯ silently returns nothing
+#   if the CLI ever changes its decoration, making sync think zero plugins are
+#   installed. The old settings.json fallback was also broken — grep -oE '"x@y":'
+#   matched any key whose value contained @, producing false positives on env vars
+#   with emails or user@host URLs.
+_plugins_from_json() {
+  local f="$CLAUDE_DIR/settings.json"
+  [ -f "$f" ] || return 1
+  if command -v jq >/dev/null 2>&1; then
+    jq -r '.enabledPlugins // {} | keys[]' "$f" 2>/dev/null
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 -c "
+import json, sys
+with open(sys.argv[1]) as fh:
+    d = json.load(fh)
+for k in d.get('enabledPlugins', {}).keys():
+    print(k)
+" "$f" 2>/dev/null
+  else
+    return 1
+  fi
+}
+INSTALLED_PLUGINS=$(_plugins_from_json)
+if [ -z "$INSTALLED_PLUGINS" ]; then
+  if ! [ -f "$CLAUDE_DIR/settings.json" ] || { ! command -v jq >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; }; then
+    echo "  (note: no JSON parser available — falling back to 'claude plugin list')"
+  else
+    echo "  (note: settings.json parse returned nothing — falling back to 'claude plugin list')"
+  fi
+  # Fallback: accept any of the common list-marker characters the CLI uses
+  INSTALLED_PLUGINS=$(claude plugin list 2>/dev/null \
+    | grep -E '(❯|✓|\*|^  [a-zA-Z])' \
+    | sed -E 's/^[[:space:]]*(❯|✓|\*)[[:space:]]*//' \
+    | awk '{print $1}' \
+    | grep '@')
 fi
 for p in $INSTALLED_PLUGINS; do
   if ! in_list "$p" "${CORE_PLUGINS[@]}"; then
