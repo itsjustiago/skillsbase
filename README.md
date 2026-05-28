@@ -110,6 +110,18 @@ Restart Claude once after install — done. Future sessions in that project auto
 
 ---
 
+# 🔁 Closing the discovery loop
+
+The three skill tools form a closed cycle:
+
+1. **`skill-matchmaker`** — installs skills from this catalog into the current project (`/skills-suggest`)
+2. **`skill-scout`** — finds skills from the wider ecosystem that aren't in the catalog yet
+3. **`/propose-skill`** — feeds a locally-installed outside skill back into the catalog
+
+When `skill-scout` finds something good and you install it, run `/propose-skill <name>` after you've tried it. It opens a PR to skillsbase with the SKILL.md, description, and a review checklist. Once merged, the matchmaker can recommend it to any future project — the catalog grows organically from real use.
+
+---
+
 # 🎨 Design MCP Stack
 
 Skills give the agent **rules**. MCPs give the agent **eyes and hands**. The `design-auto-pipeline` skill auto-uses three of them — you don't invoke them by name:
