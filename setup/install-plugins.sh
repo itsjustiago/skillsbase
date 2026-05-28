@@ -8,6 +8,7 @@
 # Or via the orchestrator: bash setup.sh
 
 set -e
+set -o pipefail
 
 # Resolve repo root regardless of where this is called from
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -39,7 +40,12 @@ core_plugins=(
 
 FAILED=()
 for plugin in "${core_plugins[@]}"; do
-  if claude plugin install "$plugin" --scope user 2>&1 | grep -qiE "Successfully|already installed"; then
+  # Capture stdout+stderr into a variable so we can inspect both the exit code of
+  # the install command itself *and* the output text — piping directly would mask
+  # the install's exit code behind grep's (and set -e / pipefail wouldn't help).
+  install_out=$(claude plugin install "$plugin" --scope user 2>&1)
+  install_exit=$?
+  if [ $install_exit -eq 0 ] && echo "$install_out" | grep -qiE "Successfully|already installed"; then
     echo "  v $plugin"
   else
     echo "  x $plugin (install failed)"
@@ -48,8 +54,18 @@ for plugin in "${core_plugins[@]}"; do
 done
 if [ ${#FAILED[@]} -gt 0 ]; then
   echo ""
-  echo "⚠ ${#FAILED[@]} plugin(s) failed: ${FAILED[*]}"
-  echo "  Re-run this script to retry (it's idempotent). Usually a transient network error."
+  echo "╔══════════════════════════════════════════════╗"
+  echo "║           PLUGIN INSTALL FAILURES            ║"
+  echo "╚══════════════════════════════════════════════╝"
+  echo ""
+  echo "  ${#FAILED[@]} plugin(s) did NOT install successfully:"
+  for f in "${FAILED[@]}"; do
+    echo "    • $f"
+  done
+  echo ""
+  echo "  Fix the errors above, then re-run (the script is idempotent)."
+  echo "  Usually a transient network error or a missing marketplace."
+  exit 1
 fi
 
 echo ""
