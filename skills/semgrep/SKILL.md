@@ -1,6 +1,6 @@
 ---
 name: semgrep
-description: "Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes — run all and important only. Automatically detects and uses Semgrep Pro for cross-file taint analysis when available."
+description: "Run Semgrep static analysis on a codebase using parallel subagents. Supports run-all and important-only modes. Auto-detects Semgrep Pro for cross-file taint analysis when available."
 tags: [security, sast, static-analysis, semgrep, scanning]
 project_types: [any]
 when_to_use: "When asked to scan code for vulnerabilities, run a security audit with Semgrep, find bugs, or perform static analysis on codebases with parallel multi-language execution."

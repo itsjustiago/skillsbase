@@ -1,6 +1,6 @@
 ---
 name: deployment-patterns
-description: Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up deployment infrastructure or planning releases.
+description: CI/CD pipelines, Docker containerization, health checks, rollback strategies, and production readiness checklists for web apps. Use when setting up deployment infrastructure or planning releases.
 tags: [deployment, ci-cd, docker, vercel]
 project_types: [any-web]
 when_to_use: |

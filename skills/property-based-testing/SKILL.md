@@ -1,6 +1,6 @@
 ---
 name: property-based-testing
-description: "Provides guidance for property-based testing across multiple languages and smart contracts. Helps write stronger test coverage than example-based tests for serialization, parsing, validation, and algorithmic code."
+description: "Property-based testing guidance across languages and smart contracts. Generates stronger coverage than example-based tests for serialization, parsing, validation, and algorithmic code."
 tags: [testing, property-based-testing, pbt, coverage]
 project_types: [any]
 when_to_use: "When writing tests, reviewing code with serialization/validation/parsing patterns, designing features, or when property-based testing would provide stronger coverage than example-based tests."
