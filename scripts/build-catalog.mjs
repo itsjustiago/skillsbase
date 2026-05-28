@@ -81,10 +81,17 @@ async function main() {
     if (!s.isFile()) continue;
     const md = await readFile(skillPath, 'utf8');
     const fm = parseFrontmatter(md);
+    const description = fm.description ?? '';
+    if (description.length > 200) {
+      throw new Error(
+        `skills/${name}/SKILL.md: description is ${description.length} chars — max is 200. ` +
+        `Rewrite it to ≤200 chars before regenerating the catalog.`
+      );
+    }
     skills.push({
       name: fm.name ?? name,
       path: `skills/${name}/SKILL.md`,
-      description: fm.description ?? '',
+      description,
       tags: Array.isArray(fm.tags) ? fm.tags : [],
       project_types: Array.isArray(fm.project_types) ? fm.project_types : [],
       cost_tokens: typeof fm.cost_tokens === 'number' ? fm.cost_tokens : null,
