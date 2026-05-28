@@ -260,6 +260,9 @@ Click a skill name to read its full body. Each row: tags · project types · one
 | [`html-ppt-zhangzara-monochrome`](./skills/html-ppt-zhangzara-monochrome/SKILL.md) | Monochrome ledger — Lora serif, no color |
 | [`web-prototype`](./skills/web-prototype/SKILL.md) | Desktop web prototype — landing / marketing / docs |
 | [`video-shortform`](./skills/video-shortform/SKILL.md) | 3–10 second clips — product reveals, motion tests |
+| [`wireframe-sketch`](./skills/wireframe-sketch/SKILL.md) | Hand-drawn lo-fi wireframes — graph-paper background, marker tones, annotation |
+| [`design-brief`](./skills/design-brief/SKILL.md) | Parse natural-language briefs into structured specs — palette, type, layout, mood |
+| [`kami-deck`](./skills/kami-deck/SKILL.md) | Print-grade slide deck — warm parchment, serif type, ink-blue accent, editorial |
 
 ---
 
