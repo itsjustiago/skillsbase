@@ -1,6 +1,6 @@
 ---
 name: mutation-testing
-description: "Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Helps configure and optimize mutation testing campaigns for code quality assurance."
+description: "Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Use when setting up or tuning mutation testing for code quality assurance."
 tags: [testing, mutation-testing, quality, coverage]
 project_types: [any]
 when_to_use: "When the user mentions mewt, muton, or mutation testing, needs to configure or optimize a mutation testing campaign, or wants to run mutation testing and needs help getting set up first."

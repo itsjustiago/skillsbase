@@ -1,6 +1,6 @@
 ---
 name: insecure-defaults
-description: "Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns that crash safely."
+description: "Detects fail-open insecure defaults — hardcoded secrets, weak auth, permissive security — that let apps run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns."
 tags: [security, audit, configuration, secrets, hardcoded]
 project_types: [any]
 when_to_use: "When auditing security, reviewing config management, analyzing environment variable handling, performing code review of security configuration, or running pre-deployment checks for hardcoded credentials."

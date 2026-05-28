@@ -1,6 +1,6 @@
 ---
 name: docker-patterns
-description: Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration. Use when setting up containerized development environments or reviewing Docker configurations.
+description: Docker and Compose patterns for local dev, container security, networking, and multi-service orchestration. Use when setting up containerized environments or reviewing Docker configurations.
 tags: [docker, container, deployment, ci-cd]
 project_types: [any]
 when_to_use: |

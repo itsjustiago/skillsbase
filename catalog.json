@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "updated_at": "2026-05-14",
+  "updated_at": "2026-05-28",
   "skills": [
     {
       "name": "agent-harness-construction",
@@ -35,7 +35,7 @@
     {
       "name": "agentic-engineering",
       "path": "skills/agentic-engineering/SKILL.md",
-      "description": "Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing. Use when AI agents perform most implementation work and humans enforce quality and risk controls.",
+      "description": "Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing. Use when AI agents perform most implementation work and humans enforce quality controls.",
       "tags": [
         "agent",
         "agents",
@@ -223,7 +223,7 @@
     {
       "name": "codeql",
       "path": "skills/codeql/SKILL.md",
-      "description": "Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Supports run all and important only scan modes with data extension models and SARIF output processing.",
+      "description": "Scans a codebase for security vulnerabilities using CodeQL interprocedural data flow and taint tracking. Supports run-all and important-only scan modes with data extension models and SARIF output.",
       "tags": [
         "security",
         "sast",
@@ -288,7 +288,7 @@
     {
       "name": "database-migrations",
       "path": "skills/database-migrations/SKILL.md",
-      "description": "Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Django, TypeORM, golang-migrate). Use when planning or implementing database schema changes.",
+      "description": "Zero-downtime schema migrations, rollbacks, and data migrations across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Django, TypeORM). Use when planning or implementing database schema changes.",
       "tags": [
         "database",
         "migration",
@@ -321,7 +321,7 @@
     {
       "name": "deployment-patterns",
       "path": "skills/deployment-patterns/SKILL.md",
-      "description": "Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up deployment infrastructure or planning releases.",
+      "description": "CI/CD pipelines, Docker containerization, health checks, rollback strategies, and production readiness checklists for web apps. Use when setting up deployment infrastructure or planning releases.",
       "tags": [
         "deployment",
         "ci-cd",
@@ -353,7 +353,7 @@
     {
       "name": "docker-patterns",
       "path": "skills/docker-patterns/SKILL.md",
-      "description": "Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration. Use when setting up containerized development environments or reviewing Docker configurations.",
+      "description": "Docker and Compose patterns for local dev, container security, networking, and multi-service orchestration. Use when setting up containerized environments or reviewing Docker configurations.",
       "tags": [
         "docker",
         "container",
@@ -551,7 +551,7 @@
     {
       "name": "insecure-defaults",
       "path": "skills/insecure-defaults/SKILL.md",
-      "description": "Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns that crash safely.",
+      "description": "Detects fail-open insecure defaults — hardcoded secrets, weak auth, permissive security — that let apps run insecurely in production. Distinguishes exploitable defaults from fail-secure patterns.",
       "tags": [
         "security",
         "audit",
@@ -646,7 +646,7 @@
     {
       "name": "mutation-testing",
       "path": "skills/mutation-testing/SKILL.md",
-      "description": "Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Helps configure and optimize mutation testing campaigns for code quality assurance.",
+      "description": "Configures mewt or muton mutation testing campaigns — scopes targets, tunes timeouts, and optimizes long-running runs. Use when setting up or tuning mutation testing for code quality assurance.",
       "tags": [
         "testing",
         "mutation-testing",
@@ -699,7 +699,7 @@
     {
       "name": "postgres-patterns",
       "path": "skills/postgres-patterns/SKILL.md",
-      "description": "PostgreSQL database patterns for query optimization, schema design, indexing, and security. Quick reference for common patterns, index types, data types, and anti-pattern detection. Based on Supabase best practices.",
+      "description": "PostgreSQL patterns for query optimization, schema design, indexing, and security. Quick reference for index types, data types, and anti-pattern detection. Based on Supabase best practices.",
       "tags": [
         "postgres",
         "sql",
@@ -744,7 +744,7 @@
     {
       "name": "property-based-testing",
       "path": "skills/property-based-testing/SKILL.md",
-      "description": "Provides guidance for property-based testing across multiple languages and smart contracts. Helps write stronger test coverage than example-based tests for serialization, parsing, validation, and algorithmic code.",
+      "description": "Property-based testing guidance across languages and smart contracts. Generates stronger coverage than example-based tests for serialization, parsing, validation, and algorithmic code.",
       "tags": [
         "testing",
         "property-based-testing",
@@ -845,7 +845,7 @@
     {
       "name": "semgrep",
       "path": "skills/semgrep/SKILL.md",
-      "description": "Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes — run all and important only. Automatically detects and uses Semgrep Pro for cross-file taint analysis when available.",
+      "description": "Run Semgrep static analysis on a codebase using parallel subagents. Supports run-all and important-only modes. Auto-detects Semgrep Pro for cross-file taint analysis when available.",
       "tags": [
         "security",
         "sast",
@@ -953,7 +953,7 @@
     {
       "name": "variant-analysis",
       "path": "skills/variant-analysis/SKILL.md",
-      "description": "Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits.",
+      "description": "Find similar vulnerabilities across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, or performing systematic security audits.",
       "tags": [
         "security",
         "audit",

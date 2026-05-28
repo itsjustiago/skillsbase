@@ -1,6 +1,6 @@
 ---
 name: variant-analysis
-description: "Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits."
+description: "Find similar vulnerabilities across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, or performing systematic security audits."
 tags: [security, audit, variant-analysis, pattern-matching, bug-hunting]
 project_types: [any]
 when_to_use: "When a vulnerability has been found and searching for similar instances, building or refining CodeQL/Semgrep queries for security patterns, performing systematic code audits after initial discovery, or analyzing how a root cause manifests differently."

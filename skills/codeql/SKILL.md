@@ -1,6 +1,6 @@
 ---
 name: codeql
-description: "Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Supports run all and important only scan modes with data extension models and SARIF output processing."
+description: "Scans a codebase for security vulnerabilities using CodeQL interprocedural data flow and taint tracking. Supports run-all and important-only scan modes with data extension models and SARIF output."
 tags: [security, sast, static-analysis, codeql, data-flow]
 project_types: [any]
 when_to_use: "When scanning a codebase for security vulnerabilities with deep data flow analysis, building a CodeQL database from source, finding complex vulnerabilities requiring interprocedural taint tracking, or performing comprehensive security audits."
