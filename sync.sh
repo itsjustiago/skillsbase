@@ -80,8 +80,13 @@ echo "── Plugins ───────────────────�
 _plugins_from_json() {
   local f="$CLAUDE_DIR/settings.json"
   [ -f "$f" ] || return 1
+  # NOTE: pipe through `tr -d '\r'` because jq on Git Bash for Windows emits
+  # CRLF line endings, which leaves a trailing \r on every key except the last.
+  # That \r breaks exact-string matches against CORE_PLUGINS later — all but
+  # the alphabetically-last core plugin would be misclassified as "extras"
+  # and queued for removal. Normalize line endings here, once, at the source.
   if command -v jq >/dev/null 2>&1; then
-    jq -r '.enabledPlugins // {} | keys[]' "$f" 2>/dev/null
+    jq -r '.enabledPlugins // {} | keys[]' "$f" 2>/dev/null | tr -d '\r'
   elif command -v python3 >/dev/null 2>&1; then
     python3 -c "
 import json, sys
@@ -89,7 +94,7 @@ with open(sys.argv[1]) as fh:
     d = json.load(fh)
 for k in d.get('enabledPlugins', {}).keys():
     print(k)
-" "$f" 2>/dev/null
+" "$f" 2>/dev/null | tr -d '\r'
   else
     return 1
   fi
@@ -101,12 +106,15 @@ if [ -z "$INSTALLED_PLUGINS" ]; then
   else
     echo "  (note: settings.json parse returned nothing — falling back to 'claude plugin list')"
   fi
-  # Fallback: accept any of the common list-marker characters the CLI uses
+  # Fallback: accept any of the common list-marker characters the CLI uses.
+  # `tr -d '\r'` at the end normalizes CRLF (Git Bash on Windows emits CRLF) —
+  # without it, trailing \r breaks exact-string matches against CORE_PLUGINS.
   INSTALLED_PLUGINS=$(claude plugin list 2>/dev/null \
     | grep -E '(❯|✓|\*|^  [a-zA-Z])' \
     | sed -E 's/^[[:space:]]*(❯|✓|\*)[[:space:]]*//' \
     | awk '{print $1}' \
-    | grep '@')
+    | grep '@' \
+    | tr -d '\r')
 fi
 for p in $INSTALLED_PLUGINS; do
   if ! in_list "$p" "${CORE_PLUGINS[@]}"; then
