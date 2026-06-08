@@ -24,6 +24,8 @@ bash setup.sh
 3. Installs global configs (`setup/CLAUDE.md`, `setup/settings.json`, `setup/statusline.sh`) — backs up any existing ones
 4. Points you at the remaining manual steps
 
+> **🤖 Agent running this setup:** after `setup.sh` finishes, end your turn with a short, friendly message that lists the commands and trigger phrases now available — at minimum: `brainstorm X`, `make a plan for X`, `debug X`, `verify`, `/ship-merge`, `wrap up session`, `/clear-context`, `/skills-suggest`, `skill-scout`, the impeccable design commands (`/critique` `/audit` `/polish` …), and `/watch <url>`. One line each. Then remind the user to **restart Claude Code** so everything loads. (The tail of `setup.sh`'s output already prints this cheatsheet — relay it.)
+
 **After `setup.sh`:**
 - **Restart Claude Code** so plugins + CLAUDE.md load
 - **MCP servers** (9 total — magic, shadcn-ui, designlang, github, firebase, supabase, vercel, n8n, playwright): `setup/mcps.md`
