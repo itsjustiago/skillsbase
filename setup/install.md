@@ -1,23 +1,39 @@
-# Setup — see setup.sh
+# Instalação manual (fallback do setup.sh)
 
-This file used to contain a long manual plugin-install walkthrough from an older,
-heavier setup (40+ plugins). That approach is **obsolete** — it contradicts the
-current lean-core design.
+O caminho normal é `bash setup.sh` na raiz do repo (Git Bash no Windows).
+Se precisares de fazer à mão, é isto que o script faz:
 
-## New machine setup
+## 1. Pré-requisitos
+
+- **Claude Code** (desktop app ou CLI) — https://claude.com/claude-code
+- **git** e **node** (LTS) no PATH
+- **python 3** — só para a pesquisa do `ui-ux-pro-max` (opcional até usares)
+- Windows: correr tudo em **Git Bash** (vem com o git)
+
+## 2. Skills próprias e comandos
+
+Copiar cada pasta de `global-skills/` para `~/.claude/skills/` e os `.md` de
+`commands/` para `~/.claude/commands/`.
+
+## 3. Skills externas
 
 ```bash
-git clone https://github.com/itsjustiago/skillsbase.git
-cd skillsbase
-bash setup.sh
+bash setup/install-externals.sh
 ```
 
-`setup.sh` installs the 8-plugin lean core, the global skills, the slash commands,
-and the global configs. It's idempotent — safe to re-run.
+Clona as fontes originais (Anthropic, pbakaus, Emil Kowalski, Supabase,
+obra/superpowers, nextlevelbuilder) e instala as 9 skills externas, aplicando
+os patches documentados em `DECISIONS.md` (ex.: ui-ux-pro-max fica manual-only).
+Re-correr este script = atualizar as externas.
 
-Full details: **[`README.md`](../README.md) → 🚀 New machine setup**.
+## 4. Configs
 
-After `setup.sh`:
-- MCP servers → [`setup/mcps.md`](mcps.md)
-- Optional CLIs (graphify, browser-harness) → [`setup/install-extras.md`](install-extras.md)
-- Reconcile an existing machine → `bash sync.sh`
+- `setup/CLAUDE.md` → `~/.claude/CLAUDE.md` (faz backup do existente se diferir)
+- `setup/settings.json` → `~/.claude/settings.json` (só se não existir)
+
+## 5. Pós-instalação
+
+1. Reinicia o Claude Code.
+2. Desktop app: Settings → Connectors → liga o **Supabase** (só esse — ver `setup/mcps.md`).
+3. Num projeto novo: `/ui-ux-pro-max <descrição>` → `/impeccable init`.
+4. Em qualquer projeto: `/skills-suggest` instala skills do catálogo per-project.

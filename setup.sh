@@ -1,108 +1,103 @@
 #!/usr/bin/env bash
-# skillsbase — one-shot bootstrap for a fresh Claude Code machine.
+# skillsbase — bootstrap de uma máquina nova para a build Claude Code do Tiago.
 #
-# Usage:
+# Uso:
 #   git clone https://github.com/itsjustiago/skillsbase.git
 #   cd skillsbase
 #   bash setup.sh
 #
-# Idempotent: safe to re-run. Skips what's already in place.
+# Idempotente: seguro re-correr (também serve para ATUALIZAR as skills externas).
+# Sem plugins, sem hooks — a build é 100% ficheiros. Porquê: ver DECISIONS.md.
+# Sandbox/teste: CLAUDE_DIR=/tmp/teste bash setup.sh
 
 set -e
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLAUDE_DIR="$HOME/.claude"
+CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
 
 echo "╔══════════════════════════════════════════════╗"
-echo "║   skillsbase bootstrap                       ║"
+echo "║   skillsbase bootstrap (build jul/2026)      ║"
 echo "╚══════════════════════════════════════════════╝"
+echo "    destino: $CLAUDE_DIR"
 echo ""
 
 # ── Preflight ────────────────────────────────────────────────
-echo "==> Preflight checks..."
+echo "==> Preflight..."
 MISSING=""
-command -v claude >/dev/null 2>&1 || MISSING="$MISSING claude"
-command -v git    >/dev/null 2>&1 || MISSING="$MISSING git"
-command -v curl   >/dev/null 2>&1 || MISSING="$MISSING curl"
-command -v node   >/dev/null 2>&1 || MISSING="$MISSING node"
-command -v npx    >/dev/null 2>&1 || MISSING="$MISSING npx"
+command -v git  >/dev/null 2>&1 || MISSING="$MISSING git"
+command -v node >/dev/null 2>&1 || MISSING="$MISSING node"
 if [ -n "$MISSING" ]; then
-  echo "  ✗ Missing required tools:$MISSING"
-  echo "    claude/git/curl are required; node+npx are needed for plugin + MCP installs."
-  echo "    Install them first, then re-run."
+  echo "  ✗ Falta:$MISSING — instala primeiro e volta a correr."
   exit 1
 fi
-echo "  v claude, git, curl, node, npx present"
-mkdir -p "$CLAUDE_DIR"
+echo "  v git, node"
+command -v python >/dev/null 2>&1 || command -v py >/dev/null 2>&1 || \
+  echo "  ! python não encontrado — a pesquisa do ui-ux-pro-max precisa dele (instala quando fores usar)"
+mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents"
 
-# ── Step 1: core plugins + global skills + commands ──────────
+# ── Step 1: skills próprias + slash commands ─────────────────
 echo ""
-echo "==> Step 1/3 — core plugins, global skills, slash commands"
-bash "$REPO_ROOT/setup/install-plugins.sh"
+echo "==> 1/3 — skills próprias (global-skills/) + comandos"
+for d in "$REPO_ROOT"/global-skills/*/; do
+  name="$(basename "$d")"
+  rm -rf "${CLAUDE_DIR:?}/skills/$name"
+  cp -r "$d" "$CLAUDE_DIR/skills/$name"
+  echo "  v $name"
+done
+if compgen -G "$REPO_ROOT/commands/*.md" >/dev/null; then
+  cp "$REPO_ROOT"/commands/*.md "$CLAUDE_DIR/commands/"
+  echo "  v commands/"
+fi
 
-# ── Step 2: global configs ───────────────────────────────────
+# ── Step 2: skills externas (fontes originais) ───────────────
 echo ""
-echo "==> Step 2/3 — global configs"
+echo "==> 2/3 — skills externas (clonadas dos upstreams, nunca vendorizadas)"
+CLAUDE_DIR="$CLAUDE_DIR" bash "$REPO_ROOT/setup/install-externals.sh"
 
-# CLAUDE.md — never clobber blindly; back up if it exists and differs
+# ── Step 3: configs globais ──────────────────────────────────
+echo ""
+echo "==> 3/3 — configs globais"
 if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && ! cmp -s "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"; then
   cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-skillsbase.bak"
-  echo "  ! existing CLAUDE.md backed up to CLAUDE.md.pre-skillsbase.bak"
+  echo "  ! CLAUDE.md existente diferia → backup em CLAUDE.md.pre-skillsbase.bak"
 fi
 cp "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 echo "  v CLAUDE.md"
 
-# settings.json — back up if exists; the user may have local-only keys to merge
-if [ -f "$CLAUDE_DIR/settings.json" ]; then
-  cp "$CLAUDE_DIR/settings.json" "$CLAUDE_DIR/settings.json.pre-skillsbase.bak"
-  echo "  ! existing settings.json backed up to settings.json.pre-skillsbase.bak"
-  echo "    → review setup/settings.json and merge enabledPlugins + extraKnownMarketplaces by hand"
-  echo "      (local keys like voice/theme/env are preserved in the .bak)"
-else
+if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
   cp "$REPO_ROOT/setup/settings.json" "$CLAUDE_DIR/settings.json"
   echo "  v settings.json"
+else
+  echo "  = settings.json já existe — mantido (pode ter chaves locais da máquina)"
 fi
 
-cp "$REPO_ROOT/setup/statusline.sh" "$CLAUDE_DIR/statusline.sh"
-echo "  v statusline.sh"
-
-# ── Step 3: done — point at the rest ─────────────────────────
+# ── Done ─────────────────────────────────────────────────────
 echo ""
-echo "==> Step 3/3 — done. Remaining steps need you:"
+echo "Bootstrap completo. Passos manuais:"
 echo ""
-echo "  1. RESTART Claude Code so plugins + CLAUDE.md load."
+echo "  1. REINICIA o Claude Code para as skills e o CLAUDE.md carregarem."
+echo "  2. No desktop app: Settings → Connectors → liga o SUPABASE (OAuth)."
+echo "     Só esse — os restantes foram removidos de propósito (setup/mcps.md)."
 echo ""
-echo "  2. MCP servers (9 total — magic, shadcn-ui, designlang, github, firebase,"
-echo "     supabase, vercel, n8n, playwright):  see setup/mcps.md"
+echo "────────────────────────────────────────────────────────────"
+echo " 📋 Comandos & triggers desta build:"
+echo "────────────────────────────────────────────────────────────"
+echo "  Projeto novo (ritual de kickoff)"
+echo "    /ui-ux-pro-max <descrição>   direção de design (estilo+paleta+fontes)"
+echo "    /impeccable init             fixa a direção em PRODUCT.md/DESIGN.md"
 echo ""
-echo "  3. (Optional) Extra CLIs — graphify, browser-harness:  see setup/install-extras.md"
+echo "  Design (durante/depois do build)"
+echo "    frontend-design + emil-design-eng   automáticas em trabalho de UI"
+echo "    /impeccable critique|audit|polish|…  (23 comandos — /impeccable lista)"
+echo "    /review-animations           review rigorosa de motion (manual)"
 echo ""
-echo "  4. In any project, run  /skills-suggest  — the matchmaker proposes"
-echo "     project-relevant skills from the catalog and installs them locally."
+echo "  Engenharia"
+echo "    \"debug X\"                  root cause sistemático antes de fixes"
+echo "    \"verify\"                   evidência antes de declarar feito"
+echo "    supabase/*                  automáticas em trabalho Supabase/Postgres"
 echo ""
-echo "────────────────────────────────────────────────────────────────"
-echo " 📋  Commands & triggers now available (type them in any chat):"
-echo "────────────────────────────────────────────────────────────────"
-echo "  Workflow"
-echo "    \"brainstorm X\"        talk through intent before any code"
-echo "    \"make a plan for X\"   structured plan you approve before edits"
-echo "    \"debug X\"             systematic repro → isolate → root cause"
-echo "    \"verify\"              forces evidence before claiming done"
-echo ""
-echo "  Ship & sessions"
-echo "    /ship-merge           commit → PR → CI → merge → cleanup, one shot"
-echo "    \"wrap up session\"     end-of-session handoff for the next agent"
-echo "    /clear-context        auto-saves + continues near 80% context"
-echo ""
-echo "  Skills discovery"
-echo "    /skills-suggest       install catalog skills matched to THIS project"
-echo "    skill-scout           find NEW skills/plugins/MCPs in the ecosystem"
-echo ""
-echo "  Design polish (after a UI is built)"
-echo "    /critique /audit /polish /animate /typeset /colorize /distill …"
-echo "    (17 impeccable commands — run /impeccable for the whole suite)"
-echo ""
-echo "  Media"
-echo "    /watch <url>          download + transcribe a video, then Q&A it"
-echo "────────────────────────────────────────────────────────────────"
-echo ""
-echo "Bootstrap complete."
+echo "  Ship & sessões"
+echo "    /ship                       commit → push → PR"
+echo "    /ship-merge                 commit → PR → CI → squash-merge → cleanup"
+echo "    \"wrap up session\"          handoff antes de /clear"
+echo "    /skills-suggest             skills do catálogo para ESTE projeto"
+echo "────────────────────────────────────────────────────────────"

@@ -1,65 +1,46 @@
-# Design Workflow Guide
+# Design — o stack e o workflow (build jul/2026)
 
-## The pipeline
+> Substitui o antigo "design pipeline" (design-auto-pipeline + taste-skill +
+> redesign-skill + MCPs magic/designlang) — ver DECISIONS.md para o porquê da troca.
 
-One skill orchestrates everything: **`design-auto-pipeline`**. It fires automatically when you ask Claude to build / design / make / refine any UI surface — you don't invoke the others by hand.
+## O stack (5 skills, cada uma numa dimensão)
 
-```
-design-auto-pipeline  (orchestrator — auto-fires on UI work)
-   │
-   ├─ DIRECTION   taste-skill        → 3 dials (variance / motion / density), aesthetic baselines
-   │              frontend-design    → Anthropic anti-AI-slop floor (auto-active)
-   │
-   ├─ BUILD       impeccable craft   → production-grade generation
-   │              + MCPs: magic (inspiration), shadcn-ui (real components),
-   │                designlang (extract tokens from a reference URL)
-   │
-   └─ CLOSEOUT    /critique → fix → /polish → /audit   (runs before "done")
-```
-
-## What each piece does
-
-| Piece | Role | How it activates |
+| Skill | Papel | Quando atua |
 |---|---|---|
-| `design-auto-pipeline` | Orchestrator — runs the whole flow | Auto, on any UI request |
-| `frontend-design` | Anti-slop floor — bans overused fonts, forces aesthetic commitment | Auto, Anthropic plugin |
-| `taste-skill` | Direction — opinionated dials + aesthetic | Triggered by the pipeline, or "use taste-skill, density 7" |
-| `redesign-skill` | Upgrade an *existing* site (scan → diagnose → fix) | "redesign this", "modernize this UI" |
-| `output-skill` | Bans truncation / placeholder code | Passive, always on |
-| `impeccable` (17 commands) | Refinement — see table below | Pipeline closeout, or invoke a command directly |
+| **frontend-design** (Anthropic) | Direção estética comprometida, anti-template | Auto, em qualquer UI |
+| **impeccable** (pbakaus) | Processo: critique/audit/polish/extract + DESIGN.md por projeto + detector de 45 anti-patterns | Auto + `/impeccable <cmd>` (23 comandos) |
+| **emil-design-eng** (Emil Kowalski) | Motion, micro-interactions, polish invisível | Auto, quando relevante |
+| **review-animations** (Emil Kowalski) | Review rigorosa de animações ("approval is earned") | Só manual |
+| **ui-ux-pro-max** (patched manual-only) | Base de dados de direções: 67 estilos, 161 paletas, 57 pares de fontes, reasoning por tipo de produto | Só no kickoff, `/ui-ux-pro-max` |
 
-## impeccable commands
+O sexto elemento é o **loop de preview** (Claude Preview, built-in no app):
+renderizar, ver o screenshot, corrigir. Nenhuma skill substitui olhar para o
+resultado real.
 
-| Command | Use it when… |
-|---|---|
-| `/critique` | You want a UX evaluation — hierarchy, cognitive load, anti-patterns, scored |
-| `/audit` | You want the technical pass — a11y, performance, theming, P0–P3 severity |
-| `/polish` | Spacing, alignment, micro-detail feels off |
-| `/animate` | Interactions feel static |
-| `/colorize` | Colors feel flat or monochrome |
-| `/typeset` | Typography feels wrong |
-| `/distill` | Too busy — strip to essence |
-| `/clarify` | Copy / errors / labels unclear |
-| `/layout` | Grid / alignment / rhythm broken |
-| `/adapt` | Needs responsive breakpoints + touch targets |
-| `/delight` | Works but feels generic |
-| `/bolder` | Feels timid or safe |
-| `/quieter` | Too loud / overstimulating |
-| `/overdrive` | Push into shaders / spring physics / 60fps |
-| `/optimize` | UI perf — rendering, bundle, images |
-| `/shape` | Plan UX + UI for a feature **before** code |
-| `/impeccable` | Run the whole suite end-to-end |
+## Workflow
 
-## In practice
+**Projeto novo (o remédio para "o primeiro design sai sempre lixo"):**
+1. `/ui-ux-pro-max <descrição do produto>` → direção concreta e fundamentada
+2. `/impeccable init` → PRODUCT.md + DESIGN.md (todos os comandos passam a respeitá-los)
+3. Build normal — as skills automáticas cuidam da direção e do motion
 
-You usually don't think about any of this. You say *"build me a settings page"* and the pipeline runs: direction → build → critique → polish → audit, reporting once at the end.
+**Durante o trabalho:** a regra de consistência do CLAUDE.md global obriga a
+reutilizar `components/ui` + tokens do projeto — nunca recriar botões/cards
+inline. Elemento repetido 2+ vezes → primitive partilhada.
 
-Steer it when you want to:
-- **Set an aesthetic:** *"build a brutalist landing page"* or *"use taste-skill, density 8, motion 3"*
-- **Use a reference:** *"make it like vercel.com"* → `designlang` MCP extracts the tokens
-- **Refine an existing thing:** *"this dashboard looks generic"* → pipeline runs the refine path
+**Fecho:** `/impeccable critique` em UI significativa; `/impeccable audit`
+pré-launch; `/review-animations` quando há motion novo.
 
-## Related
+**Manutenção:** `/impeccable extract` consolida padrões repetidos em primitives
+quando o drift se acumula.
 
-- MCP servers the pipeline uses: [`setup/mcps.md`](../setup/mcps.md) — magic, shadcn-ui, designlang
-- The global skills: [`README.md`](../README.md) → 🌍 Global skills
+## Referências reais ("faz tipo X.com")
+
+O grounding mais forte é dar referências concretas: URLs ou screenshots de
+sites de que gostas. O agente vê e extrai a linguagem visual real — não é
+preciso skill para isto.
+
+## Hook automático do impeccable
+
+Existe mas NÃO se instala por defeito (+até ~5s por edit de UI). Para o ativar
+num projeto específico: `npx impeccable install` na raiz desse projeto.

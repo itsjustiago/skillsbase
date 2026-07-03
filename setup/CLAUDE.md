@@ -1,57 +1,24 @@
-# Global Claude Code Instructions
+# Preferências globais — Tiago
 
-## Skills architecture (read this first)
+## Língua e ritmo
+- Responde sempre em PT-PT.
+- Avança com defaults sensatos e decide tu; lista no fim as decisões tomadas. Pergunta no máximo 1 coisa por tarefa, e só se for genuinamente bloqueante (com recomendação marcada).
+- Turns curtos e objetivos; não insistas em verificações que falham em loop.
 
-This machine runs a **two-layer skill system**:
+## Consistência de design (aplica-se a QUALQUER projeto)
+- Antes de criar ou estilizar UI, descobre o design system do projeto: `components/ui` (ou `src/components/ui`), tokens (`globals.css` `@theme`, `tailwind.config.*`, `tokens.ts`, tema Chakra) e docs (`DESIGN.md`, `DESIGN_SYSTEM.md`, `PRODUCT.md`). Usa-o.
+- Reutiliza SEMPRE o componente partilhado que já existe (Button, Card, Input, Badge…). Falta uma variante? Estende o componente partilhado — nunca dupliques a recipe inline na página.
+- Cores, spacing, radius e shadows vêm dos tokens do projeto — nunca hex/valores arbitrários soltos em páginas.
+- Elemento novo usado 2+ vezes → extrai primitive partilhada em vez de copy-paste.
+- Projeto sem design system: propõe criar primitives + tokens primeiro (`/impeccable init` + `/impeccable extract`) em vez de espalhar classes à mão.
 
-- **Global layer** — a small core that loads in every session: 8 plugins (superpowers, sanctum+leyline+abstract, conserve, impeccable, frontend-design, watch) + a handful of user skills in `~/.claude/skills/` (`skill-matchmaker`, `skill-scout`, `design-auto-pipeline`, `taste-skill`, `redesign-skill`, `output-skill`, `session-handoff`, `ship`, `ship-merge`, `graphify`). Keep this lean — it's startup token cost on every session.
-- **Per-project layer** — installed on demand into `<project>/.claude/skills/` by the `skill-matchmaker` skill, pulling from the catalog at https://github.com/itsjustiago/skillsbase.
+## Workflow de design
+- Projeto novo: 1) o Tiago corre `/ui-ux-pro-max <descrição>` (direção: estilo+paleta+fontes), 2) `/impeccable init` fixa a direção em PRODUCT.md/DESIGN.md, 3) build normal.
+- UI significativa concluída → sugere `/impeccable critique`; pré-launch → `/impeccable audit`; motion novo → `/review-animations`.
+- Drift acumulado → `/impeccable extract` para consolidar primitives.
 
-**Two discovery skills, different scope:**
-- `skill-matchmaker` — searches the user's **own catalog** (skillsbase). "What do I have for this?"
-- `skill-scout` — searches the **wider public ecosystem** (GitHub, awesome-lists, marketplaces, MCP registry). "What exists out there I don't know about?" Use when the user asks "find me a skill/plugin for X" or when the matchmaker comes up empty.
-
-**When the user says "install a skill":**
-- If it's a stack/task-specific skill → it belongs in the project. Use `skill-matchmaker` to pull it from the skillsbase catalog into `<project>/.claude/skills/`. If it's not in the catalog yet, add it to the catalog first (see below), then install.
-- If it's a genuinely global capability (used in *every* project) → install to `~/.claude/skills/` and confirm it's now global. Be conservative — global is expensive.
-
-**The single source of truth is the `skillsbase` repo** (https://github.com/itsjustiago/skillsbase). It contains both the skill catalog AND the machine bootstrap (setup scripts, configs, MCP guides). After meaningfully changing skills/setup, update that repo: add/edit the `skills/<name>/SKILL.md`, run `node scripts/build-catalog.mjs`, commit, push.
-
-**When the user wants this machine to match the repo** ("make this machine match skillsbase", "reconcile this PC", "I have a different setup here, fix it"):
-1. Clone/pull `skillsbase` if not already local.
-2. Run `bash sync.sh` (dry run) — it prints exactly what would be uninstalled/installed/updated.
-3. Show the user the diff. On their confirmation, run `bash sync.sh --apply`.
-4. `sync.sh` backs up `~/.claude/` first and only touches the global layer — never per-project skills.
-5. Tell the user to restart Claude Code.
-
-## Per-project skills on demand (skillsbase)
-There is a central catalog of project-specific skills at https://github.com/itsjustiago/skillsbase. The global skill `skill-matchmaker` consults that catalog and installs project-relevant skills into `<project>/.claude/skills/`. Trigger it in these cases:
-
-1. **Entering plan mode in a project that has no local catalog skills.** Concrete signal: `<cwd>/.claude/skills/` does not exist OR contains no subdirectories. When you hit plan mode and that's true, propose running `skill-matchmaker` before Phase 1 exploration. (If the dir exists with skills in it, the project is already set up — skip.)
-2. **User runs `/skills-suggest`** — invoke immediately, no precondition.
-3. **Reactive:** during normal work, if you realize the user wants something where a catalog skill could help (e.g. a framework you don't have patterns for, or an unfamiliar output format), propose `skill-matchmaker`. Don't invoke without confirmation. Don't loop — once per session is plenty.
-
-The skill installs locally to `<project>/.claude/skills/`, then the user must restart Claude once for the skills to load. After that the project has those skills permanently.
-
-## Design work — autonomous pipeline (mandatory)
-
-Whenever the user asks you to **build / design / make / create / refine / improve / redesign** any UI surface (component, page, layout, dashboard, landing, modal, form, styling), invoke the `design-auto-pipeline` skill **immediately**, without waiting for a separate user prompt. It orchestrates `taste-skill`, `frontend-design`, `redesign-skill`, `output-skill`, and the 17 `impeccable` commands in the correct sequence.
-
-Hard rules:
-- Run the pipeline's closeout (`/critique` → fix → `/polish` → `/audit`) **before** declaring any UI work "done".
-- Do not ask the user to confirm each gate individually — run them and report once at the end.
-- One pipeline run per coherent task. Don't loop.
-- For pure non-UI tasks (server actions, types, DB schema, scripts), the pipeline does not apply — skip it.
-
-## Task approach
-Before non-trivial coding tasks, briefly check installed skills for one that applies — invoke it via the `Skill` tool if there's a clear match. Skip the check for one-liners and trivial edits.
-
-For grunt work (file searches, reading large outputs, simple lookups, parallel checks), dispatch to subagents via the `Agent` tool with a smaller model: `model: "haiku"` for searches/reads, `model: "sonnet"` for mid-complexity work. Stay in Opus for orchestration, planning, and complex reasoning. Don't analyze every task to pick a model — just default to Opus and override only when grunt work is well-bounded.
-
-<!--
-  Two more sections get appended to ~/.claude/CLAUDE.md automatically by their installers
-  (not part of this template — they're machine-specific paths):
-
-  # graphify         — added by `graphify install` (see setup/install-extras.md)
-  # browser-harness  — added when you install browser-harness (see setup/install-extras.md)
--->
+## Skills & skillsbase
+- Fonte de verdade do setup: https://github.com/itsjustiago/skillsbase — bootstrap da máquina (`setup.sh`) + catálogo per-project. Depois de mudanças relevantes a skills/config globais, atualiza esse repo (e vê o DECISIONS.md antes de re-sugerir algo que já foi rejeitado).
+- `skill-matchmaker` procura no catálogo próprio ("o que já tenho para isto?"); `skill-scout` procura no ecossistema público ("o que existe que não conheço?").
+- Skill de stack/tarefa específica → per-project via matchmaker; capacidade genuinamente global → `~/.claude/skills/` (sê conservador — global é custo de arranque em todas as sessões).
+- "Põe esta máquina igual ao skillsbase" → `bash sync.sh` (dry-run), mostra o diff ao Tiago, aplica só com OK (`--apply`).

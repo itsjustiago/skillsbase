@@ -48,11 +48,11 @@ You are a fresh Claude session. The user just ran `/clear`. Everything above thi
 
 ## Why this matters
 
-<1-2 sentences: the bigger goal or project phase this work fits into. For Aevum: which phase (1 research / 2 paper trading / 3 IBKR live / etc.) and what the broader objective is. Skip if genuinely unclear, but try.>
+<1-2 sentences: the bigger goal or project phase this work fits into (ex.: para uma app de cliente, que feature/fase; para o skillsbase, que parte do setup). Skip if genuinely unclear, but try.>
 
 ## Tone for this user
 
-<Mirror the project CLAUDE.md tone guidance. For Aevum: "Tiago is a beginner trader. Explain finance terms in one line when used. Use BEST/NOT-RECOMMENDED labels with reasons, never neutral menus. Short plain-English sentences, no walls of text." Write "see project CLAUDE.md" if the project doesn't have specific guidance.>
+<Mirror the project CLAUDE.md tone guidance. Default para o Tiago: PT-PT, frases curtas, defaults em vez de perguntas, recomendações marcadas (nunca menus neutros). Write "see project CLAUDE.md" if the project doesn't have specific guidance.>
 
 ## Decisions locked + what shipped
 

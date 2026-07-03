@@ -1,6 +1,6 @@
 ---
 name: ship-merge
-description: Use when the user wants the FULL one-shot release - stage, commit, push, open PR, check conflicts, wait for CI, light review, squash-merge to main, and clean up the branch. Triggers on "/ship-merge", "ship and merge", "dá ship e merge", "ship até ao fim", "ship merge it". Extends the `ship` skill with PR review + auto-merge. Does NOT run heavy quality gates (no test suite execution, no docs updates, no full code review) — for that use `sanctum:prepare-pr`.
+description: Use when the user wants the FULL one-shot release - stage, commit, push, open PR, check conflicts, wait for CI, light review, squash-merge to main, and clean up the branch. Triggers on "/ship-merge", "ship and merge", "dá ship e merge", "ship até ao fim", "ship merge it". Extends the `ship` skill with PR review + auto-merge. Does NOT run heavy quality gates (no test suite execution, no docs updates, no full code review) — para gates pesados corre /code-review + testes + /verify antes.
 ---
 
 # SKILL: ship-merge
@@ -21,7 +21,7 @@ This skill does NOT replace `/ship`. `/ship` remains the fast lane that stops af
 
 **Do NOT use when:**
 - The user says `/ship` or "ship it" without "merge" — that's the fast lane, stop after PR creation
-- The user asks for tests, docs, or a thorough review first → use `sanctum:prepare-pr`
+- The user asks for tests, docs, or a thorough review first → corre `/code-review` / testes / `/verify` primeiro, depois volta
 - The user is on `main` / `master` — STOP and ask them to create a branch first
 - There are no changes and nothing unpushed — tell the user, don't force a merge
 
@@ -34,9 +34,9 @@ Follow these steps in order. Do not skip. Do not parallelize across steps (you c
 Execute exactly the steps from the `ship` skill (`C:\Users\tiago\.claude\skills\ship\SKILL.md`):
 
 1. **Preflight** (parallel: `git status`, `git branch --show-current`, `git diff --stat`, `git log -5 --oneline`, `git remote get-url origin`). Stop conditions: on `main`/`master`, or clean tree AND nothing unpushed.
-2. **Stage + commit** — `git add -A`, secret-file check, invoke `sanctum:commit-messages` for the message, commit via HEREDOC. Never `--amend`, never `--no-verify`.
+2. **Stage + commit** — `git add -A`, secret-file check, write a Conventional Commit message from the staged diff (regras no passo 2 do `/ship`), commit via HEREDOC. Never `--amend`, never `--no-verify`.
 3. **Push** — `git push -u origin <branch>` if no upstream, else `git push`.
-4. **Open PR** — `gh pr view` first; if one exists, reuse it; otherwise create via `gh pr create` using `sanctum:pr-prep` body logic (skip its quality gates).
+4. **Open PR** — `gh pr view` first; if one exists, reuse it; otherwise create via `gh pr create` com título + body gerados dos commits/diff (template no `/ship`).
 
 After step 4, capture the PR number and URL:
 
@@ -74,7 +74,7 @@ Proceed only when `mergeable == "MERGEABLE"` AND (`statusCheckRollup` is empty O
 
 ### Step 6: Light review
 
-This is NOT a full code review. Do not invoke `sanctum:pr-review` (too heavy for this skill). Instead, do an inline diff scan:
+This is NOT a full code review. Do not run a full `/code-review` here (too heavy for this lane). Instead, do an inline diff scan:
 
 ```bash
 gh pr diff <num>
@@ -145,7 +145,7 @@ If local branch deletion was skipped, adjust:
 | Step | Command | Notes |
 |------|---------|-------|
 | 1. Preflight | See `/ship` skill | Parallel |
-| 2. Commit | `sanctum:commit-messages` + HEREDOC | Never `--amend`/`--no-verify` |
+| 2. Commit | Mensagem do diff + HEREDOC | Never `--amend`/`--no-verify` |
 | 3. Push | `git push [-u origin <br>]` | `-u` only if no upstream |
 | 4. PR | `gh pr create` (or reuse existing) | Skip if one exists |
 | 5. Merge state | `gh pr view --json mergeable,...` | Stop on CONFLICTING/failing checks |
@@ -171,22 +171,22 @@ If local branch deletion was skipped, adjust:
 |---------|-----|
 | Forcing `--admin` on merge to bypass failing checks | Don't. If checks fail, the user must fix them. |
 | Using `git branch -D` when `-d` refuses | Report it to the user, let them decide. Squash-merge leaves local looking unmerged by design. |
-| Running full `sanctum:pr-review` here | Too heavy — use the inline diff scan instead. For full review, user should use `sanctum:prepare-pr`. |
+| Running a full code review here | Too heavy — use the inline diff scan instead. Para review a sério: `/code-review` antes do ship-merge. |
 | Merging with pending checks by polling `--auto` off | Keep `--auto` on when available; it's the safety net. |
-| Writing the commit message yourself | Always delegate to `sanctum:commit-messages`. Same as `/ship`. |
-| Running tests / docs updates | Wrong skill — use `sanctum:prepare-pr`. |
+| Mensagem de commit vaga ("update", "fixes") | Deriva do diff: tipo + scope + resumo concreto. Same as `/ship`. |
+| Running tests / docs updates | Wrong skill — faz isso antes, depois `/ship-merge`. |
 | Deleting the branch before the merge completes | `--delete-branch` on `gh pr merge` handles this atomically. Don't pre-delete. |
 
 ## Scope Boundary
 
-This skill is the **full one-shot lane**, but it is NOT a replacement for `sanctum:prepare-pr`. If you find yourself wanting to:
+This skill is the **full one-shot lane**, not a quality pipeline. If you find yourself wanting to:
 
 - run the full test suite locally
 - update changelogs / docs
-- run `sanctum:pr-review` for a deep review
+- run a deep code review
 - bump versions
 
-…you are using the wrong skill. Switch to `sanctum:prepare-pr`.
+…you are using the wrong skill. Corre `/code-review` + testes + `/verify` primeiro, e só depois `/ship-merge`.
 
 ## Relationship to Other Skills
 
@@ -194,4 +194,4 @@ This skill is the **full one-shot lane**, but it is NOT a replacement for `sanct
 |-------|--------|------|----|----|-------|
 | `/ship` | yes | yes | yes | no | no |
 | `/ship-merge` (this skill) | yes | yes | yes | light (inline diff) | yes (squash + delete) |
-| `sanctum:prepare-pr` | yes | yes | yes | full (tests + docs + review) | no |
+| fluxo completo (`/code-review` + testes + `/verify` → ship) | yes | yes | yes | full | yes |

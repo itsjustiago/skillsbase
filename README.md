@@ -2,11 +2,13 @@
 
 The single source of truth for itsjustiago's Claude Code setup — **machine bootstrap + per-project skill catalog in one repo.**
 
-Clone this on any new machine and Claude is fully configured: lean global core, the skill-matchmaker engine, design pipeline, MCP guides, and a 62-skill catalog that installs per-project on demand.
+Clone this on any new machine and Claude is fully configured: 14 global skills (file-based, **no plugins, no hooks**), the global CLAUDE.md, the skill-matchmaker engine, and a 62-skill catalog that installs per-project on demand.
 
 > Your Claude has **two layers** of skills:
-> - 🌍 **Global** — always loaded in every project (8 plugins + ~10 skills). Set up once by `setup.sh`.
+> - 🌍 **Global** — always available in every project: 5 own skills (vendored in `global-skills/`) + 9 external skills (pulled from their original sources by `setup/install-externals.sh` — never vendored here). Set up once by `setup.sh`.
 > - 📦 **Per-project** — picked from this catalog by the `skill-matchmaker`. Only loads in projects that need them.
+
+**Why this build looks the way it does** (no plugins, no hooks, which skills got cut and why): [`DECISIONS.md`](DECISIONS.md) — read it before re-adding anything that was removed.
 
 ---
 
@@ -15,86 +17,84 @@ Clone this on any new machine and Claude is fully configured: lean global core, 
 ```bash
 git clone https://github.com/itsjustiago/skillsbase.git
 cd skillsbase
-bash setup.sh
+bash setup.sh        # Windows: correr no Git Bash
 ```
 
-`setup.sh` is idempotent (safe to re-run). It:
-1. Installs the 8 core plugins (superpowers, sanctum + leyline + abstract, conserve, impeccable, frontend-design, watch)
-2. Copies the global skills (`global-skills/` → `~/.claude/skills/`) and slash commands (`commands/` → `~/.claude/commands/`)
-3. Installs global configs (`setup/CLAUDE.md`, `setup/settings.json`, `setup/statusline.sh`) — backs up any existing ones
-4. Points you at the remaining manual steps
+`setup.sh` is idempotent (safe to re-run — re-running also **updates** the external skills). It:
+1. Copies own skills (`global-skills/` → `~/.claude/skills/`) and slash commands (`commands/` → `~/.claude/commands/`)
+2. Runs `setup/install-externals.sh` — clones the 9 external skills from their upstreams (Anthropic, pbakaus, Emil Kowalski, Supabase, obra/superpowers, nextlevelbuilder) and applies the patches documented in `DECISIONS.md`
+3. Installs global configs (`setup/CLAUDE.md`, `setup/settings.json`) — backs up any existing CLAUDE.md that differs
 
-> **🤖 Agent running this setup:** after `setup.sh` finishes, end your turn with a short, friendly message that lists the commands and trigger phrases now available — at minimum: `brainstorm X`, `make a plan for X`, `debug X`, `verify`, `/ship-merge`, `wrap up session`, `/clear-context`, `/skills-suggest`, `skill-scout`, the impeccable design commands (`/critique` `/audit` `/polish` …), and `/watch <url>`. One line each. Then remind the user to **restart Claude Code** so everything loads. (The tail of `setup.sh`'s output already prints this cheatsheet — relay it.)
+**Requires:** git + node on PATH. Python 3 only for `ui-ux-pro-max` search (install when needed). The `claude` CLI is NOT required — this build works on the desktop app.
 
 **After `setup.sh`:**
-- **Restart Claude Code** so plugins + CLAUDE.md load
-- **MCP servers** (9 total — magic, shadcn-ui, designlang, github, firebase, supabase, vercel, n8n, playwright): `setup/mcps.md`
-- **Optional CLIs** (graphify, browser-harness): `setup/install-extras.md`
-- **Per project**: run `/skills-suggest` — the matchmaker installs project-relevant skills locally
+- **Restart Claude Code** so skills + CLAUDE.md load
+- Desktop app: **Settings → Connectors → Supabase** (the only connector this build uses — see [`setup/mcps.md`](setup/mcps.md))
+- **Per project**: run `/skills-suggest` — the matchmaker installs project-relevant catalog skills locally
+
+Manual fallback (what the script does, step by step): [`setup/install.md`](setup/install.md)
 
 ## Syncing an existing machine
 
-`setup.sh` is **additive** — it installs the core but leaves any extra plugins/skills already on the machine. To make a machine match this repo **exactly** (uninstall what's not in the core, install what's missing), use `sync.sh`:
+`setup.sh` is **additive**. To make a machine match this repo **exactly** (remove global skills that don't belong, update the rest):
 
 ```bash
 bash sync.sh            # DRY RUN — shows the diff, changes nothing
-bash sync.sh --apply    # reconcile: uninstall extras, install missing, copy configs
+bash sync.sh --apply    # reconcile: remove extras, install/update missing, copy CLAUDE.md
 ```
 
 `sync.sh`:
 - Only touches the **global layer** (`~/.claude/`) — never per-project `.claude/skills/`
-- Backs up `~/.claude/{skills,commands,settings.json,CLAUDE.md}` to `~/.claude/backups/sync-<ts>/` before applying
-- Leaves externally-managed skills alone (e.g. `graphify`, which self-installs via its CLI)
-- Never auto-overwrites `settings.json` (it has machine-local keys like voice/theme/env) — flags it for manual merge instead
+- Backs up `~/.claude/{skills,commands,CLAUDE.md}` to `~/.claude/backups/sync-<ts>/` before applying
+- **Never** touches `settings.json` (machine-local keys)
 
-**Telling Claude to do it:** "make this machine match the skillsbase repo" → Claude runs `bash sync.sh` (dry run), shows you the diff, and on your OK runs `bash sync.sh --apply`.
+**Telling Claude to do it:** "põe esta máquina igual ao skillsbase" → Claude runs the dry run, shows you the diff, and applies only on your OK.
 
 Repo layout:
 
 | Dir | Purpose |
 |---|---|
-| `setup/` | Bootstrap scripts + config templates (CLAUDE.md, settings.json, statusline.sh, install-extras.md) |
-| `global-skills/` | Skills copied into `~/.claude/skills/` — matchmaker, design-auto-pipeline, taste-skill, etc. |
+| `setup.sh` / `sync.sh` | Bootstrap (additive) / exact reconcile (dry-run first) |
+| `setup/` | `install-externals.sh`, config templates (CLAUDE.md, settings.json), MCP notes, manual fallback |
+| `global-skills/` | The 5 **own** skills copied into `~/.claude/skills/` — ship, ship-merge, session-handoff, matchmaker, scout |
 | `commands/` | Slash commands copied into `~/.claude/commands/` |
+| `DECISIONS.md` | Why the build is like this — audit findings, what was cut and why, patches applied |
 | `skills/` | The 62-skill **per-project catalog** (consumed by the matchmaker, never auto-installed globally) |
 | `profiles/` | Curated starter packs (e.g. `nextjs-pwa`) |
 | `scripts/` | `build-catalog.mjs` — regenerates `catalog.json` from `skills/` |
-| `setup/mcps.md` | Install commands + auth notes for all 9 MCP servers |
-| `mcp/` | MCP conceptual guide (what each server does, auth deep-dive) |
-| `guides/` | Workflow docs — design pipeline, git, security, multi-agent |
-| `memory/` | How Claude's memory system works |
+| `guides/` | Workflow docs — design stack, git, security, multi-agent |
+| `mcp/` · `memory/` | MCP conceptual guide · how Claude's memory works |
 | `catalog.json` | Machine-readable index of the per-project catalog |
 
 ---
 
-# 🌍 Global skills (always-on)
+# 🌍 Global skills (always available)
 
-Just type the trigger word in any chat. No install, no setup.
+### Kickoff de projeto novo
 
-### Workflow
+- **`/ui-ux-pro-max <descrição>`** → design direction from a real database (67 styles, 161 palettes, 57 font pairs). Manual-only by design — see DECISIONS.md
+- **`/impeccable init`** → writes PRODUCT.md + DESIGN.md; every design command respects them from then on
 
-- **"brainstorm X"** → talks through intent + requirements before any code
-- **"make a plan for X"** → builds a structured plan, you approve before edits
-- **"debug X"** → systematic diagnosis (repro → isolate → root cause)
-- **"verify"** → forces evidence before claiming "done"
+### Design (auto + on demand)
 
-### PRs & shipping
+- **frontend-design** + **emil-design-eng** → fire automatically on UI work (aesthetic direction; motion/polish)
+- **`/impeccable critique|audit|polish|…`** → 23 refinement commands (run `/impeccable` for the suite)
+- **`/review-animations`** → strict motion review (manual)
+- Full design workflow: [`guides/design.md`](guides/design.md)
 
-- **"ship and merge"** (or `/ship-merge`) → commit → PR → CI → merge → cleanup, in one shot
-- **"wrap up session"** → end-of-session handoff summary for the next agent
+### Engineering
+
+- **"debug X"** → systematic root-cause before any fix (superpowers cherry-pick)
+- **"verify"** → evidence before claiming done (superpowers cherry-pick)
+- **supabase / supabase-postgres-best-practices** → fire automatically on Supabase/Postgres work (official skills)
+
+### Ship & sessions
+
+- **`/ship`** → commit → push → PR, one shot
+- **`/ship-merge`** → commit → PR → CI wait → light review → squash-merge → cleanup
+- **"wrap up session"** → end-of-session handoff before `/clear`
 - **`/skills-suggest`** → propose project-relevant skills from this catalog
-
-### Design polish (after UI is built)
-
-- **`/critique`** → UX review
-- **`/audit`** → accessibility + performance check
-- **`/polish`** → final pass on alignment, spacing, micro-detail
-- **`/animate`** · **`/typeset`** · **`/colorize`** · **`/distill`** · *[+ 10 more](#impeccable-design-commands)*
-
-### Context & video
-
-- **`/clear-context`** → auto-saves + spawns continuation at 80% context
-- **`/watch <url>`** → downloads + transcribes a video, answers questions about it
+- **skill-scout** → find NEW skills/plugins/MCPs in the wider ecosystem
 
 ---
 
@@ -112,43 +112,29 @@ Restart Claude once after install — done. Future sessions in that project auto
 
 ---
 
-# 🎨 Design MCP Stack
-
-Skills give the agent **rules**. MCPs give the agent **eyes and hands**. The `design-auto-pipeline` skill auto-uses three of them — you don't invoke them by name:
-
-- **magic** (21st.dev) — visual component gallery; surfaces real UI references when a prompt is vague
-- **shadcn-ui** — real shadcn/ui component source code; never invent the API
-- **designlang** — point at any URL → extracts Tailwind config + design tokens (for *"make it like vercel.com"*)
-
-Install commands for these (+ the other 6 MCPs) → [`setup/mcps.md`](setup/mcps.md). They're not installed by `setup.sh` because they need API keys / auth.
-
-**The unlock:** text-only LLM design never *sees* what it built. Pair the pipeline with a preview tool (Claude Preview / playwright-chrome) so the agent screenshots its own output at closeout and fixes what's visually wrong before declaring done.
-
----
-
 # 🛟 Troubleshooting
 
 | Symptom | Fix |
 |---|---|
 | `setup.sh` stopped partway | Re-run it — idempotent, picks up where it left off |
-| New skills don't show up after `/skills-suggest` | You must **restart Claude Code** — skills only load at session start |
-| A plugin "failed to load" with a dependency error | A core plugin's dependency is disabled. `sanctum` needs `leyline`. Enable it in `~/.claude/settings.json` and restart |
-| MCP shows `! Needs authentication` | Expected for supabase/vercel — auth happens via browser on first use, or run `/mcp` |
-| MCP shows `✗ Failed to connect` | Check the command in `claude mcp get <name>` — usually a wrong subcommand/flag. See [`setup/mcps.md`](setup/mcps.md) |
-| Startup feels heavy / too many tokens | Run `bash sync.sh` — reconciles the machine back to the lean core |
-| "Is this `setup.sh` or `sync.sh`?" | `setup.sh` = first-time, additive. `sync.sh` = make an existing machine match the repo exactly |
+| New skills don't show up | **Restart Claude Code** — skills load at session start |
+| `ui-ux-pro-max` never fires on its own | By design (manual-only patch). Invoke with `/ui-ux-pro-max` at project kickoff |
+| impeccable/ui-ux-pro-max ask permission to run scripts | Normal — their detectors/search run local scripts on demand |
+| External skill looks outdated | Re-run `bash setup/install-externals.sh` (or `setup.sh`) — pulls latest upstream |
+| Startup feels heavy / too many tokens | `bash sync.sh` (dry run) — see what doesn't belong; also check connected MCP connectors (`setup/mcps.md`) |
+| "Is this `setup.sh` or `sync.sh`?" | `setup.sh` = first-time + update, additive. `sync.sh` = make machine match repo exactly |
 | Want a skill that's not in the catalog | Ask the agent to run `skill-scout` — it searches the wider ecosystem |
 
 # 📖 Glossary
 
 | Term | Meaning |
 |---|---|
-| **Global layer** | The 8 plugins + ~10 skills in `~/.claude/` that load in *every* session |
+| **Global layer** | The 14 skills + CLAUDE.md in `~/.claude/` available in *every* session (file-based — this build uses no plugins) |
 | **Per-project layer** | Skills in `<project>/.claude/skills/` that load only in that one project |
+| **Own vs external skills** | Own (5) live in `global-skills/` here; external (9) are pulled from their upstream repos at install time — never vendored |
 | **skill-matchmaker** | Global skill — searches *this catalog* and installs project-relevant skills locally |
 | **skill-scout** | Global skill — searches the *wider ecosystem* (GitHub, marketplaces) for skills you don't have |
-| **design-auto-pipeline** | Global skill — orchestrates the design flow (taste-skill → frontend-design → impeccable) automatically |
-| **MCP** | Model Context Protocol server — gives Claude a live tool (browser, DB, design API). Distinct from a skill (which is instructions) |
+| **MCP** | Model Context Protocol server — gives Claude a live tool (browser, DB). Distinct from a skill (which is instructions) |
 | **catalog** | `catalog.json` + `skills/` — the 62-skill per-project library the matchmaker reads from |
 | **profile** | A named bundle of catalog skills for a common stack (e.g. `nextjs-pwa`) |
 
@@ -387,27 +373,33 @@ Matchmaker reads from `main` branch, so changes are live after push.
 
 ## Impeccable design commands
 
-Full list referenced from the global section:
+Full list (v3.9 — 23 commands, all via `/impeccable <command> [target]`):
 
 | Command | What it does |
 |---|---|
-| `/critique` | UX evaluation — visual hierarchy, cognitive load, anti-patterns, scored |
-| `/audit` | Technical pass — a11y, performance, theming, responsive, P0–P3 severity |
-| `/polish` | Final pass — alignment, spacing, consistency micro-details |
-| `/animate` | Add purposeful motion + micro-interactions |
-| `/colorize` | Inject strategic color when too monochrome |
-| `/typeset` | Improve type — fonts, hierarchy, sizing, readability |
-| `/distill` | Strip noise — simpler, cleaner, more focused |
-| `/clarify` | Improve unclear copy, errors, microcopy |
-| `/layout` | Fix spacing, rhythm, alignment, hierarchy |
-| `/adapt` | Add responsive breakpoints + touch targets |
-| `/delight` | Add personality / unexpected joy |
-| `/bolder` | Make safe designs more visually confident |
-| `/quieter` | Tone down overstimulating designs |
-| `/overdrive` | Push into shaders / spring physics / 60fps |
-| `/optimize` | Fix UI perf — rendering, bundle, images |
-| `/shape` | Plan UX + UI for a feature **before** code |
-| `/impeccable` | Run the whole suite end-to-end |
+| `init` | Setup — writes PRODUCT.md + DESIGN.md from a codebase crawl (run once per project) |
+| `document` | Generate/refresh DESIGN.md from existing code |
+| `craft` | Build a UI end-to-end with the full quality loop |
+| `shape` | Plan UX + UI for a feature **before** code |
+| `critique` | UX evaluation — visual hierarchy, cognitive load, anti-patterns, scored |
+| `audit` | Technical pass — a11y, performance, theming, responsive, P0–P3 severity |
+| `polish` | Final pass — alignment, spacing, consistency micro-details |
+| `extract` | Consolidate repeated patterns into design-system primitives + tokens |
+| `harden` | Edge cases — long text, empty/error states, i18n, slow network |
+| `animate` | Add purposeful motion + micro-interactions |
+| `colorize` | Inject strategic color when too monochrome |
+| `typeset` | Improve type — fonts, hierarchy, sizing, readability |
+| `distill` | Strip noise — simpler, cleaner, more focused |
+| `clarify` | Improve unclear copy, errors, microcopy |
+| `layout` | Fix spacing, rhythm, alignment, hierarchy |
+| `adapt` | Add responsive breakpoints + touch targets |
+| `delight` | Add personality / unexpected joy |
+| `bolder` | Make safe designs more visually confident |
+| `quieter` | Tone down overstimulating designs |
+| `overdrive` | Push into shaders / spring physics / 60fps |
+| `optimize` | Fix UI perf — rendering, bundle, images |
+| `onboard` | Design onboarding/first-run flows |
+| `live` | Live browser iteration — variant mode on the running app |
 
 ---
 
@@ -418,6 +410,6 @@ Full list referenced from the global section:
 
 ## License
 
-Skills migrated from upstream plugins retain their original authorship and licenses. The catalog structure (frontmatter schema, build script, matchmaker integration) is MIT.
+External skills are **never vendored** in this repo — `setup/install-externals.sh` pulls them from their original sources at install time, and they keep their own authorship and licenses (Apache-2.0, MIT, …). The own skills, catalog structure and scripts here are MIT.
 
 </details>
