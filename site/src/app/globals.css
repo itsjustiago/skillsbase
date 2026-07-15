@@ -72,3 +72,22 @@ html {
     transparent
   );
 }
+
+/* Reveal — time-based CSS fade-in on mount. Pure CSS (compositor-driven, not
+   rAF and not scroll-linked), so it runs even in throttled preview panes, and
+   ends at the element's natural opacity (1) so content is never stuck hidden. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .reveal {
+    animation: reveal-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
