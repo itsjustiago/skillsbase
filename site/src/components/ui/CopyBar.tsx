@@ -5,9 +5,11 @@ import { useState } from "react";
 export function CopyBar({
   command,
   kind = "shell",
+  compact = false,
 }: {
   command: string;
   kind?: "shell" | "claude";
+  compact?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -22,14 +24,22 @@ export function CopyBar({
   };
 
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-ink px-4 py-3.5">
+    <div
+      className={`flex gap-3 rounded-2xl border border-white/10 bg-ink px-4 py-3.5 ${
+        compact ? "items-center" : "items-start"
+      }`}
+    >
       <span
         aria-hidden
         className="mt-px shrink-0 select-none font-mono text-[13px] text-violet"
       >
         {kind === "claude" ? "›" : "$"}
       </span>
-      <code className="min-w-0 flex-1 whitespace-pre-wrap break-words font-mono text-[12.5px] leading-relaxed text-white/90">
+      <code
+        className={`min-w-0 flex-1 font-mono text-[12.5px] leading-relaxed text-white/90 ${
+          compact ? "truncate" : "whitespace-pre-wrap break-words"
+        }`}
+      >
         {command}
       </code>
       <button

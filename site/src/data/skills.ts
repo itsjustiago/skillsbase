@@ -140,52 +140,30 @@ export const globalGroups: { id: string; label: string; skills: GlobalSkill[] }[
 
 export const globalSkills: GlobalSkill[] = globalGroups.flatMap((g) => g.skills);
 
-// ---- Install: prompts you paste into Claude ----
-export type InstallCommand = {
-  id: string;
-  label: string;
-  blurb: string;
-  prompt: string;
-};
+// ---- Install: one prompt you paste into Claude ----
+// Claude reads setup/AGENT-INSTALL.md, inspects the user's ~/.claude, and offers
+// the modes below as a single question — then applies the one they pick.
+export const smartInstall =
+  "Set up the itsjustiago Claude Code build: clone https://github.com/itsjustiago/skillsbase and follow setup/AGENT-INSTALL.md — check what I already have in ~/.claude, show me the options, and install the one I pick.";
 
-export const installCommands: InstallCommand[] = [
+export type InstallMode = { label: string; blurb: string };
+
+export const installModes: InstallMode[] = [
   {
-    id: "everything",
-    label: "Everything",
-    blurb: "Skills + instructions + slash commands. The full bootstrap.",
-    prompt:
-      "Clone https://github.com/itsjustiago/skillsbase and run `bash setup.sh` — install the 14 global skills, the global CLAUDE.md and the slash commands, then tell me what changed and remind me to restart Claude Code.",
-  },
-  {
-    id: "skills",
     label: "Skills only",
-    blurb: "Just the global skills. Leaves your instructions untouched.",
-    prompt:
-      "From github.com/itsjustiago/skillsbase, install only the global skills (`global-skills/` → `~/.claude/skills/`). Don't touch my CLAUDE.md or settings. List what you added.",
+    blurb: "Adds the 14 skills on top — keeps everything you already have.",
   },
   {
-    id: "instructions",
+    label: "Skills + instructions",
+    blurb: "Full bootstrap; swaps your global CLAUDE.md (with a backup).",
+  },
+  {
+    label: "Make it identical",
+    blurb: "Reconciles — removes the global skills that aren't in the build.",
+  },
+  {
     label: "Instructions only",
     blurb: "Just the global CLAUDE.md, with a backup of your current one.",
-    prompt:
-      "Install only the global CLAUDE.md from skillsbase (`setup/CLAUDE.md` → `~/.claude/CLAUDE.md`), backing up my existing one first. No skills.",
-  },
-];
-
-export const secondaryCommands: InstallCommand[] = [
-  {
-    id: "sync",
-    label: "Match this machine to the repo",
-    blurb: "Reconcile an existing machine — dry run first.",
-    prompt:
-      "Make this machine match skillsbase exactly: run `bash sync.sh` (dry run), show me the diff, and apply it only if I say OK.",
-  },
-  {
-    id: "per-project",
-    label: "Add per-project skills",
-    blurb: "Let the matchmaker pick catalog skills for a project.",
-    prompt:
-      "Run /skills-suggest — pick the catalog skills that match this project's stack and install them into .claude/skills/.",
   },
 ];
 
