@@ -84,9 +84,11 @@ merge") e (2) ter de caçar qual dos chats está preso à espera de um sim/não
 enterrado no meio do texto. Decisão (nova secção "Confirmações de ship / merge"
 em `setup/CLAUDE.md`):
 
-- **Palavra-gatilho (ship/merge/…) → executa já**, sem pré-confirmar. Sem
-  gatilho, NÃO faz merge a `main` por iniciativa própria (protege contra mandar
-  o branch errado para `main` em chats paralelos).
+- **Default = auto-merge**: quando acaba um bloco shipável, corre `/ship-merge`
+  sozinho — sem perguntar e sem esperar por palavra-gatilho. Só NÃO merja se o
+  Tiago disser EXPLICITAMENTE para não ("não dês merge ainda", "faz X primeiro").
+  A isolação de branch/worktree (uma sessão = um branch) é o que garante que só
+  vai para `main` o trabalho DESTA sessão, não o de outro chat.
 - **Quando tiver mesmo de perguntar → botão (AskUserQuestion) + `PushNotification`**
   a dizer qual chat/branch está à espera.
 
