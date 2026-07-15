@@ -75,3 +75,22 @@ ship-merge, skill-matchmaker, skill-scout.
 - Impeccable também atualiza via `npx impeccable update` (instala o hook — evitar).
 - Antes de adicionar uma skill global nova: ela vale o custo de arranque em TODAS
   as sessões? Se é de stack/tarefa → catálogo per-project (`skills/`) via matchmaker.
+
+## Addendum 2026-07-15 — confirmações de ship/merge
+
+Queixa do Tiago: com vários chats em paralelo, o chato não é o Claude pedir — é
+(1) re-pedir o que já foi pedido ("posso dar merge?" depois de ele dizer "dá
+merge") e (2) ter de caçar qual dos chats está preso à espera de um sim/não
+enterrado no meio do texto. Decisão (nova secção "Confirmações de ship / merge"
+em `setup/CLAUDE.md`):
+
+- **Palavra-gatilho (ship/merge/…) → executa já**, sem pré-confirmar. Sem
+  gatilho, NÃO faz merge a `main` por iniciativa própria (protege contra mandar
+  o branch errado para `main` em chats paralelos).
+- **Quando tiver mesmo de perguntar → botão (AskUserQuestion) + `PushNotification`**
+  a dizer qual chat/branch está à espera.
+
+Nota vs. 2026-07-03: os **"hooks de notificação" continuam rejeitados** (são
+automáticos, latência a cada evento). Isto é diferente — chamada pontual ao tool
+`PushNotification` só no momento go/no-go, escolhida explicitamente pelo Tiago.
+Não reintroduz hooks. Alinhado com o objetivo do audit de cortar esperas por input.

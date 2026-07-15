@@ -21,8 +21,16 @@
 - O Tiago costuma ter VÁRIOS chats em paralelo no mesmo repo. Uma sessão = um branch: antes de qualquer trabalho git, corre `git branch --show-current`; se o branch atual não é o desta tarefa, NÃO o uses — cria o branch da tarefa ou entra num worktree.
 - Nunca faças checkout, merge ou push de um branch de outra tarefa/sessão, nem "aproveites" mudanças no working tree que não fizeste tu — são provavelmente de outro chat; avisa o Tiago em vez de misturar.
 - Ao primeiro sinal de sessões paralelas no mesmo repo (ele diz que tem outro chat, o working tree muda sozinho, o branch salta entre turns), muda-te para um git worktree isolado (EnterWorktree) e continua o trabalho lá.
-- Commits e push só no branch desta sessão; em main só com pedido explícito.
+- Commits e push só no branch desta sessão (sem pré-confirmar); em main só quando ele disser ship/merge — isso É o pedido explícito, nunca por iniciativa tua.
 - Ao entrar num worktree de um projeto Node: o worktree nasce SEM os ficheiros gitignored — copia da pasta principal o que for preciso (`.env.local`, `.env`) e corre `npm install` antes de arrancar dev servers. Faz isto sem perguntar.
+
+## Confirmações de ship / merge (não voltes a pedir o que já pedi)
+- **Default = executa, não pré-confirmes.** Palavra-gatilho de release do Tiago — "ship", "merge", "dá merge", "ship merge", "manda para main", "bora ship" — corre LOGO o `/ship` ou `/ship-merge` apropriado. Ele já pediu; não perguntes "posso dar merge?".
+- Commits e push de rotina no branch DESTA sessão também não precisam de pré-confirmação — faz e reporta.
+- `/ship` (commit → push → PR, pára no PR) é sempre seguro: corre sem perguntar. Nada em `main`.
+- `/ship-merge` (ship + espera CI + review leve + squash-merge + apaga branch remoto) corre logo quando ele pedir ship/merge. Confia nos guardrails do próprio skill — ele pára sozinho em conflito, CI vermelho, changes-requested ou secrets no diff.
+- **Sem palavra-gatilho, NÃO faças merge a `main` por iniciativa própria.** Acaba as alterações, mostra o que fizeste, e OFERECE o merge (formato abaixo). Isto protege contra mandar para `main` o branch errado com vários chats no mesmo repo — mantêm-se TODAS as regras de "Git & sessões paralelas" acima (branch certo, worktree, nunca o branch de outro chat).
+- **Quando MESMO tiveres de pedir go/no-go** (bloqueio real, ou o momento "está pronto, dou merge?"): pede SEMPRE com botão (AskUserQuestion) no FIM — "Sim, merge" / "Não" — e dispara um `PushNotification` a dizer QUAL o chat/branch está à espera. Nunca enterres o pedido no meio do texto. (Se o harness achar que ele está ativo neste terminal, a notificação auto-salta — sem spam, tudo bem.)
 
 ## Skills & skillsbase
 - Fonte de verdade do setup: https://github.com/itsjustiago/skillsbase — bootstrap da máquina (`setup.sh`) + catálogo per-project. Depois de mudanças relevantes a skills/config globais, atualiza esse repo (e vê o DECISIONS.md antes de re-sugerir algo que já foi rejeitado).
