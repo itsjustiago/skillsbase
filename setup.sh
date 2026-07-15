@@ -14,10 +14,25 @@ set -e
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
 
+# ── Modo (default = tudo) ────────────────────────────────────
+#   (sem args)       tudo: skills + externas + comandos + CLAUDE.md (+ settings)
+#   --skills         só skills próprias + externas + comandos (não toca em config)
+#   --instructions   só o CLAUDE.md global (com backup)
+MODE="all"
+case "${1:-}" in
+  --skills)       MODE="skills" ;;
+  --instructions) MODE="instructions" ;;
+  ""|--all)       MODE="all" ;;
+  *) echo "Uso: bash setup.sh [--skills | --instructions]"; exit 1 ;;
+esac
+do_skills() { [ "$MODE" = "all" ] || [ "$MODE" = "skills" ]; }
+do_config() { [ "$MODE" = "all" ] || [ "$MODE" = "instructions" ]; }
+
 echo "╔══════════════════════════════════════════════╗"
 echo "║   skillsbase bootstrap (build jul/2026)      ║"
 echo "╚══════════════════════════════════════════════╝"
 echo "    destino: $CLAUDE_DIR"
+echo "    modo:    $MODE"
 echo ""
 
 # ── Preflight ────────────────────────────────────────────────
@@ -35,39 +50,48 @@ command -v python >/dev/null 2>&1 || command -v py >/dev/null 2>&1 || \
 mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents"
 
 # ── Step 1: skills próprias + slash commands ─────────────────
-echo ""
-echo "==> 1/3 — skills próprias (global-skills/) + comandos"
-for d in "$REPO_ROOT"/global-skills/*/; do
-  name="$(basename "$d")"
-  rm -rf "${CLAUDE_DIR:?}/skills/$name"
-  cp -r "$d" "$CLAUDE_DIR/skills/$name"
-  echo "  v $name"
-done
-if compgen -G "$REPO_ROOT/commands/*.md" >/dev/null; then
-  cp "$REPO_ROOT"/commands/*.md "$CLAUDE_DIR/commands/"
-  echo "  v commands/"
+if do_skills; then
+  echo ""
+  echo "==> skills próprias (global-skills/) + comandos"
+  for d in "$REPO_ROOT"/global-skills/*/; do
+    name="$(basename "$d")"
+    rm -rf "${CLAUDE_DIR:?}/skills/$name"
+    cp -r "$d" "$CLAUDE_DIR/skills/$name"
+    echo "  v $name"
+  done
+  if compgen -G "$REPO_ROOT/commands/*.md" >/dev/null; then
+    cp "$REPO_ROOT"/commands/*.md "$CLAUDE_DIR/commands/"
+    echo "  v commands/"
+  fi
 fi
 
 # ── Step 2: skills externas (fontes originais) ───────────────
-echo ""
-echo "==> 2/3 — skills externas (clonadas dos upstreams, nunca vendorizadas)"
-CLAUDE_DIR="$CLAUDE_DIR" bash "$REPO_ROOT/setup/install-externals.sh"
+if do_skills; then
+  echo ""
+  echo "==> skills externas (clonadas dos upstreams, nunca vendorizadas)"
+  CLAUDE_DIR="$CLAUDE_DIR" bash "$REPO_ROOT/setup/install-externals.sh"
+fi
 
 # ── Step 3: configs globais ──────────────────────────────────
-echo ""
-echo "==> 3/3 — configs globais"
-if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && ! cmp -s "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"; then
-  cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-skillsbase.bak"
-  echo "  ! CLAUDE.md existente diferia → backup em CLAUDE.md.pre-skillsbase.bak"
+if do_config; then
+  echo ""
+  echo "==> config — CLAUDE.md global"
+  if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && ! cmp -s "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"; then
+    cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-skillsbase.bak"
+    echo "  ! CLAUDE.md existente diferia → backup em CLAUDE.md.pre-skillsbase.bak"
+  fi
+  cp "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+  echo "  v CLAUDE.md"
 fi
-cp "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-echo "  v CLAUDE.md"
 
-if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
-  cp "$REPO_ROOT/setup/settings.json" "$CLAUDE_DIR/settings.json"
-  echo "  v settings.json"
-else
-  echo "  = settings.json já existe — mantido (pode ter chaves locais da máquina)"
+# settings.json só no bootstrap completo — create-only, nunca sobrescreve (chaves locais)
+if [ "$MODE" = "all" ]; then
+  if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
+    cp "$REPO_ROOT/setup/settings.json" "$CLAUDE_DIR/settings.json"
+    echo "  v settings.json"
+  else
+    echo "  = settings.json já existe — mantido (pode ter chaves locais da máquina)"
+  fi
 fi
 
 # ── Done ─────────────────────────────────────────────────────

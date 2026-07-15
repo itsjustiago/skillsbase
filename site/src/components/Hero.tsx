@@ -1,5 +1,6 @@
 import { Button, Container, Contours, DotGrid } from "./ui/primitives";
-import { families, stats } from "@/data/skills";
+import { CopyBar } from "./ui/CopyBar";
+import { families, stats, smartInstall } from "@/data/skills";
 
 export function Hero() {
   return (
@@ -26,9 +27,16 @@ export function Hero() {
           matchmaker. File-based — no plugins, no hooks.
         </p>
 
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Button href="#install" variant="primary" icon>
-            Get the install command
+        <div className="mx-auto mt-9 max-w-xl text-left">
+          <CopyBar command={smartInstall} kind="claude" compact />
+          <p className="mt-2.5 text-center font-mono text-[11px] uppercase tracking-[0.13em] text-muted">
+            Paste into Claude — it asks how you want it
+          </p>
+        </div>
+
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <Button href="#install" variant="outline">
+            How it installs
           </Button>
           <Button href="#skills" variant="outline">
             Browse {stats.global + stats.catalog} skills
