@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfcfa;
+  --ink: #141414;
+  --ink-soft: #4a4740;
+  --muted: #8a8781;
+  --line: #e7e4db;
+  --violet: #5a2bf0;
+  --violet-deep: #3a1cb0;
+  --tangerine: #ff6a2b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-violet: var(--violet);
+  --color-violet-deep: var(--violet-deep);
+  --color-tangerine: var(--tangerine);
+
+  --font-display: var(--font-unbounded);
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-space-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-hanken), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--violet);
+  color: #fff;
+}
+
+html {
+  scroll-padding-top: 88px;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 34s linear infinite;
+}
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
