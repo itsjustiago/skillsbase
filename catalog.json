@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "updated_at": "2026-07-15",
+  "updated_at": "2026-07-26",
   "skills": [
     {
       "name": "agent-harness-construction",
@@ -927,6 +927,27 @@
         "any-web"
       ],
       "cost_tokens": 1500
+    },
+    {
+      "name": "taste-frontend",
+      "path": "skills/taste-frontend/SKILL.md",
+      "description": "Anti-slop frontend para landings, portfolios e redesigns — 3 diais, bans explicitos e pre-flight check contra UI generica de IA. Nao serve dashboards nem produto multi-ecra.",
+      "tags": [
+        "design",
+        "frontend",
+        "landing-page",
+        "tailwind",
+        "nextjs",
+        "motion",
+        "typography",
+        "anti-slop",
+        "taste"
+      ],
+      "project_types": [
+        "nextjs",
+        "any-web"
+      ],
+      "cost_tokens": 21800
     },
     {
       "name": "tdd-workflow",
