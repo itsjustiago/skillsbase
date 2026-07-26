@@ -929,27 +929,6 @@
       "cost_tokens": 1500
     },
     {
-      "name": "taste-frontend",
-      "path": "skills/taste-frontend/SKILL.md",
-      "description": "Anti-slop frontend para landings, portfolios e redesigns — 3 diais, bans explicitos e pre-flight check contra UI generica de IA. Nao serve dashboards nem produto multi-ecra.",
-      "tags": [
-        "design",
-        "frontend",
-        "landing-page",
-        "tailwind",
-        "nextjs",
-        "motion",
-        "typography",
-        "anti-slop",
-        "taste"
-      ],
-      "project_types": [
-        "nextjs",
-        "any-web"
-      ],
-      "cost_tokens": 21800
-    },
-    {
       "name": "tdd-workflow",
       "path": "skills/tdd-workflow/SKILL.md",
       "description": "Test-driven development with 80%+ coverage including unit, integration, and E2E tests using Jest/Vitest, Playwright, and mocking patterns.",
