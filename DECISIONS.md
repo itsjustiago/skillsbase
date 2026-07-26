@@ -48,7 +48,7 @@ ship-merge, skill-matchmaker, skill-scout.
 | O quê | Porquê |
 |---|---|
 | design-auto-pipeline (skill própria) | Auto-disparava em toda a UI, turns 2,3× mais lentos, orquestrava ferramentas não instaladas. Substituído pela secção "Workflow de design" do CLAUDE.md. |
-| taste-skill | Regras rígidas redundantes/conflituosas com o frontend-design oficial. A versão atual (55k⭐) continua a ser regras estáticas — reavaliada e rejeitada em 2026-07-03. |
+| ~~taste-skill~~ **REVERTIDO 2026-07-26** | Rejeitada 2× até 2026-07-03 ("regras estáticas, conflito com frontend-design"). Revertido com a v2 (diais variance/motion/density, 67.9k⭐): o Tiago pediu explicitamente após novo scout. Entrou como `taste-frontend` no catálogo, **per-project e só para landings/marketing** (Elevia, Toolbelt) — o conflito com o frontend-design em produto/dashboards mantém-se, por isso o `when_to_use` exclui esse âmbito. |
 | output-skill | Os modelos atuais não truncam código; só alongava outputs (mais lento). |
 | redesign-skill | Coberto pelo impeccable (critique → fix → polish → audit). |
 | Plugins sanctum/leyline/abstract/conserve/watch | Sem uso real; o sanctum deixou referências mortas no ship durante semanas. |
