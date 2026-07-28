@@ -1,5 +1,6 @@
 ---
 name: ship
+autor: tiago
 description: Use when the user wants to stage, commit, push, and open a pull request in one shot. Triggers on "/ship", "ship it", "dá push e abre PR", "commit push e PR". One-shot release flow that generates a Conventional Commit message and PR description from the diff, without running the heavy quality gates (no tests, no docs, no code review).
 ---
 

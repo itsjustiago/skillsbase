@@ -1,5 +1,6 @@
 ---
 name: ship-merge
+autor: tiago
 description: Use when the user wants the FULL one-shot release - stage, commit, push, open PR, check conflicts, wait for CI, light review, squash-merge to main, and clean up the branch. Triggers on "/ship-merge", "ship and merge", "dá ship e merge", "ship até ao fim", "ship merge it". Extends the `ship` skill with PR review + auto-merge. Does NOT run heavy quality gates (no test suite execution, no docs updates, no full code review) — para gates pesados corre /code-review + testes + /verify antes.
 ---
 
