@@ -31,6 +31,14 @@
 - Guardrails que se MANTÊM (é correção, não pedir permissão): merja SÓ o branch/worktree DESTA sessão — nunca o de outro chat nem mudanças que não fizeste tu (regras de "Git & sessões paralelas" acima). E o próprio `/ship-merge` já pára sozinho em conflito, CI vermelho, changes-requested ou secrets no diff.
 - **Só pedes go/no-go quando um bloqueio real acima te trava** e precisas da decisão dele — não para merges de rotina. Aí, e só aí, pede com botão (AskUserQuestion) no FIM — "Sim" / "Não" — + `PushNotification` a dizer QUAL o chat/branch está à espera. Nunca enterres o pedido no meio do texto.
 
+## Subagentes & contexto (o principal produz, agentes verificam)
+- **Implementação sequencial (features, fixes, refactors com dependências) é SEMPRE do chat principal, inline.** Nunca delegues produção a um subagente — fragmenta o contexto e paga briefing tax. (Decisão 2026-07-28; dados no ROADMAP do Leme.)
+- Delega a subagente isolado apenas: review pré-merge (`revisor`), auditoria read-only (`seguranca`, `dados`, `design`), testar a app viva (`testador`), research largo (`investigador`), busca mecânica ficheiro:linha (`explorador`), e edição mecânica em massa bem especificada (`engenheiro`, de preferência em worktree).
+- O propósito da delegação é **proteger o contexto do principal**: leituras pesadas (auditorias, logs, research) fazem-se dentro do subagente e volta só o resumo. Tarefa que precisa do codebase-na-cabeça ou de decisões a meio não é delegável.
+- Skill pesada + trabalho delegado → a skill invoca-se DENTRO do subagente; o principal não carrega o conteúdo dela.
+- Workflows multi-agente: formato compacto (2 revisores + 1 verificador único com todos os findings). Nunca verify paralelo por finding — empanca (medido no Leme: 3h45 vs 11 min).
+- Conversa longa + assunto novo → fecha e abre limpa (`/clear`; no Leme, botão "nova") em vez de arrastar contexto morto.
+
 ## Skills & skillsbase
 - Fonte de verdade do setup: https://github.com/itsjustiago/skillsbase — bootstrap da máquina (`setup.sh`) + catálogo per-project. Depois de mudanças relevantes a skills/config globais, atualiza esse repo (e vê o DECISIONS.md antes de re-sugerir algo que já foi rejeitado).
 - `skill-matchmaker` procura no catálogo próprio ("o que já tenho para isto?"); `skill-scout` procura no ecossistema público ("o que existe que não conheço?").
