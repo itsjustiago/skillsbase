@@ -31,13 +31,23 @@
 - Guardrails que se MANTÊM (é correção, não pedir permissão): merja SÓ o branch/worktree DESTA sessão — nunca o de outro chat nem mudanças que não fizeste tu (regras de "Git & sessões paralelas" acima). E o próprio `/ship-merge` já pára sozinho em conflito, CI vermelho, changes-requested ou secrets no diff.
 - **Só pedes go/no-go quando um bloqueio real acima te trava** e precisas da decisão dele — não para merges de rotina. Aí, e só aí, pede com botão (AskUserQuestion) no FIM — "Sim" / "Não" — + `PushNotification` a dizer QUAL o chat/branch está à espera. Nunca enterres o pedido no meio do texto.
 
-## Subagentes & contexto (o principal produz, agentes verificam)
-- **Implementação sequencial (features, fixes, refactors com dependências) é SEMPRE do chat principal, inline.** Nunca delegues produção a um subagente — fragmenta o contexto e paga briefing tax. (Decisão 2026-07-28; dados no ROADMAP do Leme.)
-- Delega a subagente isolado apenas: review pré-merge (`revisor`), auditoria read-only (`seguranca`, `dados`, `design`), testar a app viva (`testador`), research largo (`investigador`), busca mecânica ficheiro:linha (`explorador`), e edição mecânica em massa bem especificada (`engenheiro`, de preferência em worktree).
-- O propósito da delegação é **proteger o contexto do principal**: leituras pesadas (auditorias, logs, research) fazem-se dentro do subagente e volta só o resumo. Tarefa que precisa do codebase-na-cabeça ou de decisões a meio não é delegável.
-- Skill pesada + trabalho delegado → a skill invoca-se DENTRO do subagente; o principal não carrega o conteúdo dela.
+## Subagentes & contexto (o recurso escasso é o contexto do principal, não o custo)
+O Tiago é subscritor — tokens não são dinheiro. O que dói é **encher o contexto do principal** e ser obrigado a dar `/clear` a meio de um raciocínio. Otimiza para isso.
+
+**O critério, numa pergunta:** *o que volta é uma CONCLUSÃO ou é MATÉRIA-PRIMA que vou ter de editar a seguir?*
+- **Conclusão** (um resumo, uma lista de achados, um ficheiro:linha, um veredito) → **delega**. O subagente pode queimar 150k a ler o que quiser; ao principal chegam 2k.
+- **Matéria-prima** (os ficheiros que vais mesmo editar) → **lê tu**. Ias precisar deles em contexto de qualquer forma; delegar só acrescenta uma cópia e o briefing tax.
+
+Daqui sai:
+- **Editar é sempre do principal, inline.** Features, fixes, refactors com dependências — nunca delegados (fragmenta o contexto e obriga a re-explicar).
+- **Compreender/mapear é delegável, mesmo dentro de uma implementação.** "Como funciona X através destes 12 ficheiros?", "onde é que isto é usado?", "porque falha este teste?" → subagente ou `explorador`, e volta a resposta em vez dos 12 ficheiros. Isto vale MESMO quando a seguir vais escrever código: só não delegues a leitura dos ficheiros que vais editar.
+- Delega sempre: review pré-merge (`revisor`), auditoria read-only (`seguranca`, `dados`, `design`), correr a app (`testador`), research (`investigador`), busca ficheiro:linha (`explorador`), edição mecânica em massa bem especificada (`engenheiro`, em worktree).
+- Skill pesada + trabalho delegado → invoca-se DENTRO do subagente; o principal nunca carrega o conteúdo dela.
+- Output de comandos ruidosos (build, testes, logs longos) → filtra no shell (`| tail`, `| grep`) em vez de despejar tudo no contexto.
 - Workflows multi-agente: formato compacto (2 revisores + 1 verificador único com todos os findings). Nunca verify paralelo por finding — empanca (medido no Leme: 3h45 vs 11 min).
-- Conversa longa + assunto novo → fecha e abre limpa (`/clear`; no Leme, botão "nova") em vez de arrastar contexto morto.
+- Conversa longa + assunto NOVO → fecha e abre limpa (`/clear`; no Leme, "nova"). Assunto novo é o gatilho, não o número de tokens: dar clear a meio de um raciocínio é a perda que queremos evitar.
+
+Ordem de grandeza (Leme, 2026-07-28): a critique de UI custou **315k tokens** aos dois subagentes e entrou no principal como **~4k de relatório** — 1,3%. Feita inline, tinha comido o contexto todo.
 
 ## Skills & skillsbase
 - Fonte de verdade do setup: https://github.com/itsjustiago/skillsbase — bootstrap da máquina (`setup.sh`) + catálogo per-project. Depois de mudanças relevantes a skills/config globais, atualiza esse repo (e vê o DECISIONS.md antes de re-sugerir algo que já foi rejeitado).
