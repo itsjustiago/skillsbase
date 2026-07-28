@@ -1,5 +1,6 @@
 ---
 name: skill-scout
+autor: tiago
 description: |
   Discover NEW Claude Code skills, plugins, and MCP servers from the wider
   ecosystem — things NOT yet in the user's skillsbase catalog. Use when:

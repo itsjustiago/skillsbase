@@ -1,4 +1,5 @@
 ---
+autor: tiago
 description: Consult the skillsbase catalog and propose project-relevant skills for the current project.
 ---
 

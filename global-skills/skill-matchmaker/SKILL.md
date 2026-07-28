@@ -1,5 +1,6 @@
 ---
 name: skill-matchmaker
+autor: tiago
 description: |
   Use to install project-relevant skills from the skillsbase GitHub catalog
   into the current project's .claude/skills/ folder. Invoke when:

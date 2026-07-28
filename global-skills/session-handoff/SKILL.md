@@ -1,5 +1,6 @@
 ---
 name: session-handoff
+autor: tiago
 description: Use when the user says "session handoff", "wrap up session", "hand off", "handoff summary", or wants a structured end-of-session summary before clearing context. Produces a chat-only, single-fenced-block handoff with explicit copy markers covering decisions, shipped changes, key files, running state, verification steps, deferrals, dead-ends tried, tone reminders, and explicit first-action steps so a fresh agent can continue seamlessly after /clear.
 ---
 
