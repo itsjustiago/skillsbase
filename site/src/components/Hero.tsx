@@ -1,6 +1,6 @@
 import { Button, Container, Contours, DotGrid } from "./ui/primitives";
 import { CopyBar } from "./ui/CopyBar";
-import { families, stats, smartInstall } from "@/data/skills";
+import { globalGroups, stats, smartInstall } from "@/data/skills";
 
 export function Hero() {
   return (
@@ -13,8 +13,7 @@ export function Hero() {
 
       <Container className="relative py-20 text-center">
         <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-violet">
-          ↑ {stats.global} global · {stats.catalog} on-demand · {stats.plugins}{" "}
-          plugins
+          ↑ {stats.skills} skills · {stats.agents} agents · {stats.hooks} hook
         </span>
 
         <h1 className="mx-auto mt-5 max-w-[16ch] font-display text-[clamp(2.4rem,8vw,5rem)] font-extrabold leading-[0.92] tracking-[-0.025em] text-balance">
@@ -23,8 +22,8 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-[48ch] text-[clamp(15px,1.7vw,18px)] leading-relaxed text-ink-soft">
-          One repo bootstraps every skill, the global instructions and the
-          matchmaker. File-based — no plugins, no hooks.
+          One repo sets up Claude Code: skills, subagents, a guardrail hook and
+          the global instructions. Plain files you can read.
         </p>
 
         <div className="mx-auto mt-9 max-w-xl text-left">
@@ -39,18 +38,18 @@ export function Hero() {
             How it installs
           </Button>
           <Button href="#skills" variant="outline">
-            Browse {stats.global + stats.catalog} skills
+            Browse {stats.skills} skills
           </Button>
         </div>
 
         <div className="mt-14 flex flex-wrap justify-center gap-2">
-          {families.map((f) => (
+          {globalGroups.map((g) => (
             <span
-              key={f.id}
+              key={g.id}
               className="inline-flex items-center gap-2 rounded-full bg-[#ece9ff] px-3.5 py-1.5 text-[12.5px] font-semibold text-violet-deep"
             >
-              {f.label.split(" · ")[0]}
-              <b className="font-mono tabular-nums">{f.count}</b>
+              {g.label}
+              <b className="font-mono tabular-nums">{g.skills.length}</b>
             </span>
           ))}
         </div>

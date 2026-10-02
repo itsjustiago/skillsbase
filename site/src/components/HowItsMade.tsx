@@ -1,58 +1,57 @@
 import { Container, SectionHeading } from "./ui/primitives";
 import { Reveal } from "./ui/Reveal";
-import { repoUrl } from "@/data/skills";
+import { plugins, repoUrl, stats } from "@/data/skills";
 
-const stats = [
-  { n: "0", l: "plugins" },
-  { n: "0", l: "hooks" },
-  { n: "38", l: "sessions audited" },
-  { n: "14", l: "global skills" },
+const figures = [
+  { n: stats.skills, l: "global skills" },
+  { n: stats.agents, l: "agents" },
+  { n: stats.external, l: "pulled from source" },
+  { n: stats.hooks, l: "hook" },
 ];
 
 const principles = [
   {
     t: "Files, not plugins",
-    d: "Skills are plain files in ~/.claude/skills/. It works on the desktop app — the claude CLI isn't required.",
+    d: `Skills, agents, the hook and the command are plain files in ~/.claude. It works on the desktop app without the claude CLI on PATH, and updating means re-running a script. The only plugin is ${plugins[0]}, enabled by the bundled settings.json when you have none.`,
   },
   {
-    t: "Zero hooks",
-    d: "Latency was the #1 complaint. Nothing fires automatically on every edit; enforcement lives in the instructions.",
+    t: "Third parties from source",
+    d: `The ${stats.external} external skills are never vendored. install-externals.sh clones each upstream at install time, so authors and licenses stay theirs and updates are a re-run.`,
   },
   {
-    t: "Externals from source",
-    d: "The 9 external skills are pulled from their upstreams and patched on install — never vendored, so updates are one command.",
+    t: "Orchestrator model",
+    d: "One main session briefs and reviews. The engenheiro agent writes the code; the read-only agents map, review, test and audit it.",
   },
   {
-    t: "Audited, not accumulated",
-    d: "An audit of 38 sessions cut dead connectors and heavy skills. Every global skill has to earn its start-up cost.",
+    t: "Safe by default",
+    d: "One hook, for killing processes by name; no per-edit hooks to add latency. Setup is additive, sync is a dry-run until --apply, every replace leaves a backup and settings.json is never overwritten.",
   },
 ];
 
 export function HowItsMade() {
   return (
-    <section id="how" className="scroll-mt-24 py-24 md:py-32">
+    <section id="how" className="py-24 md:py-32">
       <Container>
         <Reveal>
           <SectionHeading
             eyebrow="How it's made"
             title={
               <>
-                File-based. No plugins,{" "}
-                <span className="text-violet">no hooks</span>.
+                Plain files, <span className="text-violet">pulled from source</span>.
               </>
             }
-            intro="Rebuilt from an audit of 38 sessions. The old build ran 8 plugins and automatic hooks; the latency and context bloat had to go."
+            intro="Rebuilt from scratch as files. The per-project catalog, the install profiles and the heavy MCP set are gone: everything left has to earn its start-up cost."
           />
         </Reveal>
 
         <Reveal>
           <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
-            {stats.map((s) => (
+            {figures.map((s) => (
               <div key={s.l} className="bg-white p-6 text-center">
                 <div className="font-display text-[38px] font-extrabold leading-none tracking-tight tabular-nums">
                   {s.n}
                 </div>
-                <div className="mt-2 font-mono text-[11px] uppercase tracking-wider text-muted">
+                <div className="mt-2 font-mono text-[11px] uppercase tracking-wider text-ink-soft">
                   {s.l}
                 </div>
               </div>
@@ -76,14 +75,32 @@ export function HowItsMade() {
         </div>
 
         <p className="mt-8 text-[14px] text-ink-soft">
-          The full reasoning — what was cut and why —{" "}
+          The full reasoning, what was cut and why, lives in{" "}
           <a
             href={`${repoUrl}/blob/main/DECISIONS.md`}
             target="_blank"
             rel="noreferrer"
             className="font-semibold text-violet underline-offset-4 hover:underline"
           >
-            lives in DECISIONS.md
+            DECISIONS.md
+          </a>
+          ; the install logic is{" "}
+          <a
+            href={`${repoUrl}/blob/main/setup.sh`}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-violet underline-offset-4 hover:underline"
+          >
+            setup.sh
+          </a>
+          , and the overview is the{" "}
+          <a
+            href={`${repoUrl}/blob/main/README.md`}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-violet underline-offset-4 hover:underline"
+          >
+            README.md
           </a>
           .
         </p>

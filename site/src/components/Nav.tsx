@@ -5,7 +5,9 @@ import { Container } from "./ui/primitives";
 import { repoUrl } from "@/data/skills";
 
 const links = [
+  { href: "#build", label: "The build" },
   { href: "#skills", label: "Skills" },
+  { href: "#agents", label: "Agents" },
   { href: "#how", label: "How it's made" },
   { href: "#install", label: "Install" },
 ];

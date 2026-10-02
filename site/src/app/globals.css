@@ -39,10 +39,6 @@ body {
   color: #fff;
 }
 
-html {
-  scroll-padding-top: 88px;
-}
-
 @keyframes marquee {
   from {
     transform: translateX(0);
