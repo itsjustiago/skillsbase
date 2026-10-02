@@ -18,11 +18,11 @@ User says: "session handoff", "wrap up session", "hand off", "handoff summary", 
 
 1. **Review the full conversation**, not just the last few turns. Handoffs miss things when they only summarize recent context.
 2. **Pull state from these sources (in order):**
-   - Plan files referenced this session (check `C:\Users\tiago\.claude\plans\` if a plan was mentioned).
+   - Plan files referenced this session (check `~/.claude/plans/` if a plan was mentioned).
    - TodoWrite state — any in-progress or pending tasks.
    - Background processes you started with `run_in_background` — shell IDs are load-bearing for the next agent.
    - Files created or modified this session — you know what you touched; don't grep to re-discover.
-   - Memory files written or updated (`C:\Users\tiago\.claude\projects\<project>\memory\`).
+   - Memory files written or updated (`~/.claude/projects/<project>/memory/`).
    - Project CLAUDE.md — pull tone/communication preferences for the "Tone for this user" section.
    - Unresolved questions — things you asked the user that never got a clear answer, or things the user asked that got deflected.
    - Dead-ends — approaches you tried that didn't work, or were ruled out partway through.
@@ -89,7 +89,7 @@ You are a fresh Claude session. The user just ran `/clear`. Everything above thi
 
 ## First action (do these in order)
 
-1. <Read which file end-to-end, e.g., "Read `C:\Users\tiago\.claude\plans\foo.md`">
+1. <Read which file end-to-end, e.g., "Read `~/.claude/plans/foo.md`">
 2. <Run which command to confirm state, e.g., "Run `pytest packages/core` — should be green">
 3. <Ask user which question if any, e.g., "Confirm with user whether to proceed with X or Y before any code changes">
 

@@ -157,7 +157,7 @@ Example for a Next.js + PWA + Drizzle project:
 >
 > Há uma terceira no catálogo (`supabase-typescript`) que **não recomendo** porque o teu projeto usa Drizzle+Neon, não Supabase. Só fazia sentido se planeares migrar.
 >
-> Custo: ~2900 tokens adicionados ao startup do `lift`. Ficam só neste projeto (`.claude/skills/`), não afetam mais nada.
+> Custo: ~2900 tokens adicionados ao startup deste projeto. Ficam só neste projeto (`.claude/skills/`), não afetam mais nada.
 
 #### Ask one question, three options
 
