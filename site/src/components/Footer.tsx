@@ -5,7 +5,9 @@ const columns = [
   {
     title: "Build",
     links: [
+      { label: "The build", href: "#build" },
       { label: "Skills", href: "#skills" },
+      { label: "Agents", href: "#agents" },
       { label: "How it's made", href: "#how" },
       { label: "Install", href: "#install" },
     ],
@@ -14,6 +16,7 @@ const columns = [
     title: "Repo",
     links: [
       { label: "GitHub", href: repoUrl },
+      { label: "README.md", href: `${repoUrl}/blob/main/README.md` },
       { label: "DECISIONS.md", href: `${repoUrl}/blob/main/DECISIONS.md` },
       { label: "setup.sh", href: `${repoUrl}/blob/main/setup.sh` },
     ],
@@ -33,17 +36,17 @@ export function Footer() {
               skillsbase
             </div>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-white/60">
-              One repo bootstraps a whole Claude Code setup — {stats.global}{" "}
-              global skills, a {stats.catalog}-skill catalog and the global
+              One repo sets up Claude Code: {stats.skills} global skills,{" "}
+              {stats.agents} agents, {stats.hooks} guardrail hook and the global
               instructions.
             </p>
           </div>
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="font-mono text-[12px] uppercase tracking-wider text-white/40">
+              <p className="font-mono text-[12px] uppercase tracking-wider text-white/40">
                 {col.title}
-              </h4>
+              </p>
               <ul className="mt-4 grid gap-2.5">
                 {col.links.map((l) => (
                   <li key={l.label}>
@@ -67,7 +70,7 @@ export function Footer() {
             © 2026 skillsbase · built by itsjustiago
           </p>
           <p className="font-mono text-[12px] uppercase tracking-wider text-white/40">
-            file-based · no plugins · no hooks
+            plain files · {stats.skills} skills · {stats.agents} agents
           </p>
         </div>
       </Container>

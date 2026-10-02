@@ -1,11 +1,11 @@
 import { Container, SectionHeading } from "./ui/primitives";
 import { Reveal } from "./ui/Reveal";
 import { CopyBar } from "./ui/CopyBar";
-import { smartInstall, installModes, repoUrl } from "@/data/skills";
+import { smartInstall, installModes, installNotes, repoUrl } from "@/data/skills";
 
 export function Install() {
   return (
-    <section id="install" className="scroll-mt-24 py-24 md:py-32">
+    <section id="install" className="py-24 md:py-32">
       <Container>
         <Reveal>
           <SectionHeading
@@ -35,9 +35,16 @@ export function Install() {
                 key={m.label}
                 className="rounded-2xl border border-line bg-white p-5"
               >
-                <h3 className="font-display text-[15px] font-bold tracking-tight">
-                  {m.label}
-                </h3>
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="min-w-0 font-display text-[15px] font-bold tracking-tight">
+                    {m.label}
+                  </h3>
+                  {m.recommended && (
+                    <span className="shrink-0 rounded bg-[#ece9ff] px-1.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-violet-deep">
+                      recommended
+                    </span>
+                  )}
+                </div>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-ink-soft">
                   {m.blurb}
                 </p>
@@ -46,8 +53,17 @@ export function Install() {
           </div>
         </div>
 
+        <ul className="mx-auto mt-6 grid max-w-3xl gap-2 rounded-2xl border border-tangerine/40 bg-white p-5 text-[13px] leading-relaxed text-ink-soft">
+          {installNotes.map((n) => (
+            <li key={n} className="flex gap-2.5">
+              <span aria-hidden className="font-mono text-tangerine">!</span>
+              <span className="min-w-0 break-words">{n}</span>
+            </li>
+          ))}
+        </ul>
+
         <p className="mx-auto mt-10 max-w-2xl text-center text-[13px] leading-relaxed text-ink-soft">
-          Fresh machine or a build of your own — it adapts. Everything comes from
+          Fresh machine or a setup of your own, it adapts. Everything comes from
           one public repo:{" "}
           <a
             href={repoUrl}

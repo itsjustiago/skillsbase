@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Unbounded, Hanken_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { stats } from "@/data/skills";
 
 const unbounded = Unbounded({
   subsets: ["latin"],
@@ -20,8 +21,7 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
 });
 
-const DESC =
-  "Clone one repo and Claude is fully configured: 14 global skills, a 62-skill catalog and the global instructions — file-based, no plugins, no hooks.";
+const DESC = `Paste one prompt on a new machine and Claude Code is configured: ${stats.skills} global skills, ${stats.agents} agents, ${stats.hooks} guardrail hook and the global instructions, all as plain files.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://skillsbase.vercel.app"),
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "skillsbase",
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary" },
 };
 
 export default function RootLayout({

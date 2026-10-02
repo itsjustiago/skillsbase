@@ -1,8 +1,8 @@
 import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
-import { TwoLayer } from "@/components/TwoLayer";
+import { Overview } from "@/components/Overview";
 import { GlobalSkills } from "@/components/GlobalSkills";
-import { Catalog } from "@/components/Catalog";
+import { Agents } from "@/components/Agents";
 import { HowItsMade } from "@/components/HowItsMade";
 import { Install } from "@/components/Install";
 import { Footer } from "@/components/Footer";
@@ -13,9 +13,9 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <TwoLayer />
+        <Overview />
         <GlobalSkills />
-        <Catalog />
+        <Agents />
         <HowItsMade />
         <Install />
       </main>
