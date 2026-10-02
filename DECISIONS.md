@@ -4,7 +4,7 @@ Why this build looks the way it does. Read before re-adding anything that was re
 
 ## Still valid
 
-- **Files, not plugins.** Skills, agents, the hook and the command are plain files in `~/.claude`. It works in the desktop app without the `claude` CLI on PATH, and updating means re-running a script.
+- **Files, not plugins.** Skills, agents, and the hook are plain files in `~/.claude`. It works in the desktop app without the `claude` CLI on PATH, and updating means re-running a script.
 - **Third-party skills are never vendored.** `setup/install-externals.sh` clones each upstream at install time (licenses stay with their authors; updates = re-run). The 16 externals and their sources are in the README.
 - **Patches reapplied on install** by `install-externals.sh`:
   - `ui-ux-pro-max`: `disable-model-invocation: true` plus a kickoff prefix in the description. Upstream auto-triggers on any UI work (~12k tokens per invocation); now it only runs on `/ui-ux-pro-max`.
@@ -18,8 +18,5 @@ Why this build looks the way it does. Read before re-adding anything that was re
 ## Changed in this rebuild
 
 - **Removed:** the 62-skill per-project catalog, `catalog.json` and its build/validate scripts, the install profiles, the guides, the memory templates, the MCP folder, the catalog CI workflow, and the manual install doc.
+- **Removed (later):** the `skill-matchmaker` skill, the `/skills-suggest` command and the "add to catalog" step of `skill-scout`. They depended on the catalog above, which no longer exists. The build has no slash commands and no `commands/` folder.
 - **Added:** 7 more external skills (browser testing, security, web quality, static analysis), the own skill `watch-youtube`, 8 agents, the process-kill hook, and the owner's `CLAUDE.md` and `settings.json`.
-
-## Known limitation
-
-`skill-matchmaker`, `skill-scout` (its "add to catalog" step) and `/skills-suggest` read a `catalog.json` that no longer exists. They are kept as-is rather than inventing a new catalog; fix them or drop them when a catalog is decided again.

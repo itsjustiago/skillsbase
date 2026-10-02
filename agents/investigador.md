@@ -40,11 +40,11 @@ recomendação ranqueada com provas.
 | tarefa | invoca |
 |---|---|
 | "o que existe no ecossistema para X?" | `skill-scout` — GitHub, awesome-lists, marketplaces, registry MCP |
-| "já tenho algo para isto?" | `skill-matchmaker` — procura no catálogo dele (skillsbase) |
+| "já tenho algo para isto?" | vê primeiro o que já está instalado em `~/.claude/skills` |
 | vídeo do YouTube a analisar | `watch-youtube` — transcript + frames, não adivinhes pelo título |
 | pergunta sobre a API/modelos da Anthropic | `claude-api` — preços e IDs mudam, nunca de memória |
 
-Antes de recomendar algo novo, corre o `skill-matchmaker`: duplicar uma capacidade
+Antes de recomendar algo novo, vê o que já está instalado em `~/.claude/skills`: duplicar uma capacidade
 que ele já tem é custo, não ganho.
 
 ## Subagentes

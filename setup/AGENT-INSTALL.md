@@ -5,8 +5,8 @@
 
 **Regra de ouro:** faz **UMA** `AskUserQuestion` com a opção recomendada marcada — **nunca** um menu neutro de tudo.
 
-Esta build tem **22 skills globais**, **8 agentes**, **1 hook**, **1 comando** e as instruções globais:
-- **Skills próprias (6):** `ship`, `ship-merge`, `session-handoff`, `skill-matchmaker`, `skill-scout`, `watch-youtube`
+Esta build tem **21 skills globais**, **8 agentes**, **1 hook** e as instruções globais:
+- **Skills próprias (5):** `ship`, `ship-merge`, `session-handoff`, `skill-scout`, `watch-youtube`
 - **Skills externas (16, puxadas dos upstreams):** `frontend-design`, `impeccable`, `emil-design-eng`, `review-animations`, `supabase`, `supabase-postgres-best-practices`, `systematic-debugging`, `verification-before-completion`, `ui-ux-pro-max`, `browser-testing-with-devtools`, `security-and-hardening`, `core-web-vitals`, `web-accessibility`, `semgrep`, `differential-review`, `supply-chain-risk-auditor`
 - **Agentes (8):** `design`, `engenheiro`, `explorador`, `financas`, `investigador`, `revisor`, `seguranca`, `testador`
 - **Hook (1):** `bloquear_kill_por_nome.py` (PreToolUse em Bash; bloqueia `pkill`/`killall` e afins)
@@ -15,7 +15,7 @@ Esta build tem **22 skills globais**, **8 agentes**, **1 hook**, **1 comando** e
 
 ## 1. Inspeciona o terreno (só leitura, antes de perguntar)
 
-- `ls ~/.claude/skills 2>/dev/null` → quantas skills globais ele já tem, e **quantas NÃO são das 22 acima** (candidatas a remoção no modo "match").
+- `ls ~/.claude/skills 2>/dev/null` → quantas skills globais ele já tem, e **quantas NÃO são das 21 acima** (candidatas a remoção no modo "match").
 - `ls ~/.claude/agents ~/.claude/hooks 2>/dev/null` → o mesmo para agentes e hooks que não são da build.
 - `~/.claude/CLAUDE.md` existe? → vai ser substituído nos modos com instruções (com backup).
 - `~/.claude/settings.json` existe? → **nunca** é sobrescrito. Se existir, vê se já tem o hook `bloquear_kill_por_nome` em `hooks.PreToolUse`.
@@ -27,7 +27,7 @@ Guarda os números para usar na pergunta (ex.: *"tens 18 skills globais, 12 não
 
 Usa o estado real dele nas descrições. Opções:
 
-- **Só skills, por cima** — *(recomendado)* — instala as 22 skills, os 8 agentes, o ficheiro do hook e o comando por cima. Mantém as tuas outras skills/agentes, plugins, o teu CLAUDE.md e settings. Itens teus **com o mesmo nome** que os da build são substituídos, com backup em `~/.claude/backups/skillsbase-<TS>/`. O hook só fica ativo depois do §4.
+- **Só skills, por cima** — *(recomendado)* — instala as 21 skills, os 8 agentes e o ficheiro do hook por cima. Mantém as tuas outras skills/agentes, plugins, o teu CLAUDE.md e settings. Itens teus **com o mesmo nome** que os da build são substituídos, com backup em `~/.claude/backups/skillsbase-<TS>/`. O hook só fica ativo depois do §4.
 - **Skills + instruções** — o bootstrap completo. Faz o de cima **e substitui o teu CLAUDE.md** pelo desta build (backup em `CLAUDE.md.pre-skillsbase.bak`, ou `…-<TS>.bak` se já existir um). Cria o `settings.json` só se não existir. **Avisa numa linha:** o CLAUDE.md é o do dono (auto-merge e push sem perguntar, escrito para "o Tiago") e convém adaptá-lo.
 - **Deixar igual à build** — reconcilia: instala tudo **e remove as {N} skills globais, os agentes e os hooks teus que não são desta build**, + substitui o CLAUDE.md. *(NÃO remove plugins nem settings — são sistemas à parte.)*
 - **Só instruções** — só substitui o CLAUDE.md (com backup; mesmo aviso do dono). Não toca em skills, agentes nem hooks.
@@ -36,7 +36,7 @@ Se ele quiser **ver o que muda antes** de decidir o "match": corre o dry-run (`b
 
 ## 3. Aplica o modo escolhido
 
-Já clonaste o repo (o prompt mandou clonar). **Antes de correr**, mostra ao utilizador, em poucas linhas, o que vão fazer: `setup.sh` copia skills próprias, agentes, hook, comando (e CLAUDE.md/settings conforme o modo) para `~/.claude`, com backup do que substitui; `setup/install-externals.sh` **clona o HEAD dos 9 repos upstream** (sem pin, por desenho) e instala 16 skills — convém ele rever o script se quiser. Só depois corre, a partir da **raiz do repo**:
+Já clonaste o repo (o prompt mandou clonar). **Antes de correr**, mostra ao utilizador, em poucas linhas, o que vão fazer: `setup.sh` copia skills próprias, agentes, hook (e CLAUDE.md/settings conforme o modo) para `~/.claude`, com backup do que substitui; `setup/install-externals.sh` **clona o HEAD dos 9 repos upstream** (sem pin, por desenho) e instala 16 skills — convém ele rever o script se quiser. Só depois corre, a partir da **raiz do repo**:
 
 | Modo | Comando |
 |---|---|
@@ -69,7 +69,6 @@ Diz-lhe, em concreto:
 - **Reinicia o Claude Code** para skills, agentes e CLAUDE.md carregarem.
 - O hook precisa de `python3` no PATH.
 - **Supabase (opcional):** conector OAuth no desktop app ou MCP por CLI — ver [`setup/mcps.md`](mcps.md). Tu (agente) não consegues ligá-lo por ele.
-- **Limitação conhecida:** `skill-matchmaker` e `/skills-suggest` dependem de um `catalog.json` que esta build já não publica — não os uses (ver [`DECISIONS.md`](../DECISIONS.md)).
 
 ---
 

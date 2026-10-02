@@ -7,8 +7,8 @@
 #   bash setup.sh
 #
 # Idempotente: seguro re-correr (também serve para ATUALIZAR as skills externas).
-# A build é 100% ficheiros (skills, agentes, hook, comando, CLAUDE.md, settings). Porquê: ver DECISIONS.md.
-# Ordem: primeiro o que não precisa de rede (próprias, agentes, hooks, comando,
+# A build é 100% ficheiros (skills, agentes, hook, CLAUDE.md, settings). Porquê: ver DECISIONS.md.
+# Ordem: primeiro o que não precisa de rede (próprias, agentes, hooks,
 # CLAUDE.md, settings), por último as externas (clonam o HEAD dos upstreams).
 # Sandbox/teste: CLAUDE_DIR=/tmp/teste bash setup.sh
 
@@ -20,8 +20,8 @@ TS="$(date +%Y-%m-%d-%H%M%S)"
 export SKILLSBASE_BAK="$CLAUDE_DIR/backups/skillsbase-$TS"
 
 # ── Modo (default = tudo) ────────────────────────────────────
-#   (sem args)       tudo: skills + externas + agentes + hooks + comandos + CLAUDE.md (+ settings)
-#   --skills         só skills próprias + externas + agentes + hooks + comandos (não toca em config)
+#   (sem args)       tudo: skills + externas + agentes + hooks + CLAUDE.md (+ settings)
+#   --skills         só skills próprias + externas + agentes + hooks (não toca em config)
 #   --instructions   só o CLAUDE.md global (com backup)
 MODE="all"
 case "${1:-}" in
@@ -60,7 +60,7 @@ if do_skills; then
   fi
 fi
 mkdir -p "$CLAUDE_DIR"
-if do_skills; then mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/hooks"; fi
+if do_skills; then mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/hooks"; fi
 
 # put <origem> <pasta-destino> <categoria> — copia ficheiro/pasta; se já existir com o mesmo
 # nome e for diferente, faz backup em $SKILLSBASE_BAK/<categoria>/ antes de substituir.
@@ -102,7 +102,7 @@ hook_note() {
   print_hook_excerpt
 }
 
-# ── Step 1: skills próprias + agentes + hooks + slash commands (sem rede) ──
+# ── Step 1: skills próprias + agentes + hooks (sem rede) ──
 if do_skills; then
   echo ""
   echo "==> skills próprias (global-skills/)"
@@ -114,9 +114,6 @@ if do_skills; then
   echo "==> hooks (hooks/ — só os ficheiros; o registo vive no settings.json)"
   for f in "$REPO_ROOT"/hooks/*; do [ -f "$f" ] && put "$f" "$CLAUDE_DIR/hooks" hooks; done
   chmod +x "$CLAUDE_DIR"/hooks/*.py 2>/dev/null || true
-  echo ""
-  echo "==> comandos (commands/)"
-  for f in "$REPO_ROOT"/commands/*.md; do [ -f "$f" ] && put "$f" "$CLAUDE_DIR/commands" commands; done
 fi
 
 # ── Step 2: configs globais (sem rede) ───────────────────────
@@ -176,7 +173,7 @@ echo "  2. Supabase (só se usares): conector OAuth no desktop app, ou o MCP por
 if [ -d "$SKILLSBASE_BAK" ]; then echo "  3. Versões anteriores substituídas: $SKILLSBASE_BAK"; fi
 echo ""
 echo "────────────────────────────────────────────────────────────"
-echo " 📋 Comandos & triggers desta build:"
+echo " 📋 Triggers desta build (skills):"
 echo "────────────────────────────────────────────────────────────"
 echo "  Projeto novo (ritual de kickoff)"
 echo "    /ui-ux-pro-max <descrição>   direção de design (estilo+paleta+fontes)"

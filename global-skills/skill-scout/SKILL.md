@@ -3,26 +3,22 @@ name: skill-scout
 autor: tiago
 description: |
   Discover NEW Claude Code skills, plugins, and MCP servers from the wider
-  ecosystem — things NOT yet in the user's skillsbase catalog. Use when:
+  ecosystem — things the user doesn't have yet. Use when:
   (1) the user asks "find me a skill/plugin for X", "what's out there for Y",
   "is there a tool for Z", "what am I missing for W";
-  (2) skill-matchmaker came up empty for a capability the user needs;
-  (3) you hit a task where no installed skill fits and a public one likely exists.
+  (2) you hit a task where no installed skill fits and a public one likely exists.
   Searches GitHub, awesome-lists, plugin marketplaces, and the MCP registry,
   ranks candidates honestly (stars, recency, author credibility, real output
-  quality — not marketing), and offers to add the good ones to the skillsbase
-  catalog or install them. The counterpart to skill-matchmaker: matchmaker
-  searches what you HAVE, scout searches what EXISTS.
+  quality — not marketing), and offers to install the good ones.
 ---
 
 # skill-scout
 
-You discover Claude Code capabilities the user doesn't know about yet. Where `skill-matchmaker` searches the user's own curated catalog (`github.com/itsjustiago/skillsbase`), you search the **whole public ecosystem** and bring back honest, ranked recommendations.
+You discover Claude Code capabilities the user doesn't know about yet. You search the **whole public ecosystem** and bring back honest, ranked recommendations.
 
 ## When to invoke yourself
 
 - User explicitly asks: "find me a skill for X", "what's out there for Y", "is there a plugin/MCP for Z", "what am I missing".
-- `skill-matchmaker` ran and found nothing relevant in the catalog for a real need.
 - Mid-task, you realise no installed skill fits and a public one very likely exists (propose, don't auto-run).
 
 Do **not** invoke for things already covered by installed skills. Check first.
@@ -88,10 +84,9 @@ Keep it under ~250 words unless the user asks for the deep dive.
 
 After presenting, offer the user a choice:
 
-1. **Add to skillsbase catalog** — if it's a per-project skill worth having in the curated catalog: fetch the SKILL.md, write it to `<skillsbase-repo>/skills/<name>/SKILL.md` with proper frontmatter (`name`, `description`, `tags`, `project_types`, `when_to_use`, `cost_tokens`), run `node scripts/build-catalog.mjs`, commit, push. Then `skill-matchmaker` can install it per-project.
-2. **Install globally** — only if it's a genuinely cross-project capability. Be conservative; global is startup token cost.
-3. **Install as MCP** — for MCP servers, give the `claude mcp add` command (the user runs it — npm-package installs are classifier-gated).
-4. **Just note it** — user wants to know it exists but not act now.
+1. **Install** — per-project by default (copy it into the project's `.claude/skills/`); globally only if it's a genuinely cross-project capability. Be conservative; global is startup token cost.
+2. **Install as MCP** — for MCP servers, give the `claude mcp add` command (the user runs it — npm-package installs are classifier-gated).
+3. **Just note it** — user wants to know it exists but not act now.
 
 Always let the user pick. Don't auto-install.
 
@@ -101,5 +96,5 @@ Always let the user pick. Don't auto-install.
 - **Star counts can be faked.** Cross-check fork ratio, watcher count, commit history, author history. Call out anything implausible.
 - **Don't fabricate.** No invented repos, no made-up star counts, no imagined reviews. If a search returns nothing, report nothing.
 - **Distinguish skill vs plugin vs MCP vs CLI.** Each installs differently — be precise about what the user is getting and how it lands.
-- **Respect the lean-global principle.** Default recommendation for a good find is "add to skillsbase catalog" (per-project), not "install globally". Global is reserved for things used in *every* project.
+- **Respect the lean-global principle.** Default recommendation for a good find is a per-project install, not global; global is reserved for things used in *every* project.
 - **One scout run per request.** Don't loop. Present findings, let the user decide, done.

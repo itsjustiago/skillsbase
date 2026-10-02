@@ -64,8 +64,7 @@ export const globalGroups: { id: string; label: string; skills: GlobalSkill[] }[
     id: "discovery",
     label: "Discovery",
     skills: [
-      { name: "skill-scout", kind: "own", blurb: "Finds new skills, plugins and MCPs in the wider ecosystem. Its add-to-catalog step has no catalog to write to right now." },
-      { name: "skill-matchmaker", kind: "own", blurb: "Meant to install per-project skills from a catalog. There is no catalog at the moment, so it has nothing to read.", trigger: "/skills-suggest" },
+      { name: "skill-scout", kind: "own", blurb: "Finds new skills, plugins and MCPs in the wider ecosystem." },
       { name: "watch-youtube", kind: "own", blurb: "Transcript plus key frames from YouTube videos." },
     ],
   },
@@ -102,18 +101,17 @@ export const orchestration = [
   { who: "Other agents", what: "Map, research, review, test and audit. design and seguranca are strictly read-only." },
 ];
 
-// ---- Hook, command, instructions, settings ----
+// ---- Hook, instructions, settings ----
 export const plugins = ["security-guidance"];
 
 export type Extra = {
-  kind: "hook" | "command" | "instructions" | "settings";
+  kind: "hook" | "instructions" | "settings";
   name: string;
   blurb: string;
 };
 
 export const extras: Extra[] = [
   { kind: "hook", name: "bloquear_kill_por_nome", blurb: "PreToolUse hook on Bash: blocks killing processes by name. Needs python3." },
-  { kind: "command", name: "/skills-suggest", blurb: "Asks skill-matchmaker for per-project skills. With no catalog at the moment, it has nothing to suggest." },
   { kind: "instructions", name: "setup/CLAUDE.md", blurb: "The global ~/.claude/CLAUDE.md: language, git and ship rules, orchestrator mode." },
   { kind: "settings", name: "settings.json", blurb: `Created only if missing. Registers the hook and enables ${plugins.length} plugin (${plugins.join(", ")}).` },
 ];
@@ -134,7 +132,6 @@ export const stats = {
   groups: globalGroups.length,
   agents: agents.length,
   hooks: extras.filter((e) => e.kind === "hook").length,
-  commands: extras.filter((e) => e.kind === "command").length,
   plugins: plugins.length,
 };
 
@@ -144,7 +141,7 @@ export const installModes: InstallMode[] = [
   {
     label: "Skills only, on top",
     recommended: true,
-    blurb: `Installs the ${stats.skills} skills, ${stats.agents} agents, the hook file and the command. Keeps your other skills, agents, plugins, CLAUDE.md and settings. Same-name items are replaced, with a backup in ~/.claude/backups/.`,
+    blurb: `Installs the ${stats.skills} skills, ${stats.agents} agents, and the hook file. Keeps your other skills, agents, plugins, CLAUDE.md and settings. Same-name items are replaced, with a backup in ~/.claude/backups/.`,
   },
   {
     label: "Skills + instructions",

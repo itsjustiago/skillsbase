@@ -12,7 +12,7 @@ const figures = [
 const principles = [
   {
     t: "Files, not plugins",
-    d: `Skills, agents, the hook and the command are plain files in ~/.claude. It works on the desktop app without the claude CLI on PATH, and updating means re-running a script. The only plugin is ${plugins[0]}, enabled by the bundled settings.json when you have none.`,
+    d: `Skills, agents, the hook and the instructions are plain files in ~/.claude. It works on the desktop app without the claude CLI on PATH, and updating means re-running a script. The only plugin is ${plugins[0]}, enabled by the bundled settings.json when you have none.`,
   },
   {
     t: "Third parties from source",

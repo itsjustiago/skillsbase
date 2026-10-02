@@ -2,12 +2,12 @@
 # sync.sh — reconcilia a camada GLOBAL (~/.claude) desta máquina com o repo.
 #
 # setup.sh é aditivo; sync.sh é o reconcile completo:
-#   - remove skills globais que NÃO pertencem à build (6 próprias + 16 externas)
-#   - atualiza as próprias a partir de global-skills/ e os comandos de commands/
+#   - remove skills globais que NÃO pertencem à build (5 próprias + 16 externas)
+#   - atualiza as próprias a partir de global-skills/
 #   - reconcilia agents/ e hooks/ (remove os que não estão no repo — só com --apply)
 #   - re-corre install-externals.sh (traz/atualiza as 16 externas)
 #   - copia o CLAUDE.md global se diferir
-#   - NUNCA remove plugins, nem toca em settings.json (chaves locais) nem em <projeto>/.claude/
+#   - NUNCA toca em ~/.claude/commands/ (comandos teus), nem remove plugins, nem toca em settings.json (chaves locais) nem em <projeto>/.claude/
 #
 # DRY-RUN por defeito (não escreve nada). `bash sync.sh --apply` para executar (faz backup antes).
 # Com --apply as externas correm PRIMEIRO (rede); se alguma falhar não se remove
@@ -40,7 +40,7 @@ if $APPLY; then
   BAK="$CLAUDE_DIR/backups/sync-$TS"
   backup_fail() { echo "✗ Backup falhou em $BAK — abortado ANTES de alterar fosse o que fosse."; exit 1; }
   mkdir -p "$BAK" || backup_fail
-  for sub in skills commands agents hooks; do
+  for sub in skills agents hooks; do
     if [ -d "$CLAUDE_DIR/$sub" ]; then cp -R -P "$CLAUDE_DIR/$sub" "$BAK/$sub" || backup_fail; fi
   done
   if [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then cp "$CLAUDE_DIR/CLAUDE.md" "$BAK/" || backup_fail; fi
@@ -104,20 +104,6 @@ done
 if ! $APPLY && [ "$MISSING_EXT" = "1" ]; then
   echo "    (--apply corre o install-externals.sh e resolve)"
 fi
-
-# ── Comandos ─────────────────────────────────────────────────
-echo ""
-echo "==> Slash commands"
-for f in "$REPO_ROOT"/commands/*.md; do
-  [ -f "$f" ] || continue
-  base="$(basename "$f")"
-  if [ ! -f "$CLAUDE_DIR/commands/$base" ] || ! cmp -s "$f" "$CLAUDE_DIR/commands/$base"; then
-    echo "  ~ $base"
-    if $APPLY; then mkdir -p "$CLAUDE_DIR/commands" && cp "$f" "$CLAUDE_DIR/commands/$base"; fi
-  else
-    echo "  = ok: $base"
-  fi
-done
 
 # ── Agentes e hooks ──────────────────────────────────────────
 # reconcile_dir <rótulo> <dir-repo> <dir-destino> <glob> <protege-se-referenciado-no-settings:true|false>
