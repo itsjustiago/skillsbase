@@ -59,9 +59,9 @@ A build traz **2 hooks** (`PreToolUse` em `Bash` → `python3 ~/.claude/hooks/bl
 
 - **Sem `~/.claude/settings.json`:** o `setup.sh` (modo completo) cria-o com isto tudo — os hooks ficam ativos.
 - **Com `~/.claude/settings.json`:** o script não lhe toca e imprime o excerto dos hooks. Mostra-o ao utilizador e **só com o OK dele** funde-o no ficheiro dele (acrescenta as entradas a `hooks.PreToolUse` e `hooks.SessionStart`, sem apagar nada do que lá está). Faz o mesmo, também só com OK, para o plugin se ele o quiser.
-- **Chaves de contexto a juntar à mão** (também só com OK): `"autoCompactWindow": 250000` e `"permissions": { "deny": ["Artifact", "ArtifactComments", "ArtifactData"] }` (se ele já tiver `permissions.deny`, acrescenta aos que lá estão). Porquê: `DECISIONS.md`.
+- **Auto-compact** (também só com OK): propõe juntar `"autoCompactWindow": 250000` ao settings dele, com o hook `SessionStart` acima (é o que retoma o estado depois de compactar). Só faz diferença em modelos com 1M de contexto; nos outros a janela já é menor. Porquê: `DECISIONS.md`.
 - Os hooks precisam de `python3` a funcionar (no Windows `python3` pode ser o stub da Microsoft Store): o `setup.sh` avisa se `python3 --version` falhar; se avisou, diz-lho claramente antes de registar os hooks.
-- Avisa que `setup/settings.json` inclui preferências do dono (tema `dark`, Remote Control desligado, stop-review desligado) — **não** as fundas por defeito; só os hooks e as chaves de contexto (e o plugin, se ele quiser).
+- Avisa que `setup/settings.json` inclui preferências do dono (tema `dark`, Remote Control desligado, stop-review desligado, deny às tools `Artifact`) — **não** as fundas por defeito; só os hooks e o `autoCompactWindow` (e o plugin, se ele quiser).
 
 ## 5. Reporta + passos manuais (o utilizador tem de fazer)
 

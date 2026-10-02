@@ -52,7 +52,7 @@ site/           the showcase site (Next.js, deployed separately)
 - **Instructions:** `setup/CLAUDE.md` is the global `~/.claude/CLAUDE.md` (language, git and ship rules, orchestrator mode).
 - **MCP:** only Supabase is documented, with placeholders: [`setup/mcps.md`](setup/mcps.md).
 
-`setup/settings.json` includes the owner's own preferences (dark theme, Remote Control off, stop-review off), plus the hooks, one plugin (`security-guidance`), `autoCompactWindow: 250000` and a deny on the `Artifact`, `ArtifactComments` and `ArtifactData` tools. It is create-only: an existing `settings.json` is never touched; merge the `hooks`, `autoCompactWindow` and `permissions.deny` keys by hand (`setup/AGENT-INSTALL.md` §4).
+`setup/settings.json` includes the owner's own preferences (dark theme, Remote Control off, stop-review off, `autoCompactWindow: 250000`, a deny on the `Artifact`, `ArtifactComments` and `ArtifactData` tools), plus the hooks and one plugin (`security-guidance`). It is create-only: an existing `settings.json` is never touched; the install prompt proposes merging the hooks and `autoCompactWindow`, with your OK (`setup/AGENT-INSTALL.md` §4).
 
 ## Install
 
