@@ -21,7 +21,7 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
 });
 
-const DESC = `Paste one prompt on a new machine and Claude Code is configured: ${stats.skills} global skills, ${stats.agents} agents, ${stats.hooks} guardrail hook and the global instructions, all as plain files.`;
+const DESC = `Paste one prompt on a new machine and Claude Code is configured: ${stats.skills} global skills, ${stats.agents} agents, ${stats.hooks} light hooks and the global instructions, all as plain files.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://skillsbase.vercel.app"),

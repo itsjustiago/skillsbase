@@ -58,6 +58,7 @@ export const globalGroups: { id: string; label: string; skills: GlobalSkill[] }[
       { name: "ship", kind: "own", blurb: "commit, push, open PR, in one shot.", trigger: "/ship" },
       { name: "ship-merge", kind: "own", blurb: "ship + CI wait + light review + squash-merge + cleanup.", trigger: "/ship-merge" },
       { name: "session-handoff", kind: "own", blurb: "A clean end-of-session handoff before /clear.", trigger: "wrap up session" },
+      { name: "preclear", kind: "own", blurb: "Saves the task state and clears the chat. The next chat resumes from it.", trigger: "/preclear" },
     ],
   },
   {
@@ -112,8 +113,9 @@ export type Extra = {
 
 export const extras: Extra[] = [
   { kind: "hook", name: "bloquear_kill_por_nome", blurb: "PreToolUse hook on Bash: blocks killing processes by name. Needs python3." },
+  { kind: "hook", name: "estado_sessao", blurb: "SessionStart hook: injects the folder's state file on startup, compact and clear, so work resumes without re-explaining. Needs python3." },
   { kind: "instructions", name: "setup/CLAUDE.md", blurb: "The global ~/.claude/CLAUDE.md: language, git and ship rules, orchestrator mode." },
-  { kind: "settings", name: "settings.json", blurb: `Created only if missing. Registers the hook and enables ${plugins.length} plugin (${plugins.join(", ")}).` },
+  { kind: "settings", name: "settings.json", blurb: `Created only if missing. Registers the hooks, enables ${plugins.length} plugin (${plugins.join(", ")}), auto-compacts at 250k and denies the Artifact tools.` },
 ];
 
 // ---- Install: one prompt you paste into Claude ----
@@ -141,7 +143,7 @@ export const installModes: InstallMode[] = [
   {
     label: "Skills only, on top",
     recommended: true,
-    blurb: `Installs the ${stats.skills} skills, ${stats.agents} agents, and the hook file. Keeps your other skills, agents, plugins, CLAUDE.md and settings. Same-name items are replaced, with a backup in ~/.claude/backups/.`,
+    blurb: `Installs the ${stats.skills} skills, ${stats.agents} agents, and the hook files. Keeps your other skills, agents, plugins, CLAUDE.md and settings. Same-name items are replaced, with a backup in ~/.claude/backups/.`,
   },
   {
     label: "Skills + instructions",
@@ -158,8 +160,8 @@ export const installModes: InstallMode[] = [
 ];
 
 export const installNotes = [
-  "Needs git and node, plus python3 for the hook. Restart Claude Code when it finishes.",
+  "Needs git and node, plus python3 for the hooks. Restart Claude Code when it finishes.",
   "The instructions are the owner's: auto-merge and push without asking, written for \"Tiago\". Adapt them after installing.",
-  "settings.json is never overwritten. Registering the hook is proposed, and only done with your OK.",
+  "settings.json is never overwritten. Registering the hooks is proposed, and only done with your OK.",
   "External skills are cloned from the upstream HEAD, unpinned by design. Review setup/install-externals.sh first.",
 ];
