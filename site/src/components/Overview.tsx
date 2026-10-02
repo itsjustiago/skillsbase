@@ -36,7 +36,7 @@ const cards = [
   {
     label: "Guardrails + instructions",
     title: `${extras.length} pieces`,
-    body: "Rules that apply in every session, from the hook to the global CLAUDE.md.",
+    body: "Rules that apply in every session, from the hooks to the global CLAUDE.md.",
     points: extras.map((e) => `${e.kind}: ${e.name}`),
   },
 ];

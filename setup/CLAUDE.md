@@ -26,3 +26,4 @@ O principal fala com o Tiago, decide e distribui; os tokens ardem no contexto do
 - Verificação de browser por texto (`read_page`, consola, js); screenshot no máximo UM, como prova final. Output ruidoso de comandos → filtra no shell.
 - **Nunca matar processos por nome** (pkill, killall, kill com pgrep, fechar apps com osascript): só `kill <PID>` de um processo que o próprio agente lançou (guarda `$!`). Um "pkill -f cat" já fechou apps abertas do Tiago. Um hook em `~/.claude/hooks/bloquear_kill_por_nome.py` bloqueia.
 - Conversa longa + assunto novo → fecha e abre limpa (/clear).
+- Trabalho longo: mantém atualizado o ficheiro de estado que o hook indica no arranque (objetivo, decisões, feito, próximo, agentes em fundo) — é o que deixa compactar ou abrir chat novo sem re-explicar. Auto-compact aos 250k.

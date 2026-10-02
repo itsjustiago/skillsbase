@@ -7,7 +7,7 @@
 #   bash setup.sh
 #
 # Idempotente: seguro re-correr (também serve para ATUALIZAR as skills externas).
-# A build é 100% ficheiros (skills, agentes, hook, CLAUDE.md, settings). Porquê: ver DECISIONS.md.
+# A build é 100% ficheiros (skills, agentes, hooks, CLAUDE.md, settings). Porquê: ver DECISIONS.md.
 # Ordem: primeiro o que não precisa de rede (próprias, agentes, hooks,
 # CLAUDE.md, settings), por último as externas (clonam o HEAD dos upstreams).
 # Sandbox/teste: CLAUDE_DIR=/tmp/teste bash setup.sh
@@ -54,8 +54,8 @@ if do_skills; then
   if python3 --version >/dev/null 2>&1; then
     echo "  v python3"
   else
-    echo "  ! python3 não funciona (no Windows pode ser o stub da Microsoft Store): o hook"
-    echo "    bloquear_kill_por_nome não corre até instalares Python 3 (e o ui-ux-pro-max também precisa)."
+    echo "  ! python3 não funciona (no Windows pode ser o stub da Microsoft Store): os hooks"
+    echo "    não correm até instalares Python 3 (e o ui-ux-pro-max também precisa)."
     echo "    A instalação continua."
   fi
 fi
@@ -90,14 +90,18 @@ const s = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
 console.log(JSON.stringify({ hooks: s.hooks }, null, 2).replace(/^/gm, "        "));
 ' "$REPO_ROOT/setup/settings.json"
 }
-# O ficheiro do hook é copiado, mas só o settings.json o regista.
+# Os ficheiros dos hooks são copiados, mas só o settings.json os regista.
 hook_note() {
-  local sf="$CLAUDE_DIR/settings.json"
-  if [ -f "$sf" ] && grep -qF bloquear_kill_por_nome "$sf"; then
-    echo "  = hook bloquear_kill_por_nome já registado no settings.json"
+  local sf="$CLAUDE_DIR/settings.json" f b missing=""
+  for f in "$REPO_ROOT"/hooks/*.py; do
+    b="$(basename "$f" .py)"
+    { [ -f "$sf" ] && grep -qF "$b" "$sf"; } || missing="$missing $b"
+  done
+  if [ -z "$missing" ]; then
+    echo "  = hooks já registados no settings.json"
     return 0
   fi
-  echo "  ! o hook bloquear_kill_por_nome NÃO fica ativo até ser registado. Funde isto em"
+  echo "  ! por registar:$missing — NÃO ficam ativos até estarem no settings.json. Funde isto em"
   echo "    \"hooks\" do teu settings.json (o AGENT-INSTALL.md trata, com OK do utilizador):"
   print_hook_excerpt
 }
@@ -135,14 +139,14 @@ fi
 if [ "$MODE" = "all" ]; then
   if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
     cp "$REPO_ROOT/setup/settings.json" "$CLAUDE_DIR/settings.json"
-    echo "  v settings.json (criado, com o hook registado)"
+    echo "  v settings.json (criado, com os hooks registados)"
   else
     echo "  = settings.json já existe — mantido (pode ter chaves locais da máquina)"
     hook_note
   fi
 elif [ "$MODE" = "skills" ]; then
   echo ""
-  echo "==> hook"
+  echo "==> hooks"
   hook_note
 fi
 
@@ -193,6 +197,7 @@ echo "  Ship & sessões"
 echo "    /ship                       commit → push → PR"
 echo "    /ship-merge                 commit → PR → CI → squash-merge → cleanup"
 echo "    \"wrap up session\"          handoff antes de /clear"
+echo "    /preclear                   guarda o estado e limpa o chat (o hook retoma-o)"
 echo ""
 echo "  Agentes (subagentes, no CLAUDE.md global)"
 echo "    engenheiro · explorador · investigador · revisor · testador"

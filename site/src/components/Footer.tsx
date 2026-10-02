@@ -37,7 +37,7 @@ export function Footer() {
             </div>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-white/60">
               One repo sets up Claude Code: {stats.skills} global skills,{" "}
-              {stats.agents} agents, {stats.hooks} guardrail hook and the global
+              {stats.agents} agents, {stats.hooks} light hooks and the global
               instructions.
             </p>
           </div>

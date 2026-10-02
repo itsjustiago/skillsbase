@@ -18,7 +18,26 @@
   "agentPushNotifEnabled": false,
   "disableRemoteControl": true,
   "remoteControlAtStartup": false,
+  "autoCompactWindow": 250000,
+  "permissions": {
+    "deny": [
+      "Artifact",
+      "ArtifactComments",
+      "ArtifactData"
+    ]
+  },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/estado_sessao.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",

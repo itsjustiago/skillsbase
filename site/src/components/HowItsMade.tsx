@@ -6,13 +6,13 @@ const figures = [
   { n: stats.skills, l: "global skills" },
   { n: stats.agents, l: "agents" },
   { n: stats.external, l: "pulled from source" },
-  { n: stats.hooks, l: "hook" },
+  { n: stats.hooks, l: "hooks" },
 ];
 
 const principles = [
   {
     t: "Files, not plugins",
-    d: `Skills, agents, the hook and the instructions are plain files in ~/.claude. It works on the desktop app without the claude CLI on PATH, and updating means re-running a script. The only plugin is ${plugins[0]}, enabled by the bundled settings.json when you have none.`,
+    d: `Skills, agents, the hooks and the instructions are plain files in ~/.claude. It works on the desktop app without the claude CLI on PATH, and updating means re-running a script. The only plugin is ${plugins[0]}, enabled by the bundled settings.json when you have none.`,
   },
   {
     t: "Third parties from source",
@@ -24,7 +24,7 @@ const principles = [
   },
   {
     t: "Safe by default",
-    d: "One hook, for killing processes by name; no per-edit hooks to add latency. Setup is additive, sync is a dry-run until --apply, every replace leaves a backup and settings.json is never overwritten.",
+    d: "Two light hooks: one blocks killing processes by name, one restores the session state on start. No per-edit hooks to add latency. Setup is additive, sync is a dry-run until --apply, every replace leaves a backup and settings.json is never overwritten.",
   },
 ];
 

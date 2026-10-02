@@ -2,7 +2,7 @@
 # sync.sh — reconcilia a camada GLOBAL (~/.claude) desta máquina com o repo.
 #
 # setup.sh é aditivo; sync.sh é o reconcile completo:
-#   - remove skills globais que NÃO pertencem à build (5 próprias + 16 externas)
+#   - remove skills globais que NÃO pertencem à build (6 próprias + 16 externas)
 #   - atualiza as próprias a partir de global-skills/
 #   - reconcilia agents/ e hooks/ (remove os que não estão no repo — só com --apply)
 #   - re-corre install-externals.sh (traz/atualiza as 16 externas)
@@ -149,5 +149,5 @@ else
 fi
 
 echo ""
-echo "settings.json: nunca tocado pelo sync (chaves locais da máquina) — o registo do hook faz-se à mão (ver setup/AGENT-INSTALL.md)."
+echo "settings.json: nunca tocado pelo sync (chaves locais da máquina) — o registo dos hooks faz-se à mão (ver setup/AGENT-INSTALL.md)."
 if $APPLY; then echo "Reconcile completo. Backup em $BAK. REINICIA o Claude Code."; else echo "Dry-run terminado. Corre com --apply para aplicar."; fi
