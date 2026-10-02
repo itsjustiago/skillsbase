@@ -1,33 +1,22 @@
-# Conectores MCP — referência da build
+# MCP — referência da build
 
-A build atual corre no **Claude Code desktop app** e usa os connectors do app,
-não `claude mcp add`. O princípio (audit jul/2026): cada conector engorda o
-contexto inicial de TODAS as sessões (~42k tokens na build antiga) — só se liga
-o que se usa de facto.
+A build documenta **um** MCP: o do Supabase, par das skills `supabase` e
+`supabase-postgres-best-practices`. Cada servidor MCP ligado engorda o contexto
+inicial de todas as sessões — liga só o que usas.
 
-## Essencial (liga isto)
+## Supabase
 
-- **Supabase** — Settings → Connectors → Supabase (OAuth no browser).
-  Par das skills `supabase` / `supabase-postgres-best-practices`. Usado
-  intensamente nos projetos de clientes (soma-seg, etc.).
+Via CLI (read-only, restrito a um projeto):
 
-## Já vem com o app (nada a fazer)
+```bash
+claude mcp add supabase \
+  --env SUPABASE_ACCESS_TOKEN=<TOKEN> \
+  -- npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=<PROJECT_REF>
+```
 
-- **Claude Preview** — dev server + screenshots + inspeção (o loop visual do design).
-- Ferramentas de sessão/visualização internas.
+- `<PROJECT_REF>` — referência do projeto (Supabase dashboard → Project Settings → General).
+- `<TOKEN>` — Personal Access Token (Supabase dashboard → Account → Access Tokens).
 
-## Removidos no audit de jul/2026 — não religar por hábito
+Ou, no desktop app: Settings → Connectors → Supabase (OAuth no browser).
 
-| Conector | Porquê saiu |
-|---|---|
-| Vercel MCP | 0 usos — os deploys vão por GitHub Actions |
-| Google Drive | 0 usos |
-| mcp-registry | 0 usos |
-| claude-in-chrome | religa só quando precisares de automação de browser |
-| computer-use | religa só quando precisares de automação de desktop |
-
-## Descontinuados da build antiga (via CLI) — ver DECISIONS.md
-
-magic (21st.dev), shadcn-ui, designlang, n8n-mcp, playwright, github, firebase.
-O stack de design atual (frontend-design + impeccable + emil + ui-ux-pro-max +
-Preview) substitui os três primeiros; os restantes nunca ganharam uso real.
+Nunca commites valores reais: o token vive só no ambiente/config local da máquina.

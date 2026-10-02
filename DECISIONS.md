@@ -1,98 +1,25 @@
-# DECISIONS — porquê desta build (auditoria de 2026-07-03)
+# DECISIONS
 
-Registo das decisões da reconstrução de julho/2026, para o futuro eu (e o futuro
-Claude) não re-litigar o que já foi avaliado. Se quiseres reverter algo daqui,
-lê primeiro o motivo.
+Why this build looks the way it does. Read before re-adding anything that was removed.
 
-## Contexto: o audit
+## Still valid
 
-Análise de 38 sessões / ~31.500 mensagens (jun–jul 2026, projetos soma-seg,
-elevia, somaeseg_site, tvdefleet, Desktop). Maiores perdas identificadas:
+- **Files, not plugins.** Skills, agents, the hook and the command are plain files in `~/.claude`. It works in the desktop app without the `claude` CLI on PATH, and updating means re-running a script.
+- **Third-party skills are never vendored.** `setup/install-externals.sh` clones each upstream at install time (licenses stay with their authors; updates = re-run). The 16 externals and their sources are in the README.
+- **Patches reapplied on install** by `install-externals.sh`:
+  - `ui-ux-pro-max`: `disable-model-invocation: true` plus a kickoff prefix in the description. Upstream auto-triggers on any UI work (~12k tokens per invocation); now it only runs on `/ui-ux-pro-max`.
+  - `systematic-debugging`: upstream test files (`test-*.md`, `CREATION-LOG.md`) removed.
+  - `web-accessibility`: upstream calls it `accessibility`; folder and `name:` are renamed.
+- **No impeccable PostToolUse hook, no `impeccable-manual-edit-applier` agent.** They add latency to every UI edit. Per project: `npx impeccable install`.
+- **Rejected:** `superpowers` as a whole (ceremony; two skills are cherry-picked), `brand-guidelines` (applies Anthropic's own brand), and the old MCP set (magic, shadcn-ui, designlang, n8n, playwright, github, firebase, Vercel, Drive). Every MCP server fattens the startup context of every session.
+- **Additive setup, careful sync.** `setup.sh` never removes anything. `sync.sh` is dry-run by default, removes only with `--apply` (with backup), never removes plugins and never edits `settings.json`. `settings.json` is create-only; an existing one gets a printed hook excerpt to merge by hand, with the user's OK.
+- **Orchestrator model.** One main session briefs and reviews; the `engenheiro` agent writes code; read-only agents audit. See `setup/CLAUDE.md`.
 
-- **Esperas por input** — ~15,5h/mês parado em AskUserQuestion (média 13 min/pergunta) → CLAUDE.md agora manda avançar com defaults e perguntar no máx. 1 coisa.
-- **Contexto inicial ~42k tokens** — conectores MCP + skills a mais → conectores mortos desligados, skills pesadas tornadas manual-only.
-- **Skills avariadas** — design-auto-pipeline e ship referenciavam ferramentas nunca instaladas (impeccable/magia/sanctum) → o Claude improvisava e perdia tempo.
+## Changed in this rebuild
 
-## Arquitetura: ficheiros, não plugins
+- **Removed:** the 62-skill per-project catalog, `catalog.json` and its build/validate scripts, the install profiles, the guides, the memory templates, the MCP folder, the catalog CI workflow, and the manual install doc.
+- **Added:** 7 more external skills (browser testing, security, web quality, static analysis), the own skill `watch-youtube`, 8 agents, the process-kill hook, and the owner's `CLAUDE.md` and `settings.json`.
 
-A build antiga instalava 8 plugins (superpowers, sanctum+leyline+abstract,
-conserve, impeccable, frontend-design, watch). A nova instala **skills como
-ficheiros** em `~/.claude/skills/`:
+## Known limitation
 
-- funciona no desktop app sem o CLI `claude` no PATH;
-- zero hooks automáticos (a latência era a queixa nº1);
-- terceiros vêm sempre das **fontes originais** via `setup/install-externals.sh`
-  (licenças respeitadas, updates = re-correr o script) — nunca vendorizados aqui.
-
-## Skills globais da build (14)
-
-**Próprias (5, vendorizadas em `global-skills/`):** session-handoff, ship,
-ship-merge, skill-matchmaker, skill-scout.
-
-**Externas (9, via install-externals.sh):**
-
-| Skill | Fonte | Papel |
-|---|---|---|
-| frontend-design | anthropics/skills | direção estética (auto) |
-| impeccable | pbakaus/impeccable | processo de design, 23 comandos |
-| emil-design-eng | emilkowalski/skills | motion/polish (auto) |
-| review-animations | emilkowalski/skills | review de motion (manual) |
-| supabase | supabase/agent-skills | guidance oficial (auto) |
-| supabase-postgres-best-practices | supabase/agent-skills | Postgres perf (auto) |
-| systematic-debugging | obra/superpowers | root cause antes de fixes |
-| verification-before-completion | obra/superpowers | evidência antes de "feito" |
-| ui-ux-pro-max | nextlevelbuilder/ui-ux-pro-max-skill | kickoff de projetos (manual) |
-
-## Removido/rejeitado — NÃO reinstalar sem motivo novo
-
-| O quê | Porquê |
-|---|---|
-| design-auto-pipeline (skill própria) | Auto-disparava em toda a UI, turns 2,3× mais lentos, orquestrava ferramentas não instaladas. Substituído pela secção "Workflow de design" do CLAUDE.md. |
-| taste-skill | Rejeitada 2× para o CATÁLOGO (regras estáticas, conflito com frontend-design em produto). 2026-07-26: adotada fora do skillsbase — vive no repo do agentic OS (nome TBD), âmbito landings/marketing. O catálogo mantém-se sem ela até se decidir a ligação entre os dois repos. |
-| output-skill | Os modelos atuais não truncam código; só alongava outputs (mais lento). |
-| redesign-skill | Coberto pelo impeccable (critique → fix → polish → audit). |
-| Plugins sanctum/leyline/abstract/conserve/watch | Sem uso real; o sanctum deixou referências mortas no ship durante semanas. |
-| superpowers COMPLETO | A metodologia inteira (brainstorm→plan→TDD→review) é cerimónia para o estilo rápido do Tiago; reviews confirmam overhead em tarefas simples. Cherry-pick de 2 skills chega. |
-| brand-guidelines (anthropics/skills) | Aplica a marca DA Anthropic (cores hardcoded). Por cliente, o equivalente certo é o DESIGN.md do `/impeccable init`. |
-| Hook PostToolUse do impeccable | +até 5s por edit de UI. Enforcement via CLAUDE.md + audits manuais. Por projeto: `npx impeccable install` se um dia se quiser. |
-| Conectores: Vercel MCP, Google Drive, mcp-registry (+ chrome/computer-use dormentes) | 0 usos no mês analisado; contexto inicial mais gordo em todas as sessões. |
-| MCPs CLI antigos: magic, shadcn-ui, designlang, n8n, playwright, github, firebase | Substituídos pelo stack de skills + Preview, ou nunca usados. |
-| statusline.sh | Não usado na build atual. |
-| Automações (hooks de notificação, fewer-permission-prompts, Supabase advisors semanal) | Propostas no audit, recusadas pelo Tiago em 2026-07-03 — preferiu manter simples. Reavaliar se as esperas voltarem a doer. |
-
-## Patches aplicados a terceiros (o installer reaplica-os)
-
-- **ui-ux-pro-max**: `disable-model-invocation: true` + prefixo de kickoff na
-  description. O upstream auto-dispara em QUALQUER trabalho de UI (47KB de
-  SKILL.md ≈ 12k tokens por invocação) e chocaria com o resto do stack; assim
-  só corre quando o Tiago escreve `/ui-ux-pro-max` no início de um projeto.
-- **systematic-debugging**: removidos os ficheiros de teste internos do upstream
-  (`test-*.md`, `CREATION-LOG.md`) — ruído.
-
-## Notas de manutenção
-
-- Atualizar externas: `bash setup/install-externals.sh` (ou re-correr `setup.sh`).
-- Impeccable também atualiza via `npx impeccable update` (instala o hook — evitar).
-- Antes de adicionar uma skill global nova: ela vale o custo de arranque em TODAS
-  as sessões? Se é de stack/tarefa → catálogo per-project (`skills/`) via matchmaker.
-
-## Addendum 2026-07-15 — confirmações de ship/merge
-
-Queixa do Tiago: com vários chats em paralelo, o chato não é o Claude pedir — é
-(1) re-pedir o que já foi pedido ("posso dar merge?" depois de ele dizer "dá
-merge") e (2) ter de caçar qual dos chats está preso à espera de um sim/não
-enterrado no meio do texto. Decisão (nova secção "Confirmações de ship / merge"
-em `setup/CLAUDE.md`):
-
-- **Default = auto-merge**: quando acaba um bloco shipável, corre `/ship-merge`
-  sozinho — sem perguntar e sem esperar por palavra-gatilho. Só NÃO merja se o
-  Tiago disser EXPLICITAMENTE para não ("não dês merge ainda", "faz X primeiro").
-  A isolação de branch/worktree (uma sessão = um branch) é o que garante que só
-  vai para `main` o trabalho DESTA sessão, não o de outro chat.
-- **Quando tiver mesmo de perguntar → botão (AskUserQuestion) + `PushNotification`**
-  a dizer qual chat/branch está à espera.
-
-Nota vs. 2026-07-03: os **"hooks de notificação" continuam rejeitados** (são
-automáticos, latência a cada evento). Isto é diferente — chamada pontual ao tool
-`PushNotification` só no momento go/no-go, escolhida explicitamente pelo Tiago.
-Não reintroduz hooks. Alinhado com o objetivo do audit de cortar esperas por input.
+`skill-matchmaker`, `skill-scout` (its "add to catalog" step) and `/skills-suggest` read a `catalog.json` that no longer exists. They are kept as-is rather than inventing a new catalog; fix them or drop them when a catalog is decided again.

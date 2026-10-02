@@ -32,7 +32,7 @@ Follow these steps in order. Do not skip. Do not parallelize across steps (you c
 
 ### Steps 1–4: Delegate to the `/ship` flow
 
-Execute exactly the steps from the `ship` skill (`C:\Users\tiago\.claude\skills\ship\SKILL.md`):
+Execute exactly the steps from the `ship` skill (`~/.claude/skills/ship/SKILL.md`):
 
 1. **Preflight** (parallel: `git status`, `git branch --show-current`, `git diff --stat`, `git log -5 --oneline`, `git remote get-url origin`). Stop conditions: on `main`/`master`, or clean tree AND nothing unpushed.
 2. **Stage + commit** — `git add -A`, secret-file check, write a Conventional Commit message from the staged diff (regras no passo 2 do `/ship`), commit via HEREDOC. Never `--amend`, never `--no-verify`.

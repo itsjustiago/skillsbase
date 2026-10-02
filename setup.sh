@@ -7,16 +7,21 @@
 #   bash setup.sh
 #
 # Idempotente: seguro re-correr (também serve para ATUALIZAR as skills externas).
-# Sem plugins, sem hooks — a build é 100% ficheiros. Porquê: ver DECISIONS.md.
+# A build é 100% ficheiros (skills, agentes, hook, comando, CLAUDE.md, settings). Porquê: ver DECISIONS.md.
+# Ordem: primeiro o que não precisa de rede (próprias, agentes, hooks, comando,
+# CLAUDE.md, settings), por último as externas (clonam o HEAD dos upstreams).
 # Sandbox/teste: CLAUDE_DIR=/tmp/teste bash setup.sh
 
 set -e
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
+TS="$(date +%Y-%m-%d-%H%M%S)"
+# Itens existentes com o mesmo nome (e diferentes) são copiados para aqui antes de serem substituídos
+export SKILLSBASE_BAK="$CLAUDE_DIR/backups/skillsbase-$TS"
 
 # ── Modo (default = tudo) ────────────────────────────────────
-#   (sem args)       tudo: skills + externas + comandos + CLAUDE.md (+ settings)
-#   --skills         só skills próprias + externas + comandos (não toca em config)
+#   (sem args)       tudo: skills + externas + agentes + hooks + comandos + CLAUDE.md (+ settings)
+#   --skills         só skills próprias + externas + agentes + hooks + comandos (não toca em config)
 #   --instructions   só o CLAUDE.md global (com backup)
 MODE="all"
 case "${1:-}" in
@@ -29,56 +34,101 @@ do_skills() { [ "$MODE" = "all" ] || [ "$MODE" = "skills" ]; }
 do_config() { [ "$MODE" = "all" ] || [ "$MODE" = "instructions" ]; }
 
 echo "╔══════════════════════════════════════════════╗"
-echo "║   skillsbase bootstrap (build jul/2026)      ║"
+echo "║   skillsbase bootstrap (build atual)          ║"
 echo "╚══════════════════════════════════════════════╝"
 echo "    destino: $CLAUDE_DIR"
 echo "    modo:    $MODE"
 echo ""
 
-# ── Preflight ────────────────────────────────────────────────
-echo "==> Preflight..."
-MISSING=""
-command -v git  >/dev/null 2>&1 || MISSING="$MISSING git"
-command -v node >/dev/null 2>&1 || MISSING="$MISSING node"
-if [ -n "$MISSING" ]; then
-  echo "  ✗ Falta:$MISSING — instala primeiro e volta a correr."
-  exit 1
-fi
-echo "  v git, node"
-command -v python >/dev/null 2>&1 || command -v py >/dev/null 2>&1 || \
-  echo "  ! python não encontrado — a pesquisa do ui-ux-pro-max precisa dele (instala quando fores usar)"
-mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents"
-
-# ── Step 1: skills próprias + slash commands ─────────────────
+# ── Preflight (só o que o modo precisa) ──────────────────────
 if do_skills; then
-  echo ""
-  echo "==> skills próprias (global-skills/) + comandos"
-  for d in "$REPO_ROOT"/global-skills/*/; do
-    name="$(basename "$d")"
-    rm -rf "${CLAUDE_DIR:?}/skills/$name"
-    cp -r "$d" "$CLAUDE_DIR/skills/$name"
-    echo "  v $name"
-  done
-  if compgen -G "$REPO_ROOT/commands/*.md" >/dev/null; then
-    cp "$REPO_ROOT"/commands/*.md "$CLAUDE_DIR/commands/"
-    echo "  v commands/"
+  echo "==> Preflight..."
+  MISSING=""
+  command -v git  >/dev/null 2>&1 || MISSING="$MISSING git"
+  command -v node >/dev/null 2>&1 || MISSING="$MISSING node"
+  if [ -n "$MISSING" ]; then
+    echo "  ✗ Falta:$MISSING — instala primeiro e volta a correr."
+    exit 1
+  fi
+  echo "  v git, node"
+  if python3 --version >/dev/null 2>&1; then
+    echo "  v python3"
+  else
+    echo "  ! python3 não funciona (no Windows pode ser o stub da Microsoft Store): o hook"
+    echo "    bloquear_kill_por_nome não corre até instalares Python 3 (e o ui-ux-pro-max também precisa)."
+    echo "    A instalação continua."
   fi
 fi
+mkdir -p "$CLAUDE_DIR"
+if do_skills; then mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/hooks"; fi
 
-# ── Step 2: skills externas (fontes originais) ───────────────
+# put <origem> <pasta-destino> <categoria> — copia ficheiro/pasta; se já existir com o mesmo
+# nome e for diferente, faz backup em $SKILLSBASE_BAK/<categoria>/ antes de substituir.
+put() {
+  local src="${1%/}" destdir="$2" cat="$3" base dst
+  base="$(basename "$src")"; dst="$destdir/$base"
+  if [ -e "$dst" ] || [ -L "$dst" ]; then
+    if [ -d "$src" ] && [ -d "$dst" ] && [ ! -L "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then
+      echo "  = $base"; return 0
+    fi
+    if [ -f "$src" ] && [ -f "$dst" ] && cmp -s "$src" "$dst"; then
+      echo "  = $base"; return 0
+    fi
+    mkdir -p "$SKILLSBASE_BAK/$cat"
+    [ -e "$SKILLSBASE_BAK/$cat/$base" ] || cp -R -P "$dst" "$SKILLSBASE_BAK/$cat/$base"
+    rm -rf "${dst:?}"
+    echo "  ~ $base (versão anterior em backups/skillsbase-$TS/$cat/)"
+  else
+    echo "  v $base"
+  fi
+  cp -R "$src" "$destdir/"
+}
+
+print_hook_excerpt() {
+  node -e '
+const s = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+console.log(JSON.stringify({ hooks: s.hooks }, null, 2).replace(/^/gm, "        "));
+' "$REPO_ROOT/setup/settings.json"
+}
+# O ficheiro do hook é copiado, mas só o settings.json o regista.
+hook_note() {
+  local sf="$CLAUDE_DIR/settings.json"
+  if [ -f "$sf" ] && grep -qF bloquear_kill_por_nome "$sf"; then
+    echo "  = hook bloquear_kill_por_nome já registado no settings.json"
+    return 0
+  fi
+  echo "  ! o hook bloquear_kill_por_nome NÃO fica ativo até ser registado. Funde isto em"
+  echo "    \"hooks\" do teu settings.json (o AGENT-INSTALL.md trata, com OK do utilizador):"
+  print_hook_excerpt
+}
+
+# ── Step 1: skills próprias + agentes + hooks + slash commands (sem rede) ──
 if do_skills; then
   echo ""
-  echo "==> skills externas (clonadas dos upstreams, nunca vendorizadas)"
-  CLAUDE_DIR="$CLAUDE_DIR" bash "$REPO_ROOT/setup/install-externals.sh"
+  echo "==> skills próprias (global-skills/)"
+  for d in "$REPO_ROOT"/global-skills/*/; do put "$d" "$CLAUDE_DIR/skills" skills; done
+  echo ""
+  echo "==> agentes (agents/)"
+  for f in "$REPO_ROOT"/agents/*.md; do [ -f "$f" ] && put "$f" "$CLAUDE_DIR/agents" agents; done
+  echo ""
+  echo "==> hooks (hooks/ — só os ficheiros; o registo vive no settings.json)"
+  for f in "$REPO_ROOT"/hooks/*; do [ -f "$f" ] && put "$f" "$CLAUDE_DIR/hooks" hooks; done
+  chmod +x "$CLAUDE_DIR"/hooks/*.py 2>/dev/null || true
+  echo ""
+  echo "==> comandos (commands/)"
+  for f in "$REPO_ROOT"/commands/*.md; do [ -f "$f" ] && put "$f" "$CLAUDE_DIR/commands" commands; done
 fi
 
-# ── Step 3: configs globais ──────────────────────────────────
+# ── Step 2: configs globais (sem rede) ───────────────────────
 if do_config; then
   echo ""
   echo "==> config — CLAUDE.md global"
   if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && ! cmp -s "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"; then
-    cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-skillsbase.bak"
-    echo "  ! CLAUDE.md existente diferia → backup em CLAUDE.md.pre-skillsbase.bak"
+    BAKFILE="$CLAUDE_DIR/CLAUDE.md.pre-skillsbase.bak"
+    # nunca sobrescrever um backup anterior (guarda o original)
+    [ -e "$BAKFILE" ] && BAKFILE="$CLAUDE_DIR/CLAUDE.md.pre-skillsbase-$TS.bak"
+    cp "$CLAUDE_DIR/CLAUDE.md" "$BAKFILE"
+    echo "  ! CLAUDE.md existente diferia → backup em $(basename "$BAKFILE")"
   fi
   cp "$REPO_ROOT/setup/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
   echo "  v CLAUDE.md"
@@ -88,19 +138,42 @@ fi
 if [ "$MODE" = "all" ]; then
   if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
     cp "$REPO_ROOT/setup/settings.json" "$CLAUDE_DIR/settings.json"
-    echo "  v settings.json"
+    echo "  v settings.json (criado, com o hook registado)"
   else
     echo "  = settings.json já existe — mantido (pode ter chaves locais da máquina)"
+    hook_note
   fi
+elif [ "$MODE" = "skills" ]; then
+  echo ""
+  echo "==> hook"
+  hook_note
 fi
+
+if [ "$MODE" = "instructions" ]; then
+  echo ""
+  echo "CLAUDE.md instalado. Reinicia o Claude Code para o carregar."
+  exit 0
+fi
+
+# ── Step 3: skills externas (rede; por último, para não bloquear o resto) ──
+EXT_FAIL=0
+echo ""
+echo "==> skills externas (clonadas dos upstreams — HEAD atual, nunca vendorizadas)"
+if ! CLAUDE_DIR="$CLAUDE_DIR" bash "$REPO_ROOT/setup/install-externals.sh"; then EXT_FAIL=1; fi
 
 # ── Done ─────────────────────────────────────────────────────
 echo ""
-echo "Bootstrap completo. Passos manuais:"
+if [ "$EXT_FAIL" = "1" ]; then
+  echo "Bootstrap INCOMPLETO: o que não precisa de rede ficou instalado, mas há skills"
+  echo "externas em falta (ver acima). Re-corre 'bash setup.sh --skills' com rede."
+else
+  echo "Bootstrap completo."
+fi
+echo "Passos manuais:"
 echo ""
-echo "  1. REINICIA o Claude Code para as skills e o CLAUDE.md carregarem."
-echo "  2. No desktop app: Settings → Connectors → liga o SUPABASE (OAuth)."
-echo "     Só esse — os restantes foram removidos de propósito (setup/mcps.md)."
+echo "  1. REINICIA o Claude Code para as skills, agentes e o CLAUDE.md carregarem."
+echo "  2. Supabase (só se usares): conector OAuth no desktop app, ou o MCP por CLI — ver setup/mcps.md."
+if [ -d "$SKILLSBASE_BAK" ]; then echo "  3. Versões anteriores substituídas: $SKILLSBASE_BAK"; fi
 echo ""
 echo "────────────────────────────────────────────────────────────"
 echo " 📋 Comandos & triggers desta build:"
@@ -123,5 +196,9 @@ echo "  Ship & sessões"
 echo "    /ship                       commit → push → PR"
 echo "    /ship-merge                 commit → PR → CI → squash-merge → cleanup"
 echo "    \"wrap up session\"          handoff antes de /clear"
-echo "    /skills-suggest             skills do catálogo para ESTE projeto"
+echo ""
+echo "  Agentes (subagentes, no CLAUDE.md global)"
+echo "    engenheiro · explorador · investigador · revisor · testador"
+echo "    design · seguranca · financas"
 echo "────────────────────────────────────────────────────────────"
+[ "$EXT_FAIL" = "0" ] || exit 1
