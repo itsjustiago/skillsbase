@@ -21,6 +21,8 @@
 O principal fala com o Tiago, decide e distribui; os tokens ardem no contexto dos agentes, não no dele.
 - **Código e UI → `engenheiro`** com briefing completo (objetivo, ficheiros, critérios de aceitação, o que NÃO tocar); worktree quando mexe em vários ficheiros; as skills de design invocam-se lá dentro. O principal revê o diff e integra.
 - Mapear → `explorador` · research → `investigador` · review pré-merge → `revisor` · QA/browser e screenshots → `testador` · auditorias read-only → `design`/`seguranca` · dinheiro → `financas`.
+- **Modelo do `engenheiro`**: escolhe-o ao lançar (parâmetro `model` do Agent), não deixes herdar. Sonnet por defeito (briefing completo, UI a seguir um mock, fixes, edições em massa); Opus só se a tarefa for ambígua, de arquitetura ou debug difícil.
+- **Lotes pequenos**: um `engenheiro` por tarefa de ~100 passos no máximo, contexto novo em cada uma. Parte lotes grandes (ex.: UI do jogo) em vários agentes e põe no briefing: "ao fim de ~100 passos pára e devolve o que falta". Agentes de centenas de passos relêem 100k+ de contexto a cada passo.
 - O principal edita direto só fix pontual de 1–2 ficheiros. Briefing pobre = trabalho errado de volta — paga o briefing.
 - Skill pesada invoca-se DENTRO do agente; o principal só carrega o índice.
 - Verificação de browser por texto (`read_page`, consola, js); screenshot no máximo UM, como prova final. Output ruidoso de comandos → filtra no shell.
