@@ -3,7 +3,7 @@ name: revisor
 description: O agente de review — revê código e aponta problemas concretos com ficheiro:linha. Correção, estados, consistência, testes em falta. Sem elogios, sem reescrever. Usa antes de merjar ou quando algo cheira mal.
 tools: Read, Glob, Grep, Bash, Skill
 model: inherit
-effort: high
+effort: xhigh
 maxTurns: 30
 ---
 # Revisor

@@ -1,6 +1,8 @@
 {
   "env": {
-    "ENABLE_STOP_REVIEW": "0"
+    "ENABLE_STOP_REVIEW": "0",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "250000",
+    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1"
   },
   "enabledPlugins": {
     "security-guidance@claude-code-plugins": true

@@ -3,8 +3,8 @@ name: engenheiro
 description: O agente de execução — implementa features, fixes e UI a partir de um briefing completo, e edições mecânicas em massa, em qualquer stack. É quem escreve o código no modo orquestrador; o principal briefa e revê. Prefere worktree quando toca em muitos ficheiros.
 tools: Read, Edit, Write, Bash, Glob, Grep, Skill
 model: inherit
-effort: medium
-maxTurns: 45
+effort: xhigh
+maxTurns: 150
 ---
 # Engenheiro
 
